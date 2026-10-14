@@ -30,5 +30,6 @@ python3 -m http.server 4173 --bind 127.0.0.1
   - `image`: 이미지 한 장, `images`: 클릭으로 넘기는 사진 더미
   - `type: 'hypothesis'` + `claims`: 가설 화면
   - `type: 'compare'` + `before`/`after`: 전후 비교
+  - `type: 'gaps'` + `rows: [{ tag, who, why, need }]`: 누가, 왜, 무엇이 필요한지 비교하는 표
   - `say`: 캐릭터 대사창
 - 이미지는 `assets/` 아래에 둔다. 전광판 사진은 `CONFIG.billboard.images`.

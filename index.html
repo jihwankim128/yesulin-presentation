@@ -253,6 +253,13 @@
   .lightbox-bar { display: flex; align-items: center; gap: 1rem; font-size: 15px; color: #c6cde6; }
   .lightbox-bar button { padding: .45rem .8rem; background: rgba(255, 255, 255, .1); }
   .lightbox-bar button:hover { background: rgba(255, 255, 255, .2); }
+
+  .gaps { flex: 1; display: grid; grid-template-columns: auto auto 1fr auto; align-content: center; align-items: center; gap: 2.2cqh 2.4cqw; }
+  .gaps-head { font-size: 1.5cqw; color: var(--accent-deep); }
+  .gaps-tag { padding: .8cqh 1.2cqw; font-size: 2cqw; font-weight: 700; text-align: center; background: var(--accent-soft); box-shadow: 0 0 0 .25cqw var(--ink); }
+  .gaps-who { font-size: 2.3cqw; font-weight: 700; }
+  .gaps-why { font-size: 2.2cqw; }
+  .gaps-need { padding: .8cqh 1.4cqw; font-size: 2.1cqw; font-weight: 700; color: var(--accent); background: var(--ink); }
 </style>
 </head>
 <body>
@@ -316,7 +323,7 @@
   - billboard.images: 전광판에 번갈아 나오는 사진들 (이미지를 화면에 끌어다 놓아도 바뀐다)
   - 포탈별 슬라이드는 slides/<포탈>.js에 있다. 첫 장 목차는 type: 'act' 슬라이드에서 자동으로 만들어진다.
   - 슬라이드 필드
-    type: 'act' | 'hypothesis' | 'compare' (생략하면 내용에 맞춰 자동 배치)
+    type: 'act' | 'hypothesis' | 'compare' | 'gaps' (생략하면 내용에 맞춰 자동 배치)
     kicker, title, subtitle, big, points, image, caption, images(사진 더미), claims, before/after, say(캐릭터 대사)
     **강조**는 형광펜으로 표시된다.
 */
@@ -1307,6 +1314,15 @@ function slideMarkup(s) {
   if (s.type === 'hypothesis') {
     const claims = s.claims.map(claim => `<p class="hypo-claim">“${rich(claim)}”</p>`).join('');
     return { kind: 'hypothesis', body: `<div class="hypo"><p class="hypo-label">${escapeHtml(s.title)}</p>${claims}</div>` };
+  }
+  if (s.type === 'gaps') {
+    const head = ['', '누가', '왜 우리에게?', '필요한 것'].map(label => `<span class="gaps-head">${label}</span>`).join('');
+    const rows = s.rows.map(row => `
+      <span class="gaps-tag">${escapeHtml(row.tag)}</span>
+      <span class="gaps-who">${escapeHtml(row.who)}</span>
+      <span class="gaps-why">${escapeHtml(row.why)}</span>
+      <span class="gaps-need">${escapeHtml(row.need)}</span>`).join('');
+    return { kind: 'gaps', body: `${headingMarkup(s)}<div class="gaps">${head}${rows}</div>` };
   }
   if (s.type === 'compare') {
     const col = (side, cls) => `<div class="compare-col ${cls}"><p class="compare-label">${escapeHtml(side.label)}</p><p class="compare-text">${rich(side.text)}</p></div>`;
