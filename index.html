@@ -1132,7 +1132,7 @@ function escapeHtml(text) {
   return String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
 }
 
-const rich = text => escapeHtml(text).replace(/\*\*(.+?)\*\*/g, '<mark>$1</mark>');
+const rich = text => escapeHtml(text).replace(/\*\*(.+?)\*\*/g, '<mark>$1</mark>').replace(/\n/g, '<br>');
 
 function actSlides() {
   return deck.slides.map((s, index) => ({ s, index })).filter(({ s }) => s.type === 'act');
