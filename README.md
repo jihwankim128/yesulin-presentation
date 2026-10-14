@@ -20,9 +20,9 @@ python3 -m http.server 4173 --bind 127.0.0.1
 
 ## 내용 수정
 
-`index.html` 상단의 `CONFIG`만 고친다.
+포탈별 슬라이드는 `slides/soft.js`, `slides/product.js`, `slides/tech.js`에 나뉘어 있다. 맡은 포탈 파일만 고치면 된다. 전광판 등 마을 설정은 `index.html` 상단의 `CONFIG`에 있다.
 
-- 포탈마다 `slides` 배열을 채운다. 첫 장 목차는 `type: 'act'` 슬라이드에서 자동으로 만들어진다.
+- 포탈 파일의 `slides` 배열을 채운다. 첫 장 목차는 `type: 'act'` 슬라이드에서 자동으로 만들어진다.
 - 막은 `act: 1`(지난 무대), `act: 2`(지금 무대), `act: 3`(다음 무대)로 나눈다. `items`가 목차의 세부 항목이 된다.
 - 주요 필드
   - `title`, `subtitle`, `kicker`, `big`(크게 강조할 단어)
