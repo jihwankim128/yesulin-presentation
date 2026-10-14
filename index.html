@@ -1,0 +1,1550 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>예술in 마을</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css">
+<style>
+  :root {
+    --ink: #1d1626;
+    --paper: #fbf9f4;
+    --brand: #246bfe;
+    --brand-deep: #194fc4;
+    --night: #0f1424;
+    --accent: var(--brand);
+    --accent-deep: var(--brand-deep);
+    --accent-soft: #cfe0ff;
+    --pixel-font: 'Galmuri11', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: #14281c; color: #fff; font-family: var(--pixel-font); }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  [hidden] { display: none !important; }
+
+  #view { display: block; width: 100vw; height: 100dvh; image-rendering: pixelated; }
+
+  /* 시작 화면 */
+  .title-screen {
+    position: fixed; inset: 0; display: grid; place-items: center;
+    background: radial-gradient(ellipse at center, rgba(15, 20, 36, .55), rgba(15, 20, 36, .88));
+  }
+  .title-card { display: grid; justify-items: center; gap: 1.6rem; text-align: center; padding: 0 16px; }
+  .title-sub { font-size: clamp(16px, 2vw, 22px); color: #cfe0ff; letter-spacing: .08em; }
+  .title-logo {
+    font-weight: 700; line-height: 1.05;
+    font-size: clamp(72px, 13vw, 176px);
+    color: #fff;
+    text-shadow: .06em .06em 0 var(--brand), .12em .12em 0 #0b1a4a;
+  }
+  .title-start {
+    margin-top: 1rem; padding: .9rem 1.6rem; font-size: clamp(18px, 2.2vw, 26px);
+    background: var(--paper); color: var(--ink);
+    box-shadow: 0 0 0 4px var(--ink), 0 0 0 8px #fff, 8px 8px 0 8px rgba(0, 0, 0, .4);
+    white-space: nowrap;
+  }
+  .title-start:active { transform: translate(2px, 2px); }
+  .title-start .arrow { display: inline-block; color: var(--brand); margin-right: .5em; animation: blink 1s steps(2) infinite; }
+  .title-hint { font-size: 14px; color: #9fb0d6; }
+
+  /* 마을 HUD */
+  .hud { position: fixed; inset: 0; pointer-events: none; }
+  .hud-place {
+    position: absolute; top: 16px; left: 16px; padding: .5rem .9rem; font-size: 15px;
+    background: rgba(15, 20, 36, .82); box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px rgba(255, 255, 255, .85);
+  }
+  .hud-keys {
+    position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 1.2rem; flex-wrap: wrap; justify-content: center;
+    padding: .55rem 1rem; font-size: 14px; color: #e6ecff; white-space: nowrap;
+    background: rgba(15, 20, 36, .78);
+  }
+  kbd {
+    display: inline-block; min-width: 1.6em; padding: .1em .35em; margin-right: .25em; text-align: center;
+    font: inherit; color: var(--ink); background: var(--paper); box-shadow: 0 2px 0 #8a8fa3;
+  }
+
+  /* 슬라이드 */
+  .deck {
+    position: fixed; inset: 0; display: grid; grid-template-rows: auto 1fr auto; gap: 1rem;
+    padding: 18px 24px 16px;
+    background:
+      radial-gradient(circle at 20% 15%, rgba(255, 255, 255, .06) 0 1px, transparent 2px) 0 0 / 46px 46px,
+      radial-gradient(circle at 70% 60%, rgba(255, 255, 255, .05) 0 1px, transparent 2px) 0 0 / 71px 71px,
+      var(--night);
+  }
+  .deck-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-size: 16px; }
+  .deck-badge { display: inline-flex; align-items: center; gap: .7rem; padding: .35rem .8rem .35rem .45rem; background: var(--accent); color: var(--ink); }
+  .deck-badge img { width: 32px; height: 32px; image-rendering: pixelated; }
+  .deck-count { color: #c6cde6; }
+  .deck-stage { display: grid; place-items: center; min-height: 0; }
+  .slide-frame {
+    position: relative; overflow: hidden;
+    width: min(calc(100vw - 72px), calc((100dvh - 170px) * 16 / 9));
+    aspect-ratio: 16 / 9;
+    background: var(--paper); color: var(--ink);
+    container-type: size;
+    box-shadow: 0 0 0 6px var(--ink), 0 0 0 12px var(--accent), 14px 14px 0 12px rgba(0, 0, 0, .4);
+  }
+  .slide { position: absolute; inset: 0; padding: 7cqh 6.5cqw; display: flex; flex-direction: column; gap: 3.2cqh; }
+  .slide.from-next { animation: in-next .28s steps(4) both; }
+  .slide.from-prev { animation: in-prev .28s steps(4) both; }
+  .slide-kicker { font-size: 1.7cqw; color: var(--accent-deep); }
+  .slide-title { font-weight: 700; font-size: 4.4cqw; line-height: 1.25; }
+  .slide-subtitle { font-size: 2.3cqw; line-height: 1.5; color: #4f4a5e; }
+  .slide-points { list-style: none; display: grid; gap: 2.6cqh; font-size: 2.45cqw; line-height: 1.5; }
+  .slide-points li { position: relative; padding-left: 3cqw; }
+  .slide-points li::before {
+    content: ''; position: absolute; left: 0; top: .48em; width: 1.05cqw; height: 1.05cqw;
+    background: var(--accent); box-shadow: .25cqw .25cqw 0 var(--ink);
+  }
+  .slide mark { color: inherit; background: linear-gradient(transparent 58%, var(--accent-soft) 58%); }
+  .slide--cover { justify-content: center; }
+  .slide--cover .slide-title { font-size: 7.6cqw; }
+  .slide--cover .slide-subtitle { font-size: 2.7cqw; max-width: 60ch; }
+  .slide--split { display: grid; grid-template-columns: 1.05fr 1fr; align-items: center; gap: 4.5cqw; }
+  .slide-text { display: flex; flex-direction: column; gap: 3.2cqh; }
+  .slide-media { display: grid; grid-template-rows: 1fr auto; gap: 1.6cqh; min-height: 0; height: 100%; }
+  .slide--split .slide-media { height: 76cqh; }
+  .slide--media .slide-media { flex: 1; }
+  .slide-media img { width: 100%; height: 100%; min-height: 0; object-fit: contain; }
+  .slide-media figcaption { font-size: 1.6cqw; color: #4f4a5e; text-align: center; }
+  .media-missing {
+    display: grid; place-items: center; align-content: center; gap: 1.2cqh; height: 100%; min-height: 0;
+    font-size: 1.8cqw; color: #4f4a5e; text-align: center;
+    background: repeating-linear-gradient(45deg, #eeeae0 0 10px, #f6f3eb 10px 20px);
+    box-shadow: inset 0 0 0 3px #cfc9ba;
+  }
+  .media-missing code { font-family: 'GalmuriMono11', monospace; font-size: 1.5cqw; color: var(--ink); }
+
+  .deck-foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .deck-progress { display: flex; gap: 6px; }
+  .deck-progress i { width: 18px; height: 10px; background: rgba(255, 255, 255, .16); }
+  .deck-progress i.on { background: var(--accent); }
+  .deck-nav { display: flex; gap: .6rem; }
+  .deck-nav button { padding: .45rem .8rem; font-size: 14px; background: rgba(255, 255, 255, .08); white-space: nowrap; }
+  .deck-nav button:hover { background: rgba(255, 255, 255, .18); }
+  .deck-nav button:active { transform: translate(1px, 1px); }
+
+  .fade { position: fixed; inset: 0; background: var(--night); opacity: 0; pointer-events: none; transition: opacity .32s steps(5); }
+  .fade.on { opacity: 1; }
+
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes in-next { from { opacity: 0; transform: translateX(3%); } }
+  @keyframes in-prev { from { opacity: 0; transform: translateX(-3%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .slide.from-next, .slide.from-prev, .title-start .arrow { animation: none; }
+    .fade { transition: none; }
+  }
+
+  .deck-head-left { display: flex; align-items: center; gap: .9rem; }
+  .deck-act { font-size: 15px; color: #e6ecff; }
+  .deck-progress i.act-start { margin-left: 12px; }
+
+  .slide.has-say { padding-bottom: 27cqh; }
+  .slide { word-break: keep-all; }
+  .slide--split { grid-template-columns: 1.1fr 1fr; }
+  .slide--split .slide-text { gap: 2.4cqh; }
+  .slide--split .slide-title { font-size: 3.5cqw; }
+  .slide--split .slide-subtitle { font-size: 2cqw; }
+  .slide--split .slide-points { gap: 1.8cqh; font-size: 2.05cqw; }
+  .slide--split .slide-big { font-size: 9cqw; }
+  .slide--statement { justify-content: center; }
+  .slide--split { grid-template-rows: minmax(0, 1fr); }
+  .slide--split .slide-media, .slide--split .stack { height: 100%; min-height: 0; }
+  .slide-big {
+    font-weight: 700; font-size: 11cqw; line-height: 1; color: var(--accent-deep);
+    text-shadow: .5cqw .5cqw 0 var(--accent-soft);
+  }
+
+  .toc { display: grid; gap: 2.2cqh; flex: 1; align-content: center; }
+  .toc-row {
+    display: grid; grid-template-columns: 8cqw 21cqw 1fr; align-items: center; gap: 2.4cqw;
+    padding: 1.8cqh 2cqw; text-align: left; color: var(--ink); background: #fff;
+    box-shadow: 0 0 0 .3cqw var(--ink), .5cqw .5cqw 0 .3cqw var(--accent);
+  }
+  .toc-row:hover { background: #fffaf0; }
+  .toc-row:active { transform: translate(.2cqw, .2cqw); }
+  .toc-num { font-size: 3.4cqw; font-weight: 700; color: var(--accent-deep); }
+  .toc-title { display: block; font-size: 2.3cqw; font-weight: 700; }
+  .toc-sub { display: block; margin-top: .8cqh; font-size: 1.45cqw; color: #4f4a5e; }
+  .toc-items { display: flex; flex-wrap: wrap; gap: 1cqh .8cqw; }
+  .toc-items span { padding: .5cqh .9cqw; font-size: 1.4cqw; background: var(--accent-soft); }
+
+  .slide--act {
+    align-items: center; justify-content: center; text-align: center; gap: 2cqh;
+    padding-left: 16cqw; padding-right: 16cqw; color: #fff;
+    background: radial-gradient(ellipse 42% 62% at 50% 40%, #3d3157 0%, #1d1626 72%);
+  }
+  .slide--act::before, .slide--act::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 13cqw;
+    background: repeating-linear-gradient(90deg, #b3283a 0 2.2cqw, #8c1d2c 2.2cqw 3.2cqw, #c93a4b 3.2cqw 4.3cqw);
+  }
+  .slide--act::before { left: 0; box-shadow: .6cqw 0 0 #5c1220; }
+  .slide--act::after { right: 0; box-shadow: -.6cqw 0 0 #5c1220; }
+  .curtain-top {
+    position: absolute; top: 0; left: 0; right: 0; height: 9cqh; z-index: 1;
+    background:
+      radial-gradient(circle at 50% 0, #b3283a 68%, transparent 70%) 0 3cqh / 6cqw 6cqh repeat-x,
+      linear-gradient(#8c1d2c, #8c1d2c) 0 0 / 100% 4cqh no-repeat;
+  }
+  .act-num { font-size: 10cqw; font-weight: 700; line-height: 1; color: var(--accent); text-shadow: .5cqw .5cqw 0 #0b0812; }
+  .act-title { font-size: 4.2cqw; font-weight: 700; }
+  .act-sub { font-size: 2.2cqw; color: #d8d2e6; }
+
+  .hypo { display: grid; gap: 3cqh; flex: 1; align-content: center; }
+  .hypo-label { justify-self: start; padding: .7cqh 1.2cqw; font-size: 1.7cqw; color: var(--accent); background: var(--ink); }
+  .hypo-claim { padding-left: 2.6cqw; font-size: 3.4cqw; font-weight: 700; line-height: 1.4; box-shadow: inset 1cqw 0 0 var(--accent); }
+
+  .compare { flex: 1; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 2.4cqw; }
+  .compare-col {
+    display: grid; align-content: center; gap: 1.6cqh; min-height: 30cqh; padding: 3.5cqh 2.6cqw;
+    background: #fff; box-shadow: 0 0 0 .3cqw var(--ink);
+  }
+  .compare-col.after { background: var(--accent-soft); box-shadow: 0 0 0 .3cqw var(--ink), .6cqw .6cqw 0 .3cqw var(--accent); }
+  .compare-label { font-size: 1.6cqw; color: var(--accent-deep); }
+  .compare-text { font-size: 2.7cqw; font-weight: 700; line-height: 1.4; }
+  .compare-arrow { font-size: 4cqw; color: var(--accent-deep); }
+
+  .stack { position: relative; flex: 1; min-height: 0; cursor: pointer; }
+  .stack-card {
+    position: absolute; inset: 1cqh 1cqw 5cqh; display: flex; align-items: center; justify-content: center;
+    transform: rotate(var(--r, 0deg)); transition: transform .2s steps(3), opacity .2s steps(3); pointer-events: none;
+  }
+  .stack-card img {
+    max-width: 100%; max-height: 100%; min-width: 0; background: #fff;
+    border: .6cqw solid #fff; box-shadow: 0 0 0 .25cqw var(--ink), .8cqw .8cqw 0 rgba(29, 22, 38, .22);
+  }
+  .stack-card.buried { opacity: 0; }
+  .stack-card.leaving { animation: card-out .3s steps(4) forwards; }
+  .stack-hint { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 1.45cqw; color: #4f4a5e; }
+  @keyframes card-out { to { opacity: 0; transform: translate(55%, -6%) rotate(16deg); } }
+
+  .say {
+    position: absolute; left: 4cqw; right: 4cqw; bottom: 4.5cqh; z-index: 2; min-height: 17cqh;
+    display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 2.2cqw; padding: 2.4cqh 2.6cqw;
+    text-align: left; color: #fff; background: #1d1626; box-shadow: 0 0 0 .45cqw #fff, 0 0 0 .9cqw #1d1626;
+  }
+  .say-portrait { width: 10cqh; height: 10cqh; image-rendering: pixelated; background: var(--accent); box-shadow: 0 0 0 .3cqw #fff; }
+  .say.talking .say-portrait { animation: talk .24s steps(2) infinite; }
+  .say-name { position: absolute; top: -3.4cqh; left: 2.2cqw; padding: .5cqh 1.1cqw; font-size: 1.5cqw; color: var(--ink); background: var(--accent); box-shadow: 0 0 0 .3cqw #1d1626; }
+  .say-text { font-size: 2.15cqw; line-height: 1.55; }
+  .say.done .say-text::after { content: ' ▼'; color: var(--accent); animation: blink 1s steps(2) infinite; }
+  @keyframes talk { 50% { transform: translateY(-.6cqh); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stack-card, .stack-card.leaving, .say.talking .say-portrait, .say.done .say-text::after { animation: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="view" aria-label="예술in 마을 지도"></canvas>
+
+<div class="hud" id="hud" hidden>
+  <div class="hud-place">예술in</div>
+  <div class="hud-keys">
+    <span><kbd>←↑↓→</kbd>이동</span>
+    <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd>포탈 바로가기</span>
+    <span><kbd>F</kbd>전체화면</span>
+  </div>
+</div>
+
+<div class="title-screen" id="title-screen">
+  <div class="title-card">
+    <p class="title-sub">공연예술 오디션이 열리는 곳</p>
+    <h1 class="title-logo">예술in</h1>
+    <button class="title-start" id="title-start"><span class="arrow">▶</span>마을 입장하기</button>
+    <p class="title-hint">Enter 또는 클릭</p>
+  </div>
+</div>
+
+<section class="deck" id="deck" hidden aria-live="polite">
+  <header class="deck-head">
+    <span class="deck-head-left"><span class="deck-badge"><img id="deck-hero" alt=""><span id="deck-label"></span></span><span class="deck-act" id="deck-act"></span></span>
+    <span class="deck-count" id="deck-count"></span>
+  </header>
+  <div class="deck-stage"><div class="slide-frame" id="slide-frame"></div></div>
+  <footer class="deck-foot">
+    <div class="deck-progress" id="deck-progress"></div>
+    <div class="deck-nav">
+      <button data-nav="prev">◀ 이전</button>
+      <button data-nav="next">다음 ▶</button>
+      <button data-nav="exit">ESC 마을로</button>
+    </div>
+  </footer>
+</section>
+
+<div class="fade" id="fade"></div>
+
+<script>
+/*
+  발표 내용은 CONFIG만 고치면 된다.
+  - billboard.images: 전광판에 번갈아 나오는 사진들 (이미지를 화면에 끌어다 놓아도 바뀐다)
+  - 각 포탈의 첫 장 목차는 type: 'act' 슬라이드에서 자동으로 만들어진다.
+  - 슬라이드 필드
+    type: 'act' | 'hypothesis' | 'compare' (생략하면 내용에 맞춰 자동 배치)
+    kicker, title, subtitle, big, points, image, caption, images(사진 더미), claims, before/after, say(캐릭터 대사)
+    **강조**는 형광펜으로 표시된다.
+*/
+const CONFIG = {
+  narrator: '소요유',
+  billboard: {
+    images: ['assets/billboard.png', 'assets/billboard1.jpg', 'assets/billboard2.jpg'],
+    interval: 6,
+    ledEffect: true,
+    fallbackText: '예술in에 오신 것을 환영합니다!   포탈로 걸어 들어가 보세요',
+  },
+  portals: [
+    {
+      id: 'soft', key: '1', label: '소프트 스킬',
+      accent: '#ff7ab6', accentDeep: '#c2306f', accentSoft: '#ffd6e8',
+      palette: ['#ff6fae', '#ffb3d6', '#c93a83', '#fff0f7'],
+      tocSay: '소프트 스킬 이야기는 아직 대본을 쓰는 중이에요.',
+      slides: [
+        { type: 'act', act: 1, title: '준비 중', items: ['세부 목차를 적어주세요'], say: '1막의 첫 대사를 여기에 적어주세요.' },
+        { type: 'act', act: 2, title: '준비 중', items: ['세부 목차를 적어주세요'], say: '2막의 첫 대사를 여기에 적어주세요.' },
+        { type: 'act', act: 3, title: '준비 중', items: ['세부 목차를 적어주세요'], say: '3막의 첫 대사를 여기에 적어주세요.' },
+      ],
+    },
+    {
+      id: 'product', key: '2', label: '제품',
+      accent: '#ffb938', accentDeep: '#b86a00', accentSoft: '#ffe7b0',
+      palette: ['#ffb238', '#ffd66b', '#e07a12', '#fff4cc'],
+      tocSay: '오늘 공연은 3막으로 준비했어요. 편하게 봐주세요!',
+      slides: [
+        {
+          type: 'act', act: 1, title: '콜드메일은 정말 cold 했다',
+          items: ['첫 번째 가설', '공연사에 직접 홍보', '가설 쪼개기', '처음으로 돌아가기'],
+          say: '처음엔 자신 있었어요. 공연사만 잡으면 끝날 줄 알았거든요.',
+        },
+        {
+          type: 'hypothesis', title: '첫 번째 가설',
+          claims: ['배우는 지원이, 공연사는 관리가 불편할 것이다', '공연사를 확보하면 배우는 알아서 따라올 것이다'],
+          say: '지원 관리 기능도 만들었겠다, 이제 공연사에 홍보만 하면 되겠죠?',
+        },
+        {
+          title: '공연사에 직접 홍보했습니다',
+          points: ['콜드메일과 콜드콜로 공연사에 하나씩 연락', '돌아온 건 무응답, 그리고 **아주 차가운 반응**', '심지어 "관리가 딱히 불편하지 않다"는 이야기까지'],
+          say: '콜드메일이라더니... 정말 cold 했습니다.',
+        },
+        {
+          title: '가설이 틀렸다면, 작게 쪼개보자',
+          points: ['배우는 정말 지원이 불편했을까?', '공연사는 정말 관리가 불편했을까?', '그리고 우리의 **첫 시작**은 뭐였지?'],
+          say: '큰 가설 하나가 무너졌으니, 작은 질문부터 다시 시작했어요.',
+        },
+        {
+          kicker: '처음으로 돌아가기', title: '시작은 한 배우의 불편함이었다',
+          subtitle: '팀원 대길의 여자친구, 배우가 가장 크게 이야기한 한 가지',
+          big: '알림',
+          say: '답은 생각보다 가까이에 있었어요.',
+        },
+        {
+          type: 'act', act: 2, title: '배우부터 다시 만나기',
+          items: ['두 번째 가설', '두 갈래 길', '직접 홍보', '100명의 배우', '저작권 지키기', 'OTR과 손잡기'],
+          say: '이번엔 공연사 말고, 배우부터 만나보기로 했어요.',
+        },
+        {
+          type: 'hypothesis', title: '두 번째 가설',
+          claims: ['배우에게는 공고에 대한 즉각적인 알림이 필요할 것이다'],
+          say: '이번 가설은 아주 작게, 배우 한 명의 불편함에서 출발했어요.',
+        },
+        {
+          title: '지난 시도도 아까워서, 두 갈래로',
+          points: ['**하나.** 공고 알림, 정말 필요한 사람이 있을까?', '**둘.** 아직 막강한 기존 플랫폼 OTR과 손잡을 수 있을까?'],
+          say: '버리긴 아까우니까... 두 길 다 가보기로!',
+        },
+        {
+          title: '정말 필요한 사람이 있을까?',
+          subtitle: '배우들이 모이는 커뮤니티와 단톡방, 학교에 직접 홍보했습니다',
+          images: [
+            'assets/product/gong-go/hongbo/clipboard_20261015_015420.png',
+            'assets/product/gong-go/hongbo/clipboard_20261015_015430.png',
+            'assets/product/gong-go/hongbo/clipboard_20261015_015435.png',
+            'assets/product/gong-go/hongbo/clipboard_20261015_015441.png',
+            'assets/product/gong-go/hongbo/clipboard_20261015_015446.png',
+            'assets/product/gong-go/hongbo/clipboard_20261015_015451.png',
+            'assets/product/gong-go/hongbo/clipboard_20261015_015500.png',
+            'assets/product/gong-go/hongbo/clipboard_20261015_015504.png',
+            'assets/product/gong-go/hongbo/clipboard_20261015_020107.jpg',
+            'assets/product/gong-go/hongbo/clipboard_20261015_020140.jpg',
+            'assets/product/gong-go/hongbo/clipboard_20261015_020155.jpg',
+          ],
+          say: '필요하다는 사람이 진짜 있을지, 직접 물어봤어요.',
+        },
+        {
+          kicker: '결과', title: '배우들이 모였습니다',
+          big: '100명+',
+          subtitle: '공고 알림 오픈채팅방에 모인 배우들',
+          image: 'assets/product/gong-go/result/clipboard_20261015_022849.jpg',
+          say: '알림 하나에 이렇게 모일 줄은 몰랐어요.',
+        },
+        {
+          title: '그런데, 저작권은 괜찮을까?',
+          points: ['OTR에 올라온 공고의 저작권은 **글 작성자**에게 있다', '제작사에 직접 연락해 허락을 구하고', '내용을 바꾸지 않고 원문 그대로 안내하기로'],
+          images: [
+            'assets/product/gong-go/accept/clipboard_20261015_015809.jpg',
+            'assets/product/gong-go/accept/clipboard_20261015_015813.jpg',
+            'assets/product/gong-go/accept/clipboard_20261015_015903.jpg',
+            'assets/product/gong-go/accept/clipboard_20261015_015927.jpg',
+          ],
+          say: '모이는 건 좋은데, 남의 글을 함부로 쓸 순 없죠.',
+        },
+        {
+          kicker: '그리고 신기한 일', title: '배우가 모이니, 공연사의 반응이 달라졌다',
+          say: '그 차갑던 공연사들이요!',
+        },
+        {
+          title: '막강한 OTR과 손잡기',
+          points: ['OTR 대표님을 **세 번** 만났고', '상부상조 모임 **상상모**를 함께하는 사이가 됐다', '최대 나이 차이 44살, 그래도 형과 동생', '아직은 신뢰를 쌓아가는 중'],
+          image: 'assets/product/sangsangmo/clipboard_20261015_022747.jpg',
+          say: '44살 차이 나는 형님이 생겼습니다.',
+        },
+        {
+          type: 'act', act: 3, title: '빈틈을 넓히는 가치',
+          items: ['사용자를 모은 이유', '우리가 찾은 빈틈', '세 번째 가설', '찾기에서 넓히기로'],
+          say: '그럼 우리는 대체 뭘 찾은 걸까요?',
+        },
+        {
+          title: '짧은 시간에 사용자를 모은 이유',
+          points: ['기존 플랫폼에서 인사이트를 얻고', '그 안의 불편함을 찾았다', '그런데 진짜 중요한 건, **제작사의 반응이 바뀌었다**는 것'],
+          say: '불편함을 찾은 줄 알았는데...',
+        },
+        {
+          kicker: '우리가 찾은 빈틈', title: '새로운 배우 풀',
+          points: ['제작사는 **배우가 없는 것**이 불편했다', '경험이 적었던 우리는 OTR을 모르는 **배우 지망 대학생**에게 홍보했다', '그곳이 아무도 채우지 않던 빈틈이었다'],
+          say: '불편함 찾기인 줄 알았는데, 빈틈 찾기였어요.',
+        },
+        {
+          type: 'hypothesis', title: '세 번째 가설',
+          claims: ['학생 배우가 원하는 건 유명세다', '팬덤이 생기면 배우들이 더 자주 찾아올 것이다'],
+          say: '다음 무대의 주인공은 배우들이에요.',
+        },
+        {
+          type: 'compare', title: '빈틈 찾기에서, 빈틈 넓히기로',
+          before: { label: '지금까지', text: '기존의 불편함에서 빈틈 찾기' },
+          after: { label: '앞으로', text: '빈틈을 넓히는 가치 만들기' },
+          say: '다음 공연도 기대해주세요!',
+        },
+      ],
+    },
+    {
+      id: 'tech', key: '3', label: '기술',
+      accent: '#4cc8ff', accentDeep: '#1662c9', accentSoft: '#cdeeff',
+      palette: ['#3fd0ff', '#9be9ff', '#246bfe', '#e6fbff'],
+      tocSay: '기술 이야기는 아직 대본을 쓰는 중이에요.',
+      slides: [
+        { type: 'act', act: 1, title: '준비 중', items: ['세부 목차를 적어주세요'], say: '1막의 첫 대사를 여기에 적어주세요.' },
+        { type: 'act', act: 2, title: '준비 중', items: ['세부 목차를 적어주세요'], say: '2막의 첫 대사를 여기에 적어주세요.' },
+        { type: 'act', act: 3, title: '준비 중', items: ['세부 목차를 적어주세요'], say: '3막의 첫 대사를 여기에 적어주세요.' },
+      ],
+    },
+  ],
+};
+
+const ACTS = {
+  1: { num: '1막', role: '지난 무대' },
+  2: { num: '2막', role: '지금 무대' },
+  3: { num: '3막', role: '다음 무대' },
+};
+
+const W = 384, H = 240;
+const SPEED = 78;
+const PORTAL_X = [80, 192, 304];
+const PORTAL_TOP = 112;
+const SPAWN = { x: 192, y: 212 };
+const RETURN_Y = 194;
+const BOUNDS = { left: 24, right: 360, top: 118, bottom: 222 };
+const BILLBOARD = { x: 126, y: 24, w: 132, h: 80, inner: { x: 132, y: 30, w: 120, h: 68 } };
+const BILLBOARD_SIGN = { x: 158, y: 3, w: 68, h: 16, text: '소요유' };
+
+const view = document.getElementById('view');
+const ctx = view.getContext('2d');
+const low = makeCanvas(W, H);
+const g = low.getContext('2d');
+const fadeEl = document.getElementById('fade');
+const hudEl = document.getElementById('hud');
+const titleEl = document.getElementById('title-screen');
+const deckEl = document.getElementById('deck');
+const frameEl = document.getElementById('slide-frame');
+
+let scale = 1, ox = 0, oy = 0, ledPattern = null;
+let state = 'title';
+let time = 0;
+const keys = new Set();
+const tappedKeys = new Set();
+const releasedKeys = new Set();
+const visited = new Set();
+const particles = [];
+
+function makeCanvas(w, h) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  return c;
+}
+
+function mulberry32(seed) {
+  return () => {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function sprite(rows, palette) {
+  const c = makeCanvas(Math.max(...rows.map(r => r.length)), rows.length);
+  const x = c.getContext('2d');
+  rows.forEach((row, y) => [...row].forEach((ch, i) => {
+    if (!palette[ch]) return;
+    x.fillStyle = palette[ch];
+    x.fillRect(i, y, 1, 1);
+  }));
+  return c;
+}
+
+function flipped(src) {
+  const c = makeCanvas(src.width, src.height);
+  const x = c.getContext('2d');
+  x.translate(src.width, 0);
+  x.scale(-1, 1);
+  x.drawImage(src, 0, 0);
+  return c;
+}
+
+const reverseRow = row => [...row].reverse().join('');
+
+const HERO_PALETTE = {
+  K: '#1d1626', R: '#e2474b', r: '#9e2a33', H: '#4a2e2a', S: '#ffd5b0',
+  p: '#ff9aa2', B: '#246bfe', b: '#9cc2ff', P: '#2b3557',
+};
+const HAT = [
+  '.....KKKKKK.....',
+  '....KRRRRRRKK...',
+  '...KRRRRRRRRrK..',
+  '...KHHHHHHHHK...',
+  '..KHHHHHHHHHHK..',
+];
+const FACE_FRONT = [
+  '..KHSSSSSSSSHK..',
+  '..KSSKSSSSKSSK..',
+  '..KSSKSSSSKSSK..',
+  '...KSpSSSSpSK...',
+  '....KKSSSSKK....',
+];
+const FACE_BACK = [
+  '..KHHHHHHHHHHK..',
+  '..KHHHHHHHHHHK..',
+  '..KHHHHHHHHHHK..',
+  '...KHHHHHHHHK...',
+  '....KKSSSSKK....',
+];
+const FACE_SIDE = [
+  '..KHHHHHSSSSSK..',
+  '..KHHHHSSSKSSK..',
+  '..KHHHHSSSKSSK..',
+  '...KHHSSSSSpK...',
+  '....KKKSSSKK....',
+];
+const BODY_FRONT = [
+  '...KBBBBBBBBK...',
+  '..KSBBBbbBBBSK..',
+  '..KSKBBBBBBKSK..',
+];
+const BODY_BACK = [
+  '...KBBBBBBBBK...',
+  '..KSBBBBBBBBSK..',
+  '..KSKBBBBBBKSK..',
+];
+const BODY_SIDE = [
+  '....KBBBBBBK....',
+  '....KBBSSBBK....',
+  '....KBBBBBBK....',
+];
+const LEGS_IDLE = [
+  '....KPPPPPPK....',
+  '....KPPKKPPK....',
+  '....KKK..KKK....',
+];
+const LEGS_STEP = [
+  '....KPPPPPPK....',
+  '...KPPK..KPK....',
+  '...KKK....K.....',
+];
+const LEGS_SIDE_IDLE = [
+  '....KPPPPPPK....',
+  '.....KPPPPK.....',
+  '.....KKKKKK.....',
+];
+const LEGS_SIDE_STEP = [
+  '....KPPPPPPK....',
+  '...KPPK.KPPK....',
+  '...KKK...KKK....',
+];
+
+function heroFrames(face, body, idle, stepA, stepB) {
+  const build = legs => sprite([...HAT, ...face, ...body, ...legs], HERO_PALETTE);
+  return { idle: build(idle), walk: [build(stepA), build(idle), build(stepB), build(idle)] };
+}
+
+const HERO = {
+  down: heroFrames(FACE_FRONT, BODY_FRONT, LEGS_IDLE, LEGS_STEP, LEGS_STEP.map(reverseRow)),
+  up: heroFrames(FACE_BACK, BODY_BACK, LEGS_IDLE, LEGS_STEP, LEGS_STEP.map(reverseRow)),
+  right: heroFrames(FACE_SIDE, BODY_SIDE, LEGS_SIDE_IDLE, LEGS_SIDE_STEP, LEGS_SIDE_STEP),
+};
+HERO.left = { idle: flipped(HERO.right.idle), walk: HERO.right.walk.map(flipped) };
+const SPIN = ['down', 'right', 'up', 'left'];
+
+const TREE = sprite([
+  '.....KKKKKK.....',
+  '...KKGGGGGGKK...',
+  '..KGGGLLGGGGGK..',
+  '.KGGLLLLGGGGGGK.',
+  '.KGGLLGGGGGDGGK.',
+  'KGGGGGGGGGGDDGGK',
+  'KDGGGGGGGGGGGGDK',
+  'KDDGGGGGGGGGGDDK',
+  '.KDDGGGDGGGGDDK.',
+  '.KDDDDDDDDDDDDK.',
+  '..KKDDDDDDDDKK..',
+  '....KKKTTKKK....',
+  '......KTTK......',
+  '......KTTK......',
+  '.....KTTTTK.....',
+  '.....KKKKKK.....',
+], { K: '#183324', G: '#3f8a45', L: '#74c562', D: '#2c6638', T: '#7a4a2b' });
+
+const hero = { x: SPAWN.x, y: SPAWN.y, dir: 'up', moving: false, animT: 0, visible: false, warp: null, scale: 1 };
+
+const portals = CONFIG.portals.map((p, i) => ({ ...p, cx: PORTAL_X[i] }));
+
+const SOLIDS = [
+  ...PORTAL_X.flatMap(cx => [
+    { x: cx - 18, y: PORTAL_TOP, w: 6, h: 44 },
+    { x: cx + 12, y: PORTAL_TOP, w: 6, h: 44 },
+  ]),
+];
+
+const props = [];
+function addTreeProp(x, y) {
+  props.push({ y, draw: () => g.drawImage(TREE, x - 8, y - 15) });
+  SOLIDS.push({ x: x - 5, y: y - 4, w: 10, h: 5 });
+}
+function addLamp(x, y) {
+  props.push({ y, draw: () => drawLamp(x, y) });
+  SOLIDS.push({ x: x - 3, y: y - 3, w: 6, h: 4 });
+}
+function addSign(x, y) {
+  props.push({ y, draw: () => drawSign(x, y) });
+  SOLIDS.push({ x: x - 15, y: y - 4, w: 30, h: 5 });
+}
+addTreeProp(48, 204);
+addTreeProp(336, 204);
+addTreeProp(30, 134);
+addTreeProp(354, 134);
+addLamp(136, 156);
+addLamp(248, 156);
+addSign(150, 208);
+
+const background = buildBackground();
+
+function onPath(x, y) {
+  if (y >= 156 && y < 176 && x >= 56 && x < 328) return true;
+  if (x >= 180 && x < 204 && y >= 174) return true;
+  return PORTAL_X.some(cx => x >= cx - 14 && x < cx + 14 && y >= 148 && y < 158);
+}
+
+function buildBackground() {
+  const c = makeCanvas(W, H);
+  const b = c.getContext('2d');
+  const rand = mulberry32(7);
+
+  b.fillStyle = '#5fae4f';
+  b.fillRect(0, 0, W, H);
+  for (let i = 0; i < 900; i++) {
+    b.fillStyle = rand() < 0.7 ? '#509c45' : '#78c465';
+    b.fillRect(Math.floor(rand() * W), Math.floor(rand() * H), 1, rand() < 0.5 ? 2 : 1);
+  }
+
+  const paths = [
+    { x: 56, y: 156, w: 272, h: 20 },
+    { x: 180, y: 174, w: 24, h: 66 },
+    ...PORTAL_X.map(cx => ({ x: cx - 14, y: 148, w: 28, h: 10 })),
+  ];
+  b.fillStyle = '#b48c58';
+  paths.forEach(p => b.fillRect(p.x - 1, p.y - 1, p.w + 2, p.h + 2));
+  b.fillStyle = '#dcbb83';
+  paths.forEach(p => b.fillRect(p.x, p.y, p.w, p.h));
+  for (let i = 0; i < 260; i++) {
+    const x = Math.floor(rand() * W), y = Math.floor(rand() * H);
+    if (!onPath(x, y)) continue;
+    b.fillStyle = rand() < 0.5 ? '#c9a46c' : '#ead1a0';
+    b.fillRect(x, y, 2, 1);
+  }
+
+  const flowerColors = ['#ff8fb8', '#ffe066', '#ffffff', '#9cc2ff'];
+  for (let i = 0; i < 140; i++) {
+    const x = 20 + Math.floor(rand() * 344), y = 112 + Math.floor(rand() * 112);
+    if (onPath(x, y) || onPath(x + 2, y + 2)) continue;
+    if (PORTAL_X.some(cx => Math.abs(x - cx) < 22 && y < 160)) continue;
+    b.fillStyle = flowerColors[Math.floor(rand() * flowerColors.length)];
+    b.fillRect(x, y, 1, 1); b.fillRect(x + 2, y, 1, 1); b.fillRect(x + 1, y - 1, 1, 1); b.fillRect(x + 1, y + 1, 1, 1);
+    b.fillStyle = '#ffcf3f';
+    b.fillRect(x + 1, y, 1, 1);
+  }
+
+  const scenery = [];
+  for (let x = -6; x < W; x += 13) scenery.push({ kind: 'tree', x, y: -6 + (x % 2 ? 3 : 0) });
+  for (let y = 10; y < H; y += 13) {
+    scenery.push({ kind: 'tree', x: -5, y });
+    scenery.push({ kind: 'tree', x: 373, y });
+  }
+  for (let x = -6; x < W; x += 13) {
+    if (x > 166 && x < 206) continue;
+    scenery.push({ kind: 'tree', x, y: 226 });
+  }
+  [[22, 26], [78, 20], [20, 92], [92, 88], [292, 22], [348, 24], [356, 92], [282, 90]]
+    .forEach(([x, y]) => scenery.push({ kind: 'tree', x, y }));
+  scenery.push({ kind: 'house', x: 40, y: 46, roof: '#e2474b' });
+  scenery.push({ kind: 'house', x: 304, y: 46, roof: '#246bfe' });
+  scenery.sort((a, z) => (a.y + (a.kind === 'house' ? 32 : 16)) - (z.y + (z.kind === 'house' ? 32 : 16)));
+  scenery.forEach(s => s.kind === 'tree' ? b.drawImage(TREE, s.x, s.y) : drawHouse(b, s.x, s.y, s.roof));
+
+  drawBillboardFrame(b);
+  PORTAL_X.forEach((cx, i) => drawArch(b, cx, PORTAL_TOP, portals[i].accent));
+  return c;
+}
+
+function drawHouse(b, x, y, roof) {
+  b.fillStyle = '#1d1626';
+  b.fillRect(x + 2, y + 11, 36, 21);
+  b.fillStyle = '#f3e6c8';
+  b.fillRect(x + 3, y + 12, 34, 19);
+  b.fillStyle = '#d9c7a0';
+  b.fillRect(x + 3, y + 28, 34, 3);
+  b.fillStyle = '#1d1626';
+  b.fillRect(x + 29, y - 2, 6, 8);
+  b.fillStyle = '#8a5a3c';
+  b.fillRect(x + 30, y - 1, 4, 7);
+  for (let k = 0; k <= 11; k++) {
+    b.fillStyle = '#1d1626';
+    b.fillRect(x + 9 - k, y + k, 22 + 2 * k, 1);
+    b.fillStyle = k % 3 === 2 ? shade(roof, -40) : roof;
+    b.fillRect(x + 10 - k, y + k, 20 + 2 * k, 1);
+  }
+  b.fillStyle = '#1d1626';
+  b.fillRect(x - 2, y + 11, 44, 2);
+  b.fillRect(x + 16, y + 19, 8, 12);
+  b.fillStyle = '#8a5a3c';
+  b.fillRect(x + 17, y + 20, 6, 11);
+  b.fillStyle = '#ffd34d';
+  b.fillRect(x + 21, y + 25, 1, 1);
+  [[x + 6, y + 17], [x + 28, y + 17]].forEach(([wx, wy]) => {
+    b.fillStyle = '#1d1626';
+    b.fillRect(wx - 1, wy - 1, 8, 7);
+    b.fillStyle = '#ffe9a0';
+    b.fillRect(wx, wy, 6, 5);
+    b.fillStyle = '#1d1626';
+    b.fillRect(wx + 3, wy, 1, 5);
+    b.fillRect(wx, wy + 2, 6, 1);
+  });
+}
+
+function shade(hex, amount) {
+  const n = parseInt(hex.slice(1), 16);
+  const ch = s => Math.max(0, Math.min(255, ((n >> s) & 255) + amount));
+  return `rgb(${ch(16)},${ch(8)},${ch(0)})`;
+}
+
+function drawBillboardFrame(b) {
+  const { x, y, w, h } = BILLBOARD;
+  [x + 26, x + w - 32].forEach(px => {
+    b.fillStyle = '#1d1626';
+    b.fillRect(px - 1, y + h, 8, 14);
+    b.fillStyle = '#5b5f78';
+    b.fillRect(px, y + h, 6, 13);
+    b.fillStyle = '#8b90ab';
+    b.fillRect(px + 1, y + h, 1, 13);
+  });
+  const sign = BILLBOARD_SIGN;
+  [sign.x + 12, sign.x + sign.w - 15].forEach(rx => {
+    b.fillStyle = '#1d1626';
+    b.fillRect(rx - 1, sign.y + sign.h, 5, y - sign.y - sign.h);
+    b.fillStyle = '#8b90ab';
+    b.fillRect(rx, sign.y + sign.h, 3, y - sign.y - sign.h);
+  });
+  b.fillStyle = '#1d1626';
+  b.fillRect(sign.x - 1, sign.y - 1, sign.w + 2, sign.h + 2);
+  b.fillStyle = '#ffd34d';
+  b.fillRect(sign.x, sign.y, sign.w, sign.h);
+  b.fillStyle = '#246bfe';
+  b.fillRect(sign.x + 2, sign.y + 2, sign.w - 4, sign.h - 4);
+  b.fillStyle = '#1d5ce5';
+  b.fillRect(sign.x + 2, sign.y + sign.h - 4, sign.w - 4, 2);
+  b.fillStyle = '#1d1626';
+  b.fillRect(x - 1, y - 1, w + 2, h + 2);
+  b.fillStyle = '#2d3352';
+  b.fillRect(x, y, w, h);
+  b.fillStyle = '#434b73';
+  b.fillRect(x, y, w, 1);
+  b.fillRect(x, y, 1, h);
+  const { inner } = BILLBOARD;
+  b.fillStyle = '#12131c';
+  b.fillRect(inner.x - 1, inner.y - 1, inner.w + 2, inner.h + 2);
+}
+
+function inArch(px, py, halfWidth, bottom) {
+  if (py > bottom) return false;
+  const dx = px + 0.5 - 18;
+  const dy = py + 0.5 - 18;
+  if (dy < 0) return dx * dx + dy * dy <= halfWidth * halfWidth;
+  return Math.abs(dx) <= halfWidth;
+}
+
+const SWIRL_CELLS = [];
+for (let py = 0; py < 44; py++) {
+  for (let px = 0; px < 36; px++) {
+    if (!inArch(px, py, 13, 39)) continue;
+    const dx = px + 0.5 - 18, dy = py + 0.5 - 22;
+    SWIRL_CELLS.push({ px, py, r: Math.hypot(dx, dy * 0.8), a: Math.atan2(dy, dx) });
+  }
+}
+
+function drawArch(b, cx, top, accent) {
+  const x0 = cx - 18;
+  const rand = mulberry32(cx);
+  b.fillStyle = '#1d1626';
+  b.fillRect(x0 - 4, top + 41, 44, 6);
+  b.fillStyle = '#7c7f96';
+  b.fillRect(x0 - 3, top + 42, 42, 4);
+  b.fillStyle = '#a9adc4';
+  b.fillRect(x0 - 3, top + 42, 42, 1);
+  for (let py = 0; py < 44; py++) {
+    for (let px = 0; px < 36; px++) {
+      const outer = inArch(px, py, 18, 43);
+      const inner = inArch(px, py, 13, 39);
+      if (!outer || inner) continue;
+      const edge = !inArch(px - 1, py, 18, 43) || !inArch(px + 1, py, 18, 43) || !inArch(px, py - 1, 18, 43)
+        || inArch(px - 1, py, 13, 39) || inArch(px + 1, py, 13, 39) || inArch(px, py + 1, 13, 39) || inArch(px, py - 1, 13, 39);
+      const mortar = py % 5 === 4 || (px + (Math.floor(py / 5) % 2) * 3) % 6 === 5;
+      let color = px < 18 ? '#a7aac0' : '#8d90a8';
+      if (mortar) color = '#6c6f86';
+      else if (rand() < 0.12) color = '#b9bcd0';
+      b.fillStyle = edge ? '#1d1626' : color;
+      b.fillRect(x0 + px, top + py, 1, 1);
+    }
+  }
+  b.fillStyle = '#1d1626';
+  b.fillRect(cx - 3, top, 6, 5);
+  b.fillStyle = accent;
+  b.fillRect(cx - 2, top + 1, 4, 3);
+  b.fillStyle = '#ffffff';
+  b.fillRect(cx - 2, top + 1, 1, 1);
+}
+
+function drawLamp(x, y) {
+  g.fillStyle = 'rgba(255, 233, 160, 0.18)';
+  g.fillRect(x - 7, y - 26, 14, 12);
+  g.fillStyle = '#1d1626';
+  g.fillRect(x - 3, y - 2, 6, 3);
+  g.fillRect(x - 1, y - 20, 3, 19);
+  g.fillRect(x - 4, y - 26, 8, 7);
+  g.fillStyle = '#4a4f6b';
+  g.fillRect(x, y - 19, 1, 18);
+  g.fillStyle = Math.sin(time * 3 + x) > -0.9 ? '#ffe9a0' : '#e8c66a';
+  g.fillRect(x - 3, y - 25, 6, 5);
+}
+
+function drawSign(x, y) {
+  g.fillStyle = '#1d1626';
+  g.fillRect(x - 11, y - 9, 3, 10);
+  g.fillRect(x + 8, y - 9, 3, 10);
+  g.fillStyle = '#7a4a2b';
+  g.fillRect(x - 10, y - 8, 1, 8);
+  g.fillRect(x + 9, y - 8, 1, 8);
+  g.fillStyle = '#1d1626';
+  g.fillRect(x - 16, y - 21, 32, 14);
+  g.fillStyle = '#b07a46';
+  g.fillRect(x - 15, y - 20, 30, 12);
+  g.fillStyle = '#c99358';
+  g.fillRect(x - 15, y - 20, 30, 1);
+}
+
+function drawPortalSwirl(p) {
+  const x0 = p.cx - 18;
+  for (const cell of SWIRL_CELLS) {
+    const v = cell.r * 0.32 + cell.a / Math.PI * 2 - time * 2.4;
+    const index = ((Math.floor(v) % 3) + 3) % 3;
+    g.fillStyle = cell.r < 2.6 ? p.palette[3] : p.palette[index];
+    g.fillRect(x0 + cell.px, PORTAL_TOP + cell.py, 1, 1);
+  }
+}
+
+function drawChaseLights() {
+  const { x, y, w, h } = BILLBOARD;
+  const step = Math.floor(time * 8);
+  const spots = [];
+  for (let i = x + 3; i < x + w - 2; i += 5) { spots.push([i, y + 2]); spots.push([i, y + h - 4]); }
+  for (let j = y + 7; j < y + h - 4; j += 5) { spots.push([x + 2, j]); spots.push([x + w - 4, j]); }
+  spots.forEach(([sx, sy], i) => {
+    g.fillStyle = (i + step) % 3 === 0 ? '#ffe27a' : '#6b5a2e';
+    g.fillRect(sx, sy, 2, 2);
+  });
+}
+
+function drawHero() {
+  if (!hero.visible) return;
+  const set = HERO[hero.dir];
+  const frameIndex = Math.floor(hero.animT / 0.13) % set.walk.length;
+  const img = hero.moving ? set.walk[frameIndex] : set.idle;
+  const bob = hero.moving && frameIndex % 2 === 0 ? -1 : 0;
+  const x = Math.round(hero.x), y = Math.round(hero.y);
+  g.save();
+  g.translate(x, y);
+  g.scale(hero.scale, hero.scale);
+  g.fillStyle = 'rgba(20, 30, 20, 0.28)';
+  g.fillRect(-5, -2, 10, 3);
+  g.fillRect(-6, -1, 12, 1);
+  g.drawImage(img, -8, -16 + bob);
+  g.restore();
+}
+
+function spawnParticles(dt) {
+  portals.forEach(p => {
+    if (Math.random() > dt * 10) return;
+    particles.push({
+      x: p.cx - 10 + Math.random() * 20, y: PORTAL_TOP + 14 + Math.random() * 22,
+      vy: -8 - Math.random() * 10, life: 1, color: p.palette[Math.random() < 0.5 ? 1 : 3],
+    });
+  });
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const pt = particles[i];
+    pt.y += pt.vy * dt;
+    pt.life -= dt * 0.9;
+    if (pt.life <= 0) particles.splice(i, 1);
+  }
+}
+
+function renderWorld() {
+  g.imageSmoothingEnabled = false;
+  g.drawImage(background, 0, 0);
+  drawChaseLights();
+  portals.forEach(drawPortalSwirl);
+  particles.forEach(pt => {
+    g.globalAlpha = Math.max(0, pt.life);
+    g.fillStyle = pt.color;
+    g.fillRect(Math.round(pt.x), Math.round(pt.y), 1, 1);
+  });
+  g.globalAlpha = 1;
+  [...props, { y: hero.y, draw: drawHero }].sort((a, b) => a.y - b.y).forEach(p => p.draw());
+}
+
+const toScreen = (x, y) => [ox + x * scale, oy + y * scale];
+
+const billboardImages = CONFIG.billboard.images.map(loadImage);
+const backdropCache = new WeakMap();
+
+function loadImage(src) {
+  const img = new Image();
+  img.src = src;
+  return img;
+}
+
+const isLoaded = img => img.complete && img.naturalWidth > 0;
+
+function blurredBackdrop(img) {
+  if (!backdropCache.has(img)) {
+    const c = makeCanvas(24, 14);
+    const x = c.getContext('2d');
+    const k = Math.max(24 / img.naturalWidth, 14 / img.naturalHeight);
+    x.drawImage(img, (24 - img.naturalWidth * k) / 2, (14 - img.naturalHeight * k) / 2, img.naturalWidth * k, img.naturalHeight * k);
+    backdropCache.set(img, c);
+  }
+  return backdropCache.get(img);
+}
+
+function drawFitted(img, sx, sy, sw, sh) {
+  const iw = img.naturalWidth, ih = img.naturalHeight;
+  ctx.imageSmoothingEnabled = true;
+  if (ih / iw > (sh / sw) * 1.15) {
+    ctx.drawImage(blurredBackdrop(img), sx, sy, sw, sh);
+    ctx.fillStyle = 'rgba(7, 9, 15, 0.45)';
+    ctx.fillRect(sx, sy, sw, sh);
+    const k = sh / ih;
+    ctx.drawImage(img, sx + (sw - iw * k) / 2, sy, iw * k, sh);
+    return;
+  }
+  const k = Math.max(sw / iw, sh / ih);
+  ctx.drawImage(img, sx + (sw - iw * k) / 2, sy + (sh - ih * k) / 2, iw * k, ih * k);
+}
+
+function drawBillboardFallback(sx, sy, sw, sh) {
+  const size = Math.round(sh * 0.3);
+  ctx.font = `${size}px Galmuri11, sans-serif`;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  const text = CONFIG.billboard.fallbackText;
+  const travel = ctx.measureText(text).width + sw;
+  const offset = (time * sw * 0.32) % travel;
+  ctx.fillStyle = '#ffd34d';
+  ctx.shadowColor = 'rgba(255, 190, 60, 0.75)';
+  ctx.shadowBlur = size * 0.35;
+  ctx.fillText(text, sx + sw - offset, sy + sh / 2);
+  ctx.shadowBlur = 0;
+}
+
+function drawBillboardScreen() {
+  const { inner } = BILLBOARD;
+  const [sx, sy] = toScreen(inner.x, inner.y);
+  const sw = inner.w * scale, sh = inner.h * scale;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(sx, sy, sw, sh);
+  ctx.clip();
+  try {
+    paintBillboard(sx, sy, sw, sh);
+  } finally {
+    ctx.restore();
+  }
+}
+
+function paintBillboard(sx, sy, sw, sh) {
+  ctx.fillStyle = '#07090f';
+  ctx.fillRect(sx, sy, sw, sh);
+
+  const ready = billboardImages.filter(isLoaded);
+  if (ready.length === 0) {
+    drawBillboardFallback(sx, sy, sw, sh);
+  } else {
+    const interval = CONFIG.billboard.interval;
+    const slot = Math.floor(time / interval);
+    const current = ready[slot % ready.length];
+    const previous = ready[(slot + ready.length - 1) % ready.length];
+    const wipe = Math.min((time % interval) / 0.6, 1);
+    if (ready.length > 1 && slot > 0 && wipe < 1) {
+      drawFitted(previous, sx, sy, sw, sh);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(sx, sy, sw, sh * Math.ceil(wipe * 8) / 8);
+      ctx.clip();
+      drawFitted(current, sx, sy, sw, sh);
+      ctx.restore();
+    } else {
+      drawFitted(current, sx, sy, sw, sh);
+    }
+    if (ready.length > 1) {
+      const dot = Math.max(3, Math.round(scale * 1.6));
+      const startX = sx + sw / 2 - (ready.length * dot * 2.2) / 2;
+      ready.forEach((_, i) => {
+        ctx.fillStyle = i === slot % ready.length ? '#ffe27a' : 'rgba(255, 255, 255, 0.35)';
+        ctx.fillRect(Math.round(startX + i * dot * 2.2), Math.round(sy + sh - dot * 2.2), dot, dot);
+      });
+    }
+  }
+
+  if (CONFIG.billboard.ledEffect && ledPattern) {
+    ctx.fillStyle = ledPattern;
+    ctx.fillRect(sx, sy, sw, sh);
+  }
+  const gloss = ctx.createLinearGradient(0, sy, 0, sy + sh);
+  gloss.addColorStop(0, 'rgba(255, 255, 255, 0.10)');
+  gloss.addColorStop(0.45, 'rgba(255, 255, 255, 0)');
+  ctx.fillStyle = gloss;
+  ctx.fillRect(sx, sy, sw, sh);
+}
+
+function nearPortal() {
+  return portals.find(p => Math.abs(hero.x - p.cx) < 22 && hero.y - 156 < 26 && hero.y > 140);
+}
+
+function drawLabels() {
+  const near = state === 'play' ? nearPortal() : null;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  portals.forEach(p => {
+    const highlighted = p === near;
+    const size = Math.round(scale * (highlighted ? 6.4 : 5.6));
+    ctx.font = `700 ${size}px Galmuri11, sans-serif`;
+    const text = `${p.key}  ${p.label}${visited.has(p.id) ? '  ✓' : ''}`;
+    const tw = ctx.measureText(text).width;
+    const bob = highlighted ? Math.round(Math.sin(time * 6) * scale * 0.6) : 0;
+    const [cx, cy] = toScreen(p.cx, 166);
+    const padX = size * 0.7, h = size * 1.7;
+    const bx = cx - tw / 2 - padX, by = cy - h / 2 + bob;
+    const border = Math.max(2, Math.round(scale * 0.6));
+    ctx.fillStyle = '#1d1626';
+    ctx.fillRect(bx - border, by - border, tw + padX * 2 + border * 2, h + border * 2);
+    ctx.fillStyle = highlighted ? p.accent : 'rgba(29, 22, 38, 0.92)';
+    ctx.fillRect(bx, by, tw + padX * 2, h);
+    ctx.fillStyle = highlighted ? '#1d1626' : '#ffffff';
+    ctx.fillText(text, cx, by + h / 2 + 1);
+  });
+
+  const [sx, sy] = toScreen(150, 194);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `700 ${Math.round(scale * 4.2)}px Galmuri11, sans-serif`;
+  ctx.fillStyle = '#3a2412';
+  ctx.fillText('예술in', sx, sy);
+}
+
+function drawBillboardSign() {
+  const sign = BILLBOARD_SIGN;
+  const [cx, cy] = toScreen(sign.x + sign.w / 2, sign.y + sign.h / 2 - 0.5);
+  const size = Math.round(scale * 8);
+  ctx.font = `700 ${size}px Galmuri11, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#0b1a4a';
+  ctx.fillText(sign.text, cx + scale * 0.6, cy + scale * 0.6);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(sign.text, cx, cy);
+}
+
+function render() {
+  renderWorld();
+  ctx.fillStyle = '#14281c';
+  ctx.fillRect(0, 0, view.width, view.height);
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(low, ox, oy, W * scale, H * scale);
+  drawBillboardScreen();
+  drawBillboardSign();
+  if (state !== 'title') drawLabels();
+}
+
+function blocked(x, y) {
+  if (x < BOUNDS.left || x > BOUNDS.right || y < BOUNDS.top || y > BOUNDS.bottom) return true;
+  const fx = x - 5, fy = y - 3;
+  return SOLIDS.some(s => fx < s.x + s.w && fx + 10 > s.x && fy < s.y + s.h && fy + 3 > s.y);
+}
+
+function portalUnderHero() {
+  return portals.find(p => Math.abs(hero.x - p.cx) <= 9 && hero.y <= 152);
+}
+
+function updatePlay(dt) {
+  let dx = 0, dy = 0;
+  if (keys.has('left')) dx -= 1;
+  if (keys.has('right')) dx += 1;
+  if (keys.has('up')) dy -= 1;
+  if (keys.has('down')) dy += 1;
+  hero.moving = dx !== 0 || dy !== 0;
+  if (!hero.moving) { hero.animT = 0; return; }
+
+  const tapped = tappedKeys.size > 0;
+  tappedKeys.clear();
+  releasedKeys.forEach(direction => keys.delete(direction));
+  releasedKeys.clear();
+  const step = Math.max(SPEED * dt, tapped ? 4 : 0) / Math.hypot(dx, dy);
+  if (!blocked(hero.x + dx * step, hero.y)) hero.x += dx * step;
+  if (!blocked(hero.x, hero.y + dy * step)) hero.y += dy * step;
+  hero.dir = dx < 0 ? 'left' : dx > 0 ? 'right' : dy < 0 ? 'up' : 'down';
+  hero.animT += dt;
+
+  const portal = portalUnderHero();
+  if (portal) startWarp(portal);
+}
+
+function startWarp(portal) {
+  state = 'warp';
+  keys.clear();
+  tappedKeys.clear();
+  releasedKeys.clear();
+  hero.moving = false;
+  hero.warp = { portal, t: 0, sx: hero.x, sy: hero.y, done: false };
+}
+
+function updateWarp(dt) {
+  const w = hero.warp;
+  w.t += dt;
+  const k = Math.min(w.t / 0.7, 1);
+  const ease = 1 - (1 - k) ** 3;
+  hero.x = w.sx + (w.portal.cx - w.sx) * ease;
+  hero.y = w.sy + (PORTAL_TOP + 30 - w.sy) * ease;
+  hero.scale = 1 - 0.85 * ease;
+  hero.dir = SPIN[Math.floor(w.t / 0.07) % SPIN.length];
+  if (k >= 1 && !w.done) {
+    w.done = true;
+    fadeThrough(() => openDeck(w.portal));
+  }
+}
+
+function updateIntro(dt) {
+  hero.moving = true;
+  hero.dir = 'up';
+  hero.animT += dt;
+  hero.y = Math.max(SPAWN.y, hero.y - SPEED * 0.7 * dt);
+  if (hero.y === SPAWN.y) { hero.moving = false; state = 'play'; }
+}
+
+let pendingFade = null;
+
+function fadeThrough(midway) {
+  state = 'transition';
+  fadeEl.classList.add('on');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  pendingFade = { at: time + (reduce ? 0 : 0.34), midway };
+}
+
+function updateFade() {
+  if (!pendingFade || time < pendingFade.at) return;
+  const { midway } = pendingFade;
+  pendingFade = null;
+  midway();
+  fadeEl.classList.remove('on');
+}
+
+function enterVillage() {
+  if (state !== 'title') return;
+  fadeThrough(() => {
+    titleEl.hidden = true;
+    hudEl.hidden = false;
+    hero.visible = true;
+    hero.x = SPAWN.x;
+    hero.y = H + 10;
+    state = 'intro';
+  });
+}
+
+let deck = null;
+
+function openDeck(portal) {
+  deck = { portal, index: 0, slides: [{ type: 'toc', say: portal.tocSay }, ...portal.slides], typing: null };
+  hudEl.hidden = true;
+  deckEl.hidden = false;
+  deckEl.style.setProperty('--accent', portal.accent);
+  deckEl.style.setProperty('--accent-deep', portal.accentDeep);
+  deckEl.style.setProperty('--accent-soft', portal.accentSoft);
+  document.getElementById('deck-label').textContent = portal.label;
+  state = 'deck';
+  renderSlide('next');
+}
+
+function closeDeck() {
+  if (state !== 'deck') return;
+  const portal = deck.portal;
+  fadeThrough(() => {
+    deckEl.hidden = true;
+    hudEl.hidden = false;
+    visited.add(portal.id);
+    hero.warp = null;
+    hero.scale = 1;
+    hero.x = portal.cx;
+    hero.y = RETURN_Y;
+    hero.dir = 'down';
+    keys.clear();
+    deck = null;
+    state = 'play';
+  });
+}
+
+function moveSlide(delta) {
+  if (state !== 'deck') return;
+  const next = deck.index + delta;
+  if (next >= deck.slides.length) return closeDeck();
+  if (next < 0) return;
+  goToSlide(next, delta > 0 ? 'next' : 'prev');
+}
+
+function goToSlide(index, direction) {
+  deck.index = index;
+  renderSlide(direction);
+}
+
+function escapeHtml(text) {
+  return String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+}
+
+const rich = text => escapeHtml(text).replace(/\*\*(.+?)\*\*/g, '<mark>$1</mark>');
+
+function actSlides() {
+  return deck.slides.map((s, index) => ({ s, index })).filter(({ s }) => s.type === 'act');
+}
+
+function currentAct() {
+  for (let i = deck.index; i >= 0; i--) {
+    if (deck.slides[i].type === 'act') return deck.slides[i];
+  }
+  return null;
+}
+
+function headingMarkup(s) {
+  return [
+    s.kicker ? `<p class="slide-kicker">${escapeHtml(s.kicker)}</p>` : '',
+    s.title ? `<h2 class="slide-title">${rich(s.title)}</h2>` : '',
+    s.subtitle ? `<p class="slide-subtitle">${rich(s.subtitle)}</p>` : '',
+    s.big ? `<p class="slide-big">${escapeHtml(s.big)}</p>` : '',
+  ].join('');
+}
+
+function mediaMarkup(s) {
+  if (s.images) {
+    const cards = s.images.map((src, i) => `<figure class="stack-card"><img src="${escapeHtml(src)}" alt="${escapeHtml(`${s.title ?? ''} ${i + 1}`)}"></figure>`).join('');
+    const hint = s.images.length > 1 ? `<p class="stack-hint">사진을 누르면 넘어가요 <span data-stack-count></span></p>` : '';
+    return `<div class="stack" data-stack>${cards}${hint}</div>`;
+  }
+  if (s.image) {
+    const caption = s.caption ? `<figcaption>${escapeHtml(s.caption)}</figcaption>` : '';
+    return `<figure class="slide-media"><img src="${escapeHtml(s.image)}" alt="${escapeHtml(s.caption ?? s.title ?? '')}">${caption}</figure>`;
+  }
+  return '';
+}
+
+function tocMarkup() {
+  const rows = actSlides().map(({ s, index }) => `
+    <button class="toc-row" data-goto="${index}">
+      <span class="toc-num">${ACTS[s.act].num}</span>
+      <span><span class="toc-title">${ACTS[s.act].role}</span><span class="toc-sub">${escapeHtml(s.title)}</span></span>
+      <span class="toc-items">${(s.items ?? []).map(item => `<span>${escapeHtml(item)}</span>`).join('')}</span>
+    </button>`).join('');
+  return `<p class="slide-kicker">${escapeHtml(deck.portal.label)}</p><h2 class="slide-title">오늘의 공연 순서</h2><div class="toc">${rows}</div>`;
+}
+
+function slideMarkup(s) {
+  if (s.type === 'toc') return { kind: 'toc', body: tocMarkup() };
+  if (s.type === 'act') {
+    const act = ACTS[s.act];
+    return {
+      kind: 'act',
+      body: `<div class="curtain-top"></div><p class="act-num">${act.num}</p><p class="act-title">${act.role}</p><p class="act-sub">${rich(s.title)}</p>`,
+    };
+  }
+  if (s.type === 'hypothesis') {
+    const claims = s.claims.map(claim => `<p class="hypo-claim">“${rich(claim)}”</p>`).join('');
+    return { kind: 'hypothesis', body: `<div class="hypo"><p class="hypo-label">${escapeHtml(s.title)}</p>${claims}</div>` };
+  }
+  if (s.type === 'compare') {
+    const col = (side, cls) => `<div class="compare-col ${cls}"><p class="compare-label">${escapeHtml(side.label)}</p><p class="compare-text">${rich(side.text)}</p></div>`;
+    return { kind: 'compare', body: `${headingMarkup(s)}<div class="compare">${col(s.before, 'before')}<span class="compare-arrow">▶</span>${col(s.after, 'after')}</div>` };
+  }
+
+  const points = s.points ? `<ul class="slide-points">${s.points.map(pt => `<li>${rich(pt)}</li>`).join('')}</ul>` : '';
+  const media = mediaMarkup(s);
+  const hasText = points || s.subtitle || s.big;
+  if (media && hasText) return { kind: 'split', body: `<div class="slide-text">${headingMarkup(s)}${points}</div>${media}` };
+  if (media) return { kind: 'media', body: `${headingMarkup(s)}${media}` };
+  return { kind: points ? 'list' : 'statement', body: `${headingMarkup(s)}${points}` };
+}
+
+const heroPortrait = makeCanvas(16, 16);
+heroPortrait.getContext('2d').drawImage(HERO.down.idle, 0, 0);
+const heroPortraitUrl = heroPortrait.toDataURL();
+
+function sayMarkup() {
+  return `<div class="say talking"><span class="say-name">${escapeHtml(CONFIG.narrator)}</span><img class="say-portrait" src="${heroPortraitUrl}" alt=""><p class="say-text"></p></div>`;
+}
+
+function renderSlide(direction) {
+  const { index, slides } = deck;
+  const slide = slides[index];
+  const { kind, body } = slideMarkup(slide);
+  const say = slide.say ? sayMarkup() : '';
+  frameEl.innerHTML = `<article class="slide slide--${kind}${say ? ' has-say' : ''} from-${direction}">${body}${say}</article>`;
+
+  frameEl.querySelectorAll('.slide-media img, .stack-card img').forEach(img => img.addEventListener('error', () => {
+    const missing = document.createElement('div');
+    missing.className = 'media-missing';
+    missing.innerHTML = `<span>이미지를 넣어주세요</span><code>${escapeHtml(img.getAttribute('src'))}</code>`;
+    img.replaceWith(missing);
+  }, { once: true }));
+  frameEl.querySelectorAll('[data-stack]').forEach(setupStack);
+
+  const sayText = frameEl.querySelector('.say-text');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  deck.typing = sayText ? { el: sayText, text: slide.say, start: time } : null;
+  if (deck.typing && reduce) finishTyping();
+
+  const act = currentAct();
+  document.getElementById('deck-act').textContent = slide.type === 'toc' ? '목차' : act ? `${ACTS[act.act].num} ${ACTS[act.act].role}` : '';
+  document.getElementById('deck-count').textContent = index === slides.length - 1
+    ? `${index + 1} / ${slides.length}   다음을 누르면 마을로 돌아가요`
+    : `${index + 1} / ${slides.length}`;
+  document.getElementById('deck-progress').innerHTML = slides
+    .map((s, i) => `<i class="${i <= index ? 'on' : ''}${s.type === 'act' ? ' act-start' : ''}"></i>`).join('');
+}
+
+function updateTyping() {
+  const typing = deck?.typing;
+  if (!typing) return;
+  const shown = Math.floor((time - typing.start) * 30);
+  if (shown >= typing.text.length) return finishTyping();
+  typing.el.textContent = typing.text.slice(0, shown);
+}
+
+function finishTyping() {
+  deck.typing.el.textContent = deck.typing.text;
+  deck.typing.el.closest('.say').classList.replace('talking', 'done');
+  deck.typing = null;
+}
+
+const STACK_TILT = ['0deg', '-4deg', '3deg', '-2deg'];
+
+function setupStack(stack) {
+  const cards = [...stack.querySelectorAll('.stack-card')];
+  const count = stack.querySelector('[data-stack-count]');
+  let order = cards.map((_, i) => i);
+  let shown = 0;
+
+  const layout = () => {
+    order.forEach((cardIndex, depth) => {
+      const card = cards[cardIndex];
+      card.style.zIndex = String(cards.length - depth);
+      card.style.setProperty('--r', STACK_TILT[Math.min(depth, STACK_TILT.length - 1)]);
+      card.classList.toggle('buried', depth >= STACK_TILT.length);
+    });
+    if (count) count.textContent = `${(shown % cards.length) + 1} / ${cards.length}`;
+  };
+
+  const sendToBack = () => {
+    order = [...order.slice(1), order[0]];
+    shown += 1;
+    layout();
+  };
+
+  stack.flip = direction => {
+    if (cards.length < 2 || stack.querySelector('.leaving')) return;
+    if (direction < 0) {
+      order = [order[order.length - 1], ...order.slice(0, -1)];
+      shown = (shown + cards.length - 1) % cards.length;
+      layout();
+      return;
+    }
+    const top = cards[order[0]];
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return sendToBack();
+    top.classList.add('leaving');
+    top.addEventListener('animationend', () => {
+      top.classList.remove('leaving');
+      sendToBack();
+    }, { once: true });
+  };
+
+  stack.addEventListener('click', () => stack.flip(1));
+  layout();
+}
+
+function flipStack(direction) {
+  frameEl.querySelector('[data-stack]')?.flip?.(direction);
+}
+
+const DIRECTION_KEYS = {
+  ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down',
+  a: 'left', d: 'right', w: 'up', s: 'down', A: 'left', D: 'right', W: 'up', S: 'down',
+};
+
+function toggleFullscreen() {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen?.();
+}
+
+addEventListener('keydown', e => {
+  if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); return; }
+
+  if (state === 'title') {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enterVillage(); }
+    return;
+  }
+
+  if (state === 'deck') {
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); moveSlide(1); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); moveSlide(-1); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); flipStack(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); flipStack(-1); }
+    else if (e.key === 'Escape') closeDeck();
+    else if (e.key === 'Home') goToSlide(0, 'prev');
+    return;
+  }
+
+  if (state !== 'play') return;
+  if (DIRECTION_KEYS[e.key]) {
+    e.preventDefault();
+    keys.add(DIRECTION_KEYS[e.key]);
+    tappedKeys.add(DIRECTION_KEYS[e.key]);
+    return;
+  }
+  if (e.repeat) return;
+  const shortcut = portals.find(p => p.key === e.key);
+  if (shortcut) {
+    hero.x = shortcut.cx;
+    hero.y = RETURN_Y;
+    startWarp(shortcut);
+    return;
+  }
+  if (e.key === 'Enter' || e.key === ' ') {
+    const near = nearPortal();
+    if (near) { e.preventDefault(); startWarp(near); }
+  }
+});
+
+addEventListener('keyup', e => {
+  const direction = DIRECTION_KEYS[e.key];
+  if (tappedKeys.has(direction)) releasedKeys.add(direction);
+  else keys.delete(direction);
+});
+addEventListener('blur', () => keys.clear());
+
+document.getElementById('title-start').addEventListener('click', enterVillage);
+frameEl.addEventListener('click', e => {
+  const target = e.target.closest('[data-goto]');
+  if (target) goToSlide(Number(target.dataset.goto), 'next');
+});
+deckEl.querySelector('.deck-nav').addEventListener('click', e => {
+  const nav = e.target.closest('[data-nav]')?.dataset.nav;
+  if (nav === 'prev') moveSlide(-1);
+  if (nav === 'next') moveSlide(1);
+  if (nav === 'exit') closeDeck();
+});
+
+addEventListener('dragover', e => e.preventDefault());
+addEventListener('drop', e => {
+  e.preventDefault();
+  const file = [...e.dataTransfer.files].find(f => f.type.startsWith('image/'));
+  if (!file) return;
+  billboardImages.splice(0, billboardImages.length, loadImage(URL.createObjectURL(file)));
+});
+
+function makeLedPattern() {
+  const cell = Math.max(3, Math.round(scale * 0.75));
+  const c = makeCanvas(cell, cell);
+  const x = c.getContext('2d');
+  x.fillStyle = 'rgba(0, 0, 0, 0.26)';
+  x.fillRect(cell - 1, 0, 1, cell);
+  x.fillRect(0, cell - 1, cell, 1);
+  return ctx.createPattern(c, 'repeat');
+}
+
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  view.width = Math.round(innerWidth * dpr);
+  view.height = Math.round(innerHeight * dpr);
+  scale = Math.min(view.width / W, view.height / H);
+  ox = Math.round((view.width - W * scale) / 2);
+  oy = Math.round((view.height - H * scale) / 2);
+  ledPattern = makeLedPattern();
+}
+addEventListener('resize', resize);
+resize();
+
+document.getElementById('deck-hero').src = heroPortraitUrl;
+document.fonts?.load('16px Galmuri11');
+document.fonts?.load('700 16px Galmuri11');
+
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min((now - last) / 1000, 0.05);
+  last = now;
+  time += dt;
+  try {
+    if (state === 'play') updatePlay(dt);
+    else if (state === 'warp') updateWarp(dt);
+    else if (state === 'intro') updateIntro(dt);
+    updateFade();
+    if (state === 'deck') updateTyping();
+    spawnParticles(dt);
+    if (state !== 'deck') render();
+  } finally {
+    requestAnimationFrame(frame);
+  }
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
