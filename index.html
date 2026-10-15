@@ -291,7 +291,7 @@
   .scene-actor--learner.is-walking .scene-walk img { animation-duration: .44s; }
   .scene-name { padding: .25cqh .7cqw; font-size: 1.7cqw; color: #68410a; background: #fff0d2; box-shadow: 0 0 0 .15cqw #a16d2d; }
   .scene-actor--learner .scene-name, .handshake-names .scene-name:last-child { color: #13518e; background: #e1efff; box-shadow: 0 0 0 .15cqw #377bb5; }
-  .scene-bubble.is-pending { visibility: hidden; }
+  .scene-bubble.is-pending, .scene-actor.is-pending, .scene-takeaway.is-pending { visibility: hidden; }
   .scene-path-label { position: absolute; bottom: -1%; left: 48%; transform: translateX(-50%); padding: .5cqh 1.1cqw; font-size: 1.25cqw; color: #655137; background: #fff9e8; border: .15cqw solid #b5a280; white-space: nowrap; transition: left .7s; }
   .scene-handshake { position: absolute; top: 90%; left: 50%; transform: translate(-50%, -100%); display: grid; justify-items: center; gap: .4cqh; visibility: hidden; }
   .scene-handshake img { width: 16cqw; height: 7.2cqw; image-rendering: pixelated; }
@@ -1565,6 +1565,15 @@ function closeDeck() {
 function moveSlide(delta) {
   if (state !== 'deck') return;
   const slide = deck.slides[deck.index];
+  if (slide.scene === 'goals') {
+    const step = deck.castStep + delta;
+    if (step >= 0 && step < slide.turns.length) {
+      cancelSceneMotion();
+      deck.castStep = step;
+      renderGoalState(delta > 0 ? step : null);
+      return;
+    }
+  }
   if (slide.type === 'dialogue') {
     const step = deck.dialogueStep + delta;
     if (step >= 0 && step <= slide.turns.length) {
@@ -1792,7 +1801,11 @@ function renderSlide(direction) {
     continueCrossroadScene(slide, wasWalking);
   } else {
     frameEl.innerHTML = `<article class="slide slide--${kind}${say ? ' has-say' : ''} from-${direction}">${body}${say}</article>`;
-    if (slide.scene === 'goals' && direction === 'next') revealCrossroadCast();
+  }
+
+  if (slide.scene === 'goals') {
+    deck.castStep = direction === 'prev' ? slide.turns.length - 1 : 0;
+    renderGoalState(direction === 'next' ? 0 : null);
   }
 
   frameEl.querySelectorAll('.slide-media img, .stack-card img').forEach(img => img.addEventListener('error', () => {
@@ -1834,7 +1847,19 @@ function animateSceneElement(element, frames, options) {
   return animation;
 }
 
-function revealCrossroadCast() {
+function renderGoalState(revealIndex = null) {
+  const actors = [...frameEl.querySelectorAll('.scene-actor')];
+  actors.forEach((actor, index) => {
+    const pending = index > deck.castStep;
+    actor.classList.toggle('is-pending', pending);
+    const bubble = frameEl.querySelector(`.scene-bubble[data-speaker="${actor.dataset.speaker}"]`);
+    bubble.classList.toggle('is-pending', pending);
+  });
+  frameEl.querySelector('.scene-takeaway').classList.toggle('is-pending', deck.castStep < actors.length - 1);
+  if (revealIndex !== null) revealCrossroadCast(revealIndex);
+}
+
+function revealCrossroadCast(index) {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const reveal = (element, delay, actor = false) => {
     const resting = actor ? 'translate(-50%, -100%)' : 'translateY(0)';
@@ -1845,13 +1870,11 @@ function revealCrossroadCast() {
       { opacity: 1, visibility: 'visible', transform: resting, offset: 1 },
     ], { duration: reduce ? 1 : 480, delay, easing: 'ease-out', fill: 'backwards' });
   };
-  frameEl.querySelectorAll('.scene-actor').forEach((actor, index) => {
-    const delay = index ? 1300 : 150;
-    reveal(actor, delay, true);
-    const bubble = frameEl.querySelector(`.scene-bubble[data-speaker="${actor.dataset.speaker}"]`);
-    reveal(bubble, delay);
-  });
-  reveal(frameEl.querySelector('.scene-takeaway'), 1800);
+  const actors = [...frameEl.querySelectorAll('.scene-actor')];
+  const actor = actors[index];
+  reveal(actor, 0, true);
+  reveal(frameEl.querySelector(`.scene-bubble[data-speaker="${actor.dataset.speaker}"]`), 0);
+  if (index === actors.length - 1) reveal(frameEl.querySelector('.scene-takeaway'), 480);
 }
 
 function walkSceneActors() {
@@ -1873,7 +1896,10 @@ function continueCrossroadScene(slide, wasWalking) {
   scene.className = `crossroad-scene crossroad-scene--${slide.scene}`;
   scene.querySelector('.scene-handshake').setAttribute('aria-hidden', 'true');
   scene.querySelector('.scene-path-label').textContent = '같은 프로젝트';
-  scene.querySelectorAll('.scene-actor').forEach(actor => actor.removeAttribute('aria-hidden'));
+  scene.querySelectorAll('.scene-actor').forEach(actor => {
+    actor.removeAttribute('aria-hidden');
+    actor.classList.remove('is-pending');
+  });
   scene.querySelectorAll('.scene-bubble').forEach(bubble => {
     const index = slide.turns.findIndex(turn => turn.speaker === bubble.dataset.speaker);
     const turn = slide.turns[index];
