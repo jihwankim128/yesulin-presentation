@@ -167,7 +167,8 @@
   .toc-row:active { transform: translate(.2cqw, .2cqw); }
   .toc-num { font-size: 3.4cqw; font-weight: 700; color: var(--accent-deep); }
   .toc-title { display: block; font-size: 2.3cqw; font-weight: 700; }
-  .toc-row--section { grid-template-columns: 6cqw 30cqw 1fr; }
+  .toc--sections { gap: 1.6cqh; }
+  .toc-row--section { grid-template-columns: 6cqw 30cqw 1fr; padding: 1cqh 2cqw; }
   .toc-row--section .toc-title { line-height: 1.4; }
   .toc-sub { display: block; margin-top: .8cqh; font-size: 1.45cqw; color: #4f4a5e; }
   .toc-items { display: flex; flex-wrap: wrap; gap: 1cqh .8cqw; }
@@ -1313,7 +1314,7 @@ function tocMarkup() {
       <span class="toc-items">${(s.items ?? []).map(item => `<span>${escapeHtml(item)}</span>`).join('')}</span>
     </button>`;
   }).join('');
-  return `<p class="slide-kicker">${escapeHtml(deck.portal.label)}</p><h2 class="slide-title">${escapeHtml(deck.portal.tocTitle ?? '오늘의 공연 순서')}</h2><div class="toc">${rows}</div>`;
+  return `<p class="slide-kicker">${escapeHtml(deck.portal.label)}</p><h2 class="slide-title">${escapeHtml(deck.portal.tocTitle ?? '오늘의 공연 순서')}</h2><div class="toc${plain ? ' toc--sections' : ''}">${rows}</div>`;
 }
 
 function slideMarkup(s) {
