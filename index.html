@@ -1792,6 +1792,7 @@ function renderSlide(direction) {
     continueCrossroadScene(slide, wasWalking);
   } else {
     frameEl.innerHTML = `<article class="slide slide--${kind}${say ? ' has-say' : ''} from-${direction}">${body}${say}</article>`;
+    if (slide.scene === 'goals' && direction === 'next') revealCrossroadCast();
   }
 
   frameEl.querySelectorAll('.slide-media img, .stack-card img').forEach(img => img.addEventListener('error', () => {
@@ -1831,6 +1832,26 @@ function animateSceneElement(element, frames, options) {
   const animation = element.animate(frames, options);
   sceneAnimations.push(animation);
   return animation;
+}
+
+function revealCrossroadCast() {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reveal = (element, delay, actor = false) => {
+    const resting = actor ? 'translate(-50%, -100%)' : 'translateY(0)';
+    const entering = reduce ? resting : actor ? 'translate(-50%, calc(-100% + 1.5cqh))' : 'translateY(1.5cqh)';
+    animateSceneElement(element, [
+      { opacity: 0, visibility: 'hidden', transform: entering, offset: 0 },
+      { opacity: 0, visibility: 'visible', transform: entering, offset: .01 },
+      { opacity: 1, visibility: 'visible', transform: resting, offset: 1 },
+    ], { duration: reduce ? 1 : 480, delay, easing: 'ease-out', fill: 'backwards' });
+  };
+  frameEl.querySelectorAll('.scene-actor').forEach((actor, index) => {
+    const delay = index ? 1300 : 150;
+    reveal(actor, delay, true);
+    const bubble = frameEl.querySelector(`.scene-bubble[data-speaker="${actor.dataset.speaker}"]`);
+    reveal(bubble, delay);
+  });
+  reveal(frameEl.querySelector('.scene-takeaway'), 1800);
 }
 
 function walkSceneActors() {
