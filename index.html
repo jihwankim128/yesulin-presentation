@@ -347,6 +347,12 @@
   .confirm-actions button::before { content: '▶ '; visibility: hidden; color: #ffd34d; }
   .confirm-actions button.selected { color: #1d1626; background: #ffd34d; }
   .confirm-actions button.selected::before { visibility: visible; color: #1d1626; }
+
+  .table { flex: 1; display: grid; grid-template-columns: auto repeat(calc(var(--cols) - 1), 1fr); align-content: center; column-gap: 2.4cqw; }
+  .table-head { padding-bottom: 1.4cqh; font-size: 1.6cqw; color: var(--accent-deep); }
+  .table-cell { padding: 1.5cqh 0; font-size: 2.1cqw; box-shadow: inset 0 -.15cqw 0 rgba(29, 22, 38, .15); }
+  .table-label { font-weight: 700; }
+  .table-last { padding-left: 1.2cqw; padding-right: 1.2cqw; font-weight: 700; background: var(--accent-soft); }
 </style>
 </head>
 <body>
@@ -358,12 +364,13 @@
     <span><kbd>←↑↓→</kbd>이동</span>
     <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd>포탈 바로가기</span>
     <span><kbd>F</kbd>전체화면</span>
+    <span><kbd>M</kbd><span id="sound-label">소리 켬</span></span>
   </div>
 </div>
 
 <div class="title-screen" id="title-screen">
   <div class="title-card">
-    <p class="title-sub">공연예술 오디션이 열리는 곳</p>
+    <p class="title-sub">예술의 문을 열다</p>
     <h1 class="title-logo">예술in</h1>
     <button class="title-start" id="title-start"><span class="arrow">▶</span>마을 입장하기</button>
     <p class="title-hint">Enter 또는 클릭</p>
@@ -391,7 +398,7 @@
     <span class="confirm-name">예술in</span>
     <img class="confirm-portrait" id="confirm-portrait" alt="">
     <div>
-      <p class="confirm-text" id="confirm-text">어 이건 뭐지? 반짝이는 무언가가 있어요.<br>예술in 사이트를 열어보시겠습니까?</p>
+      <p class="confirm-text" id="confirm-text">어 이건 뭐지? 반짝이는 별이 손을 흔들고 있어요.<br>예술in 사이트를 열어보시겠습니까?</p>
       <div class="confirm-actions">
         <button data-confirm="yes" class="selected">예</button>
         <button data-confirm="no">아니오</button>
@@ -426,7 +433,7 @@
   - 포탈에 sectionStyle: 'plain'을 지정하면 막 대신 번호와 구역 제목을 표시한다. tocTitle로 목차 제목을 바꿀 수 있다.
   - sectionIntro: 'stage'를 함께 지정하면 번호형 구역의 도입을 커튼이 열리는 무대로 표시한다.
   - 슬라이드 필드
-    type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' | 'cards' | 'dialogue' (생략하면 내용에 맞춰 자동 배치)
+    type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' | 'cards' | 'dialogue' | 'table' (생략하면 내용에 맞춰 자동 배치)
     kicker, title, subtitle, big, points, image, caption, images(사진 더미), claims, before/after, say(캐릭터 대사)
     cards: [{ label, title, detail }], takeaway: 카드나 대화의 정리 문장
     turns: [{ speaker: 'M' | 'D', text }], dialogue는 다음 버튼으로 대화와 정리를 차례로 공개한다.
@@ -496,6 +503,114 @@ const tappedKeys = new Set();
 const releasedKeys = new Set();
 const visited = new Set();
 const particles = [];
+
+const SOUND = { ctx: null, master: null, bgmGain: null, muted: false, bgmOn: false, nextStep: 0, step: 0 };
+const MASTER_VOLUME = 0.5;
+const BGM_LEAD = 'E5 G5 A5 G5 E5 D5 C5 D5 E5 G5 A5 C6 A5 G5 E5 - D5 E5 G5 E5 D5 C5 A4 C5 D5 E5 D5 C5 C5 - - -'.split(' ');
+const BGM_BASS = 'C3 C3 G2 G2 A2 A2 E2 E2 F2 F2 C3 C3 G2 G2 D3 G2'.split(' ');
+const BGM_STEP = 60 / 112 / 2;
+try { SOUND.muted = localStorage.getItem('yesulin-sound') === 'off'; } catch {}
+
+function unlockAudio() {
+  if (SOUND.ctx) {
+    if (SOUND.ctx.state === 'suspended') SOUND.ctx.resume();
+    return;
+  }
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return;
+  const ctx = new AudioCtx();
+  const master = ctx.createGain();
+  master.gain.value = SOUND.muted ? 0 : MASTER_VOLUME;
+  master.connect(ctx.destination);
+  const bgmGain = ctx.createGain();
+  bgmGain.gain.value = 0;
+  bgmGain.connect(master);
+  Object.assign(SOUND, { ctx, master, bgmGain });
+}
+
+function noteFrequency(name) {
+  const [, letter, sharp, octave] = /^([A-G])(#?)(\d)$/.exec(name);
+  const semitone = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }[letter] + (sharp ? 1 : 0);
+  return 440 * 2 ** ((12 * (Number(octave) + 1) + semitone - 69) / 12);
+}
+
+function tone(frequency, at, duration, { type = 'square', volume = 0.1, slideTo = null, destination = SOUND.master } = {}) {
+  const { ctx } = SOUND;
+  const oscillator = ctx.createOscillator();
+  const envelope = ctx.createGain();
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, at);
+  if (slideTo) oscillator.frequency.exponentialRampToValueAtTime(slideTo, at + duration);
+  envelope.gain.setValueAtTime(0.0001, at);
+  envelope.gain.exponentialRampToValueAtTime(volume, at + 0.01);
+  envelope.gain.exponentialRampToValueAtTime(0.0001, at + duration);
+  oscillator.connect(envelope).connect(destination);
+  oscillator.start(at);
+  oscillator.stop(at + duration + 0.02);
+}
+
+const SFX = {
+  start: [['C5', 'E5', 'G5', 'C6'], 0.08, { volume: 0.16 }],
+  next: [['A5'], 0.04, { volume: 0.1 }],
+  prev: [['E5'], 0.04, { volume: 0.1 }],
+  open: [['G5', 'D6'], 0.06, { volume: 0.12 }],
+  tick: [['C6'], 0.02, { volume: 0.07 }],
+  yes: [['C6', 'E6', 'G6'], 0.06, { volume: 0.14, type: 'triangle' }],
+  close: [['E5', 'C5'], 0.06, { volume: 0.1 }],
+};
+
+function sfx(name) {
+  if (!SOUND.ctx || SOUND.muted) return;
+  const at = SOUND.ctx.currentTime + 0.01;
+  if (name === 'warp') {
+    tone(220, at, 0.7, { type: 'triangle', volume: 0.22, slideTo: 1760 });
+    tone(330, at + 0.05, 0.65, { volume: 0.05, slideTo: 2640 });
+    return;
+  }
+  if (name === 'flip') {
+    tone(1400, at, 0.08, { type: 'triangle', volume: 0.12, slideTo: 500 });
+    return;
+  }
+  const [notes, gap, options] = SFX[name];
+  notes.forEach((note, i) => tone(noteFrequency(note), at + i * gap, gap * 1.6, options));
+}
+
+function setBgm(on) {
+  SOUND.bgmOn = on;
+  const { ctx, bgmGain } = SOUND;
+  if (!ctx) return;
+  const now = ctx.currentTime;
+  bgmGain.gain.cancelScheduledValues(now);
+  bgmGain.gain.setValueAtTime(bgmGain.gain.value, now);
+  bgmGain.gain.linearRampToValueAtTime(on ? 1 : 0, now + (on ? 1.2 : 0.5));
+}
+
+function updateBgm() {
+  const { ctx, bgmGain } = SOUND;
+  if (!ctx || !SOUND.bgmOn) return;
+  if (SOUND.nextStep < ctx.currentTime) SOUND.nextStep = ctx.currentTime + 0.05;
+  while (SOUND.nextStep < ctx.currentTime + 0.25) {
+    const i = SOUND.step % BGM_LEAD.length;
+    const at = SOUND.nextStep;
+    if (BGM_LEAD[i] !== '-') tone(noteFrequency(BGM_LEAD[i]), at, BGM_STEP * 0.9, { volume: 0.05, destination: bgmGain });
+    if (i % 2 === 0) tone(noteFrequency(BGM_BASS[i / 2 % BGM_BASS.length]), at, BGM_STEP * 1.8, { type: 'triangle', volume: 0.12, destination: bgmGain });
+    SOUND.step += 1;
+    SOUND.nextStep += BGM_STEP;
+  }
+}
+
+function toggleSound() {
+  unlockAudio();
+  SOUND.muted = !SOUND.muted;
+  try { localStorage.setItem('yesulin-sound', SOUND.muted ? 'off' : 'on'); } catch {}
+  if (SOUND.master) SOUND.master.gain.setTargetAtTime(SOUND.muted ? 0 : MASTER_VOLUME, SOUND.ctx.currentTime, 0.05);
+  showSoundLabel();
+}
+
+function showSoundLabel() {
+  document.getElementById('sound-label').textContent = SOUND.muted ? '소리 끔' : '소리 켬';
+}
+showSoundLabel();
 
 function makeCanvas(w, h) {
   const c = document.createElement('canvas');
@@ -880,20 +995,29 @@ function drawLamp(x, y) {
   g.fillRect(x - 3, y - 25, 6, 5);
 }
 
-const GOLD = sprite([
-  '.....KKKKK......',
-  '...KKYYYYWKK....',
-  '..KYYYYYWWYYK...',
-  '.KYYYOYYYYYYYK..',
-  'KYYOOYYYYYOYYYK.',
-  'KYYYYYYYOYYYYYKK',
-  'KOYYYYYYYYYYOOYK',
-  '.KOOYYYYYYOOOOK.',
-  '..KKOOOOOOOOKK..',
-  '....KKKKKKKK....',
-], { K: '#3a2412', Y: '#ffd34d', W: '#fffbe0', O: '#d99a1e' });
+const linkStar = { image: new Image(), sprite: null };
+linkStar.image.onload = () => { linkStar.sprite = downscale(linkStar.image, 22); };
+linkStar.image.src = 'assets/link-star.png';
 
-const LINK_STARS = [[-12, -12, 0], [11, -14, 1.3], [13, -4, 2.4], [-13, -3, 3.1], [2, -16, 4.2]];
+function downscale(img, width) {
+  let source = img, w = img.naturalWidth, h = img.naturalHeight;
+  while (w / 2 >= width) {
+    w = Math.round(w / 2);
+    h = Math.round(h / 2);
+    const half = makeCanvas(w, h);
+    const x = half.getContext('2d');
+    x.imageSmoothingQuality = 'high';
+    x.drawImage(source, 0, 0, w, h);
+    source = half;
+  }
+  const out = makeCanvas(width, Math.round(h * width / w));
+  const x = out.getContext('2d');
+  x.imageSmoothingQuality = 'high';
+  x.drawImage(source, 0, 0, out.width, out.height);
+  return out;
+}
+
+const LINK_STARS = [[-15, -16, 0], [14, -20, 1.3], [16, -6, 2.4], [-16, -5, 3.1], [-4, -25, 4.2]];
 
 function drawLinkSign() {
   const { x, y } = LINK_SIGN;
@@ -902,13 +1026,15 @@ function drawLinkSign() {
   g.fillRect(x - 5, y, 11, 1);
   if (hovering === 'link') {
     g.fillStyle = 'rgba(255, 243, 160, 0.35)';
-    g.fillRect(x - 10, y - 9, 21, 8);
-    g.fillRect(x - 8, y - 11, 17, 12);
+    g.fillRect(x - 12, y - 18, 25, 16);
+    g.fillRect(x - 9, y - 21, 19, 22);
   }
-  g.drawImage(GOLD, x - 8, y - 10);
+  const sprite = linkStar.sprite;
+  const hop = Math.round(Math.abs(Math.sin(time * 3)) * -2);
+  if (sprite) g.drawImage(sprite, x - Math.round(sprite.width / 2), y - sprite.height + 1 + hop);
 
   const bob = Math.round(Math.sin(time * 5) * 1.5);
-  const tip = y - 13 + bob;
+  const tip = y - 25 + bob;
   g.fillStyle = '#1d1626';
   g.fillRect(x - 4, tip - 4, 9, 1);
   g.fillRect(x - 1, tip - 7, 3, 3);
@@ -1178,7 +1304,7 @@ function drawLabels() {
 
 function drawLinkBubble() {
   const bob = Math.round(Math.sin(time * 2.5) * scale * 0.5);
-  const [cx, cy] = toScreen(LINK_SIGN.x, LINK_SIGN.y - 30);
+  const [cx, cy] = toScreen(LINK_SIGN.x, LINK_SIGN.y - 41);
   const size = Math.round(scale * 4.2);
   ctx.font = `700 ${size}px Galmuri11, sans-serif`;
   ctx.textAlign = 'center';
@@ -1292,6 +1418,7 @@ function startWarp(portal) {
   releasedKeys.clear();
   hero.moving = false;
   hero.warp = { portal, t: 0, sx: hero.x, sy: hero.y, done: false };
+  sfx('warp');
 }
 
 function updateWarp(dt) {
@@ -1336,6 +1463,9 @@ function updateFade() {
 
 function enterVillage() {
   if (state !== 'title') return;
+  unlockAudio();
+  sfx('start');
+  setBgm(true);
   fadeThrough(() => {
     titleEl.hidden = true;
     hudEl.hidden = false;
@@ -1357,13 +1487,16 @@ function openDeck(portal) {
   deckEl.style.setProperty('--accent-soft', portal.accentSoft);
   document.getElementById('deck-label').textContent = portal.label;
   state = 'deck';
+  setBgm(false);
   renderSlide('next');
 }
 
 function closeDeck() {
   if (state !== 'deck') return;
   const portal = deck.portal;
+  sfx('close');
   fadeThrough(() => {
+    setBgm(true);
     deckEl.hidden = true;
     hudEl.hidden = false;
     visited.add(portal.id);
@@ -1396,6 +1529,7 @@ function moveSlide(delta) {
 }
 
 function goToSlide(index, direction) {
+  sfx(direction);
   deck.index = index;
   renderSlide(direction);
 }
@@ -1482,6 +1616,13 @@ function slideMarkup(s) {
     const claims = s.claims.map(claim => `<p class="hypo-claim">“${rich(claim)}”</p>`).join('');
     const context = s.points ? `<ul class="hypo-context">${s.points.map(pt => `<li>${rich(pt)}</li>`).join('')}</ul>` : '';
     return { kind: 'hypothesis', body: `<div class="hypo">${context}<p class="hypo-label">${escapeHtml(s.title)}</p>${claims}</div>` };
+  }
+  if (s.type === 'table') {
+    const cells = [
+      ...s.head.map(label => `<span class="table-head">${escapeHtml(label)}</span>`),
+      ...s.rows.flatMap(row => row.map((cell, i) => `<span class="table-cell${i === 0 ? ' table-label' : ''}${i === row.length - 1 ? ' table-last' : ''}">${rich(cell)}</span>`)),
+    ].join('');
+    return { kind: 'table', body: `${headingMarkup(s)}<div class="table" style="--cols: ${s.head.length}">${cells}</div>` };
   }
   if (s.type === 'cycle') {
     const steps = s.steps.map(step => `<span class="cycle-step">${rich(step)}</span>`).join('<span class="cycle-arrow">▶</span>');
@@ -1617,6 +1758,7 @@ function setupStack(stack) {
 
   stack.flip = direction => {
     if (cards.length < 2 || stack.querySelector('.leaving')) return;
+    sfx('flip');
     if (direction < 0) {
       order = [order[order.length - 1], ...order.slice(0, -1)];
       shown = (shown + cards.length - 1) % cards.length;
@@ -1652,9 +1794,10 @@ function toggleFullscreen() {
 
 addEventListener('keydown', e => {
   if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); return; }
+  if (e.key === 'm' || e.key === 'M') { toggleSound(); return; }
 
   if (state === 'confirm') {
-    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key)) { e.preventDefault(); selectConfirm(1 - confirmChoice); }
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key)) { e.preventDefault(); sfx('tick'); selectConfirm(1 - confirmChoice); }
     else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); answerConfirm(confirmChoice === 0); }
     else if (e.key === 'Escape') answerConfirm(false);
     return;
@@ -1714,6 +1857,7 @@ function openLightbox() {
   lightbox = { images: ready, index: currentBillboardIndex(), resume: state };
   keys.clear();
   state = 'zoom';
+  sfx('open');
   lightboxEl.hidden = false;
   showLightboxImage();
 }
@@ -1730,10 +1874,12 @@ function showLightboxImage() {
 function stepLightbox(delta) {
   const count = lightbox.images.length;
   lightbox.index = (lightbox.index + delta + count) % count;
+  sfx('tick');
   showLightboxImage();
 }
 
 function closeLightbox() {
+  sfx('close');
   lightboxEl.hidden = true;
   state = lightbox.resume;
   lightbox = null;
@@ -1749,7 +1895,7 @@ function hitTarget(e) {
   const y = (e.clientY * dpr - oy) / scale;
   const { x: bx, y: by, w, h } = BILLBOARD;
   if (x >= bx && x <= bx + w && y >= by && y <= by + h) return 'billboard';
-  if (Math.abs(x - LINK_SIGN.x) <= 20 && y >= LINK_SIGN.y - 36 && y <= LINK_SIGN.y + 2) return 'link';
+  if (Math.abs(x - LINK_SIGN.x) <= 20 && y >= LINK_SIGN.y - 46 && y <= LINK_SIGN.y + 2) return 'link';
   return null;
 }
 
@@ -1777,6 +1923,7 @@ function openConfirm() {
   keys.clear();
   hero.moving = false;
   state = 'confirm';
+  sfx('open');
   confirmEl.hidden = false;
   selectConfirm(0);
 }
@@ -1787,6 +1934,7 @@ function selectConfirm(index) {
 }
 
 function answerConfirm(yes) {
+  sfx(yes ? 'yes' : 'close');
   confirmEl.hidden = true;
   state = 'play';
   if (yes) openLink();
@@ -1871,6 +2019,7 @@ function frame(now) {
     else if (state === 'intro') updateIntro(dt);
     updateFade();
     if (state === 'deck') updateTyping();
+    updateBgm();
     spawnParticles(dt);
     if (state !== 'deck') render();
   } finally {
