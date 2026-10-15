@@ -167,6 +167,8 @@
   .toc-row:active { transform: translate(.2cqw, .2cqw); }
   .toc-num { font-size: 3.4cqw; font-weight: 700; color: var(--accent-deep); }
   .toc-title { display: block; font-size: 2.3cqw; font-weight: 700; }
+  .toc-row--section { grid-template-columns: 6cqw 30cqw 1fr; }
+  .toc-row--section .toc-title { line-height: 1.4; }
   .toc-sub { display: block; margin-top: .8cqh; font-size: 1.45cqw; color: #4f4a5e; }
   .toc-items { display: flex; flex-wrap: wrap; gap: 1cqh .8cqw; }
   .toc-items span { padding: .5cqh .9cqw; font-size: 1.4cqw; background: var(--accent-soft); }
@@ -322,6 +324,7 @@
   발표 내용은 CONFIG만 고치면 된다.
   - billboard.images: 전광판에 번갈아 나오는 사진들 (이미지를 화면에 끌어다 놓아도 바뀐다)
   - 포탈별 슬라이드는 slides/<포탈>.js에 있다. 첫 장 목차는 type: 'act' 슬라이드에서 자동으로 만들어진다.
+  - 포탈에 sectionStyle: 'plain'을 지정하면 막 대신 번호와 구역 제목을 표시한다. tocTitle로 목차 제목을 바꿀 수 있다.
   - 슬라이드 필드
     type: 'act' | 'hypothesis' | 'compare' | 'gaps' (생략하면 내용에 맞춰 자동 배치)
     kicker, title, subtitle, big, points, image, caption, images(사진 더미), claims, before/after, say(캐릭터 대사)
@@ -1292,19 +1295,33 @@ function mediaMarkup(s) {
   return '';
 }
 
+function actLabels(slide) {
+  if (deck.portal.sectionStyle === 'plain') {
+    return { num: String(slide.act).padStart(2, '0'), role: slide.title };
+  }
+  return { ...ACTS[slide.act], subtitle: slide.title };
+}
+
 function tocMarkup() {
-  const rows = actSlides().map(({ s, index }) => `
-    <button class="toc-row" data-goto="${index}">
-      <span class="toc-num">${ACTS[s.act].num}</span>
-      <span><span class="toc-title">${ACTS[s.act].role}</span><span class="toc-sub">${escapeHtml(s.title)}</span></span>
+  const plain = deck.portal.sectionStyle === 'plain';
+  const rows = actSlides().map(({ s, index }) => {
+    const labels = actLabels(s);
+    return `
+    <button class="toc-row${plain ? ' toc-row--section' : ''}" data-goto="${index}">
+      <span class="toc-num">${escapeHtml(labels.num)}</span>
+      <span><span class="toc-title">${escapeHtml(labels.role)}</span>${labels.subtitle ? `<span class="toc-sub">${escapeHtml(labels.subtitle)}</span>` : ''}</span>
       <span class="toc-items">${(s.items ?? []).map(item => `<span>${escapeHtml(item)}</span>`).join('')}</span>
-    </button>`).join('');
-  return `<p class="slide-kicker">${escapeHtml(deck.portal.label)}</p><h2 class="slide-title">오늘의 공연 순서</h2><div class="toc">${rows}</div>`;
+    </button>`;
+  }).join('');
+  return `<p class="slide-kicker">${escapeHtml(deck.portal.label)}</p><h2 class="slide-title">${escapeHtml(deck.portal.tocTitle ?? '오늘의 공연 순서')}</h2><div class="toc">${rows}</div>`;
 }
 
 function slideMarkup(s) {
   if (s.type === 'toc') return { kind: 'toc', body: tocMarkup() };
   if (s.type === 'act') {
+    if (deck.portal.sectionStyle === 'plain') {
+      return { kind: 'statement', body: headingMarkup({ kicker: actLabels(s).num, title: s.title }) };
+    }
     const act = ACTS[s.act];
     return {
       kind: 'act',
@@ -1366,7 +1383,8 @@ function renderSlide(direction) {
   if (deck.typing && reduce) finishTyping();
 
   const act = currentAct();
-  document.getElementById('deck-act').textContent = slide.type === 'toc' ? '목차' : act ? `${ACTS[act.act].num} ${ACTS[act.act].role}` : '';
+  const labels = act ? actLabels(act) : null;
+  document.getElementById('deck-act').textContent = slide.type === 'toc' ? '목차' : labels ? `${labels.num} ${labels.role}` : '';
   document.getElementById('deck-count').textContent = index === slides.length - 1
     ? `${index + 1} / ${slides.length}   다음을 누르면 마을로 돌아가요`
     : `${index + 1} / ${slides.length}`;
