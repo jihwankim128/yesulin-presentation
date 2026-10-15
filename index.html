@@ -250,12 +250,16 @@
   .road-joined { opacity: 0; }
   .scene-bubble {
     --speaker-color: #8a4e05; --speaker-soft: #fff0d2;
-    position: absolute; top: 0; left: 1%; width: 43%; min-height: 23cqh;
-    display: flex; flex-direction: column; justify-content: center; gap: .9cqh;
+    position: absolute; top: 0; left: 1%; width: 43%; min-height: 23.5cqh;
+    display: flex; flex-direction: column; justify-content: center;
     padding: 1.8cqh 1.7cqw; background: #fff; border: .25cqw solid var(--speaker-color);
     box-shadow: .4cqw .4cqw 0 var(--speaker-soft);
+    transition: top 1s cubic-bezier(.25, .1, .25, 1), left 1s cubic-bezier(.25, .1, .25, 1), min-height .6s;
   }
-  .scene-bubble--learner { --speaker-color: #1662c9; --speaker-soft: #e1efff; left: 56%; }
+  .scene-bubble-copy { display: grid; gap: .9cqh; }
+  .scene-bubble--learner { --speaker-color: #1662c9; --speaker-soft: #e1efff; top: 8%; left: 53%; transition-duration: 1.6s, 1.6s, .6s; }
+  .crossroad-scene--request .scene-bubble { top: 9%; left: 9%; }
+  .crossroad-scene--request .scene-bubble--learner { top: 15%; left: 56%; }
   .scene-bubble::after {
     content: ''; position: absolute; left: 50%; bottom: -1.2cqh; width: 1.2cqw; height: 1.2cqw;
     background: #fff; border-right: .25cqw solid var(--speaker-color); border-bottom: .25cqw solid var(--speaker-color); transform: rotate(45deg);
@@ -266,32 +270,46 @@
   .scene-quote { font-size: 2.1cqw; line-height: 1.45; }
   .scene-note { font-size: 1.45cqw; line-height: 1.4; color: #615c68; }
   .crossroad-scene--reunion .scene-quote { font-size: 1.65cqw; line-height: 1.5; }
-  .crossroad-scene--reunion .scene-bubble { min-height: 24cqh; }
+  .crossroad-scene--reunion .scene-bubble { top: 0; left: 1%; min-height: 24cqh; }
+  .crossroad-scene--reunion .scene-bubble--learner { top: 2%; left: 56%; }
   .scene-actor {
-    position: absolute; left: 25%; bottom: 13%; display: grid; justify-items: center; gap: .4cqh;
-    transform: translateX(-50%); transition: left .7s steps(8), opacity .15s .6s;
+    --travel-time: 1s; --travel-delay: 0s;
+    position: absolute; left: 24%; top: 82%; display: grid; justify-items: center; gap: .4cqh;
+    transform: translate(-50%, -100%);
+    transition: left var(--travel-time) var(--travel-delay), top var(--travel-time) var(--travel-delay), opacity .15s;
   }
-  .scene-actor--learner { left: 75%; }
-  .scene-actor img { width: 6.5cqw; height: 6.5cqw; image-rendering: pixelated; }
+  .scene-actor--learner { --travel-time: 1.6s; --travel-delay: .12s; left: 72%; top: 90%; }
+  .crossroad-scene--request .scene-actor, .crossroad-scene--reunion .scene-actor { left: 34%; top: 96%; }
+  .crossroad-scene--request .scene-actor--learner, .crossroad-scene--reunion .scene-actor--learner { left: 78%; top: 98%; }
+  .scene-avatar { position: relative; width: 6.5cqw; height: 6.5cqw; }
+  .scene-avatar img { width: 100%; height: 100%; image-rendering: pixelated; }
+  .scene-walk { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
+  .scene-walk img { width: 200%; max-width: none; }
+  .scene-actor.is-walking .scene-idle { opacity: 0; }
+  .scene-actor.is-walking .scene-walk { opacity: 1; }
+  .scene-actor.is-walking .scene-walk img { animation: scene-step .28s steps(1) infinite; }
+  .scene-actor--learner.is-walking .scene-walk img { animation-duration: .44s; }
   .scene-name { padding: .25cqh .7cqw; font-size: 1.7cqw; color: #68410a; background: #fff0d2; box-shadow: 0 0 0 .15cqw #a16d2d; }
   .scene-actor--learner .scene-name, .handshake-names .scene-name:last-child { color: #13518e; background: #e1efff; box-shadow: 0 0 0 .15cqw #377bb5; }
   .scene-bubble.is-pending { visibility: hidden; }
-  .scene-path-label { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); padding: .5cqh 1.1cqw; font-size: 1.25cqw; color: #655137; background: #fff9e8; border: .15cqw solid #b5a280; white-space: nowrap; }
-  .scene-handshake { position: absolute; bottom: 13%; left: 50%; transform: translateX(-50%); display: grid; justify-items: center; gap: .4cqh; visibility: hidden; }
+  .scene-path-label { position: absolute; bottom: -1%; left: 48%; transform: translateX(-50%); padding: .5cqh 1.1cqw; font-size: 1.25cqw; color: #655137; background: #fff9e8; border: .15cqw solid #b5a280; white-space: nowrap; transition: left .7s; }
+  .scene-handshake { position: absolute; top: 90%; left: 50%; transform: translate(-50%, -100%); display: grid; justify-items: center; gap: .4cqh; visibility: hidden; }
   .scene-handshake img { width: 16cqw; height: 7.2cqw; image-rendering: pixelated; }
   .handshake-names { width: 100%; display: flex; justify-content: space-around; }
   .crossroad-scene.is-reunited .road-split { opacity: 0; }
   .crossroad-scene.is-reunited .road-joined { opacity: 1; }
-  .crossroad-scene.is-reunited .scene-actor { left: 50%; opacity: 0; }
-  .crossroad-scene.is-reunited .scene-handshake { visibility: visible; animation: handshake-arrive .2s .65s both, handshake-greet .45s .9s 2; }
+  .crossroad-scene.is-reunited .scene-actor { left: 50%; top: 90%; opacity: 0; transition: left var(--travel-time) var(--travel-delay), top var(--travel-time) var(--travel-delay), opacity .15s 1.6s; }
+  .crossroad-scene.is-reunited .scene-handshake { visibility: visible; animation: handshake-arrive .2s 1.7s both, handshake-greet .45s 1.9s 2; }
+  .crossroad-scene.is-reunited .scene-path-label { left: 50%; }
   .crossroad-scene.is-reunited .scene-bubble::after { opacity: 0; }
   .scene-footer { min-height: 5.8cqh; display: grid; align-items: center; }
   .scene-takeaway { text-align: center; font-size: 1.95cqw; line-height: 1.5; }
+  @keyframes scene-step { 50% { transform: translateX(-50%); } }
   @keyframes handshake-arrive { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes handshake-greet { 50% { transform: translate(-50%, -.6cqh); } }
+  @keyframes handshake-greet { 50% { transform: translate(-50%, calc(-100% - .6cqh)); } }
   @media (prefers-reduced-motion: reduce) {
-    .road-split, .road-joined, .scene-actor { transition: none; }
-    .crossroad-scene.is-reunited .scene-handshake { animation: none; }
+    .road-split, .road-joined, .scene-actor, .scene-bubble, .scene-path-label, .crossroad-scene.is-reunited .scene-actor { transition: none; }
+    .crossroad-scene.is-reunited .scene-handshake, .scene-actor.is-walking .scene-walk img { animation: none; }
   }
   .dialogue-controls { display: flex; align-items: center; justify-content: space-between; gap: 2cqw; }
   .dialogue-progress { font-size: 1.5cqw; color: #4f4a5e; }
@@ -467,7 +485,7 @@
     kicker, title, subtitle, big, points, image, caption, images(사진 더미), claims, before/after, say(캐릭터 대사)
     cards: [{ label, title, detail }], takeaway: 카드나 대화의 정리 문장
     turns: [{ speaker: '대O' | '맥O', label, text, note, thought }], scene: 'goals' | 'request' | 'reunion'
-    crossroads는 갈림길 장면, dialogue는 다음 버튼으로 대화와 길이 합쳐지는 악수 장면을 차례로 공개한다.
+    crossroads와 dialogue가 이어지면 같은 무대에서 캐릭터와 말풍선을 이동한다. dialogue는 대화와 악수를 순서대로 공개한다.
     **강조**는 형광펜으로 표시된다.
 */
 const CONFIG = {
@@ -1508,6 +1526,7 @@ function enterVillage() {
 }
 
 let deck = null;
+let sceneAnimations = [];
 
 function openDeck(portal) {
   deck = { portal, index: 0, slides: [{ type: 'toc', say: portal.tocSay }, ...portal.slides], typing: null };
@@ -1524,6 +1543,7 @@ function openDeck(portal) {
 
 function closeDeck() {
   if (state !== 'deck') return;
+  cancelSceneMotion();
   const portal = deck.portal;
   sfx('close');
   fadeThrough(() => {
@@ -1625,36 +1645,42 @@ function tocMarkup() {
   return `<p class="slide-kicker">${escapeHtml(deck.portal.label)}</p><h2 class="slide-title">${escapeHtml(deck.portal.tocTitle ?? '오늘의 공연 순서')}</h2><div class="toc${plain ? ' toc--sections' : ''}">${rows}</div>`;
 }
 
+function sceneBubbleCopy(turn) {
+  return `<div class="scene-bubble-copy"><p class="scene-bubble-label">${escapeHtml(turn.label)}</p><p class="scene-quote">${rich(turn.text)}</p>${turn.note ? `<p class="scene-note">${rich(turn.note)}</p>` : ''}</div>`;
+}
+
+function sceneFooterMarkup(s) {
+  if (s.type === 'dialogue') return `<div class="dialogue-controls"><span class="dialogue-progress" aria-live="polite"></span><button class="dialogue-next" data-dialogue-next></button></div><p class="dialogue-takeaway" hidden>${rich(s.takeaway)}</p>`;
+  return s.takeaway ? `<p class="scene-takeaway">${rich(s.takeaway)}</p>` : '';
+}
+
 function crossroadMarkup(s) {
   const cast = ['대O', '맥O'];
   const bubbles = cast.map((speaker, i) => {
     const index = s.turns.findIndex(turn => turn.speaker === speaker);
     const turn = s.turns[index];
-    return `<section class="scene-bubble${i ? ' scene-bubble--learner' : ''}${turn.thought ? ' scene-bubble--thought' : ''}" data-turn="${index}"><p class="scene-bubble-label">${escapeHtml(turn.label)}</p><p class="scene-quote">${rich(turn.text)}</p>${turn.note ? `<p class="scene-note">${rich(turn.note)}</p>` : ''}</section>`;
+    return `<section class="scene-bubble${i ? ' scene-bubble--learner' : ''}${turn.thought ? ' scene-bubble--thought' : ''}" data-speaker="${escapeHtml(speaker)}" data-turn="${index}">${sceneBubbleCopy(turn)}</section>`;
   }).join('');
-  const actors = cast.map((speaker, i) => `<div class="scene-actor${i ? ' scene-actor--learner' : ''}" data-speaker="${escapeHtml(speaker)}"><img src="${dialoguePortraits[speaker]}" alt="${escapeHtml(speaker)} 캐릭터"><strong class="scene-name">${escapeHtml(speaker)}</strong></div>`).join('');
+  const actors = cast.map((speaker, i) => `<div class="scene-actor${i ? ' scene-actor--learner' : ''}" data-speaker="${escapeHtml(speaker)}"><div class="scene-avatar"><img class="scene-idle" src="${dialoguePortraits[speaker]}" alt="${escapeHtml(speaker)} 캐릭터"><span class="scene-walk" aria-hidden="true"><img src="${walkingPortraits[speaker]}" alt=""></span></div><strong class="scene-name">${escapeHtml(speaker)}</strong></div>`).join('');
   const road = `<svg class="scene-road" viewBox="0 0 1000 360" preserveAspectRatio="none" aria-hidden="true">
     <g fill="#dce8cf"><path d="M60 280h12v-10h8v10h12v8H60z M888 285h12v-10h8v10h12v8h-32z M115 340h8v-8h6v8h9v6h-23z M865 340h8v-8h6v8h9v6h-23z"/></g>
     <g class="road-split" fill="none" stroke-linejoin="round">
-      <path d="M500 360V315L250 275V155 M500 315L750 275V155" stroke="#ae9d7c" stroke-width="62"/>
-      <path d="M500 360V315L250 275V155 M500 315L750 275V155" stroke="#efdfba" stroke-width="52"/>
-      <path d="M500 315L250 275V155" stroke="#c88c38" stroke-width="5" stroke-dasharray="13 10"/>
-      <path d="M500 315L750 275V155" stroke="#5b93be" stroke-width="5" stroke-dasharray="13 10"/>
-      <path d="M500 360V315" stroke="#fffaf0" stroke-width="5" stroke-dasharray="12 10"/>
+      <path d="M480 360V300 Q410 350 340 318 Q285 300 240 268 L160 220 M480 300 Q600 360 680 320 Q710 295 730 302 Q755 315 780 326 L870 270" stroke="#ae9d7c" stroke-width="62"/>
+      <path d="M480 360V300 Q410 350 340 318 Q285 300 240 268 L160 220 M480 300 Q600 360 680 320 Q710 295 730 302 Q755 315 780 326 L870 270" stroke="#efdfba" stroke-width="52"/>
+      <path d="M480 300 Q410 350 340 318 Q285 300 240 268 L160 220" stroke="#c88c38" stroke-width="5" stroke-dasharray="13 10"/>
+      <path d="M480 300 Q600 360 680 320 Q710 295 730 302 Q755 315 780 326 L870 270" stroke="#5b93be" stroke-width="5" stroke-dasharray="13 10"/>
+      <path d="M480 360V300" stroke="#fffaf0" stroke-width="5" stroke-dasharray="12 10"/>
     </g>
     <g class="road-joined" fill="none" stroke-linejoin="round">
-      <path d="M250 155V205L500 270L750 205V155 M500 270V360" stroke="#91ad96" stroke-width="62"/>
-      <path d="M250 155V205L500 270L750 205V155 M500 270V360" stroke="#e5edcf" stroke-width="52"/>
-      <path d="M250 155V205L500 270" stroke="#c88c38" stroke-width="5" stroke-dasharray="13 10"/>
-      <path d="M750 155V205L500 270" stroke="#5b93be" stroke-width="5" stroke-dasharray="13 10"/>
-      <path d="M500 270V360" stroke="#55825e" stroke-width="5" stroke-dasharray="13 10"/>
+      <path d="M160 220 Q250 290 340 318 L500 300 M870 270 L780 326 Q650 355 500 300 V360" stroke="#91ad96" stroke-width="62"/>
+      <path d="M160 220 Q250 290 340 318 L500 300 M870 270 L780 326 Q650 355 500 300 V360" stroke="#e5edcf" stroke-width="52"/>
+      <path d="M160 220 Q250 290 340 318 L500 300" stroke="#c88c38" stroke-width="5" stroke-dasharray="13 10"/>
+      <path d="M870 270 L780 326 Q650 355 500 300" stroke="#5b93be" stroke-width="5" stroke-dasharray="13 10"/>
+      <path d="M500 300V360" stroke="#55825e" stroke-width="5" stroke-dasharray="13 10"/>
     </g>
   </svg>`;
-  const handshake = s.type === 'dialogue' ? `<div class="scene-handshake" aria-hidden="true"><img src="${handshakePortrait}" alt="대O과 맥O이 악수하는 모습"><div class="handshake-names"><strong class="scene-name">대O</strong><strong class="scene-name">맥O</strong></div></div>` : '';
-  const footer = s.type === 'dialogue'
-    ? `<div class="dialogue-controls"><span class="dialogue-progress" aria-live="polite"></span><button class="dialogue-next" data-dialogue-next></button></div><p class="dialogue-takeaway" hidden>${rich(s.takeaway)}</p>`
-    : s.takeaway ? `<p class="scene-takeaway">${rich(s.takeaway)}</p>` : '';
-  return `${headingMarkup(s)}<div class="crossroad-scene crossroad-scene--${escapeHtml(s.scene)}">${road}${bubbles}${actors}${handshake}<p class="scene-path-label">같은 프로젝트</p></div><div class="scene-footer">${footer}</div>`;
+  const handshake = `<div class="scene-handshake" aria-hidden="true"><img src="${handshakePortrait}" alt="대O과 맥O이 악수하는 모습"><div class="handshake-names"><strong class="scene-name">대O</strong><strong class="scene-name">맥O</strong></div></div>`;
+  return `${headingMarkup(s)}<div class="crossroad-scene crossroad-scene--${escapeHtml(s.scene)}">${road}${bubbles}${actors}${handshake}<p class="scene-path-label">같은 프로젝트</p></div><div class="scene-footer">${sceneFooterMarkup(s)}</div>`;
 }
 
 function slideMarkup(s) {
@@ -1726,6 +1752,13 @@ const teamPalettes = {
   '맥O': { ...HERO_PALETTE, R: '#4ba4d9', r: '#245a92', B: '#347ec4', b: '#a6d8fa' },
 };
 const dialoguePortraits = Object.fromEntries(Object.entries(teamPalettes).map(([name, palette]) => [name, sprite([...HAT, ...FACE_FRONT, ...BODY_FRONT, ...LEGS_IDLE], palette).toDataURL()]));
+const walkingPortraits = Object.fromEntries(Object.entries(teamPalettes).map(([name, palette]) => {
+  const strip = makeCanvas(32, 16);
+  [LEGS_STEP, LEGS_STEP.map(reverseRow)].forEach((legs, index) => {
+    strip.getContext('2d').drawImage(sprite([...HAT, ...FACE_FRONT, ...BODY_FRONT, ...legs], palette), index * 16, 0);
+  });
+  return [name, strip.toDataURL()];
+}));
 const handshakePortrait = (() => {
   const canvas = makeCanvas(40, 18);
   const ctx = canvas.getContext('2d');
@@ -1749,11 +1782,17 @@ function sayMarkup() {
 }
 
 function renderSlide(direction) {
+  const wasWalking = !!frameEl.querySelector('.scene-actor.is-walking');
+  cancelSceneMotion();
   const { index, slides } = deck;
   const slide = slides[index];
   const { kind, body } = slideMarkup(slide);
   const say = slide.say ? sayMarkup() : '';
-  frameEl.innerHTML = `<article class="slide slide--${kind}${say ? ' has-say' : ''} from-${direction}">${body}${say}</article>`;
+  if (kind === 'crossroads' && frameEl.querySelector('.crossroad-scene')) {
+    continueCrossroadScene(slide, wasWalking);
+  } else {
+    frameEl.innerHTML = `<article class="slide slide--${kind}${say ? ' has-say' : ''} from-${direction}">${body}${say}</article>`;
+  }
 
   frameEl.querySelectorAll('.slide-media img, .stack-card img').forEach(img => img.addEventListener('error', () => {
     const missing = document.createElement('div');
@@ -1782,12 +1821,68 @@ function renderSlide(direction) {
     .map((s, i) => `<i class="${i <= index ? 'on' : ''}${s.type === 'act' ? ' act-start' : ''}"></i>`).join('');
 }
 
+function cancelSceneMotion() {
+  sceneAnimations.forEach(animation => animation.cancel());
+  sceneAnimations = [];
+  frameEl.querySelectorAll('.scene-actor.is-walking').forEach(actor => actor.classList.remove('is-walking'));
+}
+
+function animateSceneElement(element, frames, options) {
+  const animation = element.animate(frames, options);
+  sceneAnimations.push(animation);
+  return animation;
+}
+
+function walkSceneActors() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  frameEl.querySelectorAll('.scene-actor').forEach((actor, index) => {
+    actor.classList.add('is-walking');
+    const walk = animateSceneElement(actor.querySelector('.scene-avatar'), [
+      { transform: 'translateY(0)' }, { transform: 'translateY(-.25cqh)' }, { transform: 'translateY(0)' },
+    ], { duration: index ? 200 : 160, iterations: index ? 8 : 6, delay: index ? 120 : 0 });
+    walk.finished.then(() => actor.classList.remove('is-walking'), () => {});
+  });
+}
+
+function continueCrossroadScene(slide, wasWalking) {
+  const scene = frameEl.querySelector('.crossroad-scene');
+  const changesPosition = wasWalking || scene.classList.contains('is-reunited') || scene.classList.contains('crossroad-scene--goals') !== (slide.scene === 'goals');
+  frameEl.querySelector('.slide').classList.remove('from-next', 'from-prev');
+  frameEl.querySelector('.slide-title').innerHTML = rich(slide.title);
+  scene.className = `crossroad-scene crossroad-scene--${slide.scene}`;
+  scene.querySelector('.scene-handshake').setAttribute('aria-hidden', 'true');
+  scene.querySelector('.scene-path-label').textContent = '같은 프로젝트';
+  scene.querySelectorAll('.scene-actor').forEach(actor => actor.removeAttribute('aria-hidden'));
+  scene.querySelectorAll('.scene-bubble').forEach(bubble => {
+    const index = slide.turns.findIndex(turn => turn.speaker === bubble.dataset.speaker);
+    const turn = slide.turns[index];
+    bubble.dataset.turn = index;
+    bubble.classList.remove('is-pending');
+    bubble.classList.toggle('scene-bubble--thought', !!turn.thought);
+    bubble.innerHTML = sceneBubbleCopy(turn);
+  });
+  frameEl.querySelector('.scene-footer').innerHTML = sceneFooterMarkup(slide);
+  frameEl.querySelector('.say').classList.replace('done', 'talking');
+  frameEl.querySelector('.say-text').textContent = '';
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (changesPosition) walkSceneActors();
+  scene.querySelectorAll('.scene-bubble-copy').forEach((copy, index) => {
+    animateSceneElement(copy, [
+      { opacity: 0, transform: 'translateY(-1.2cqh)' }, { opacity: 1, transform: 'translateY(0)' },
+    ], { duration: 450, delay: changesPosition ? (index ? 550 : 250) : 0, fill: 'backwards' });
+  });
+  animateSceneElement(frameEl.querySelector('.slide-title'), [{ opacity: .2 }, { opacity: 1 }], { duration: 400 });
+}
+
 function renderDialogueState() {
   const slide = deck.slides[deck.index];
   const step = deck.dialogueStep;
   frameEl.querySelectorAll('.scene-bubble').forEach(bubble => bubble.classList.toggle('is-pending', Number(bubble.dataset.turn) > step));
   const complete = step === slide.turns.length;
-  frameEl.querySelector('.crossroad-scene').classList.toggle('is-reunited', complete);
+  const scene = frameEl.querySelector('.crossroad-scene');
+  const movesToMeeting = scene.classList.contains('is-reunited') !== complete;
+  scene.classList.toggle('is-reunited', complete);
+  if (movesToMeeting) { cancelSceneMotion(); walkSceneActors(); }
   frameEl.querySelector('.scene-handshake').setAttribute('aria-hidden', String(!complete));
   frameEl.querySelectorAll('.scene-actor').forEach(actor => actor.setAttribute('aria-hidden', String(complete)));
   frameEl.querySelector('.scene-path-label').textContent = complete ? '다시 함께' : '같은 프로젝트';
@@ -2089,7 +2184,7 @@ document.fonts?.load('700 16px Galmuri11');
 
 let last = performance.now();
 function frame(now) {
-  const dt = Math.min((now - last) / 1000, 0.05);
+  const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
   last = now;
   time += dt;
   try {
