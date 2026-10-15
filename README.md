@@ -28,8 +28,9 @@ python3 -m http.server 4173 --bind 127.0.0.1
   - `title`, `subtitle`, `kicker`, `big`(크게 강조할 단어)
   - `points`: 글머리 목록. `**강조**`는 형광펜 표시
   - `image`: 이미지 한 장, `images`: 클릭으로 넘기는 사진 더미
-  - `type: 'hypothesis'` + `claims`: 가설 화면
+  - `type: 'hypothesis'` + `claims`: 가설 화면. `points`를 주면 가설 위에 배경 설명으로 나온다
   - `type: 'compare'` + `before`/`after`: 전후 비교
   - `type: 'gaps'` + `rows: [{ tag, who, why, need }]`: 누가, 왜, 무엇이 필요한지 비교하는 표
+  - `type: 'cycle'` + `steps`, `loop`: 반복 사이클
   - `say`: 캐릭터 대사창
 - 이미지는 `assets/` 아래에 둔다. 전광판 사진은 `CONFIG.billboard.images`.
