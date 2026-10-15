@@ -174,17 +174,18 @@
   .toc-items { display: flex; flex-wrap: wrap; gap: 1cqh .8cqw; }
   .toc-items span { padding: .5cqh .9cqw; font-size: 1.4cqw; background: var(--accent-soft); }
 
-  .slide--act {
+  .slide--act, .slide--opening {
     align-items: center; justify-content: center; text-align: center; gap: 2cqh;
     padding-left: 16cqw; padding-right: 16cqw; color: #fff;
     background: radial-gradient(ellipse 42% 62% at 50% 40%, #3d3157 0%, #1d1626 72%);
   }
-  .slide--act::before, .slide--act::after {
+  .slide--act::before, .slide--act::after,
+  .slide--opening::before, .slide--opening::after {
     content: ''; position: absolute; top: 0; bottom: 0; width: 13cqw;
     background: repeating-linear-gradient(90deg, #b3283a 0 2.2cqw, #8c1d2c 2.2cqw 3.2cqw, #c93a4b 3.2cqw 4.3cqw);
   }
-  .slide--act::before { left: 0; box-shadow: .6cqw 0 0 #5c1220; }
-  .slide--act::after { right: 0; box-shadow: -.6cqw 0 0 #5c1220; }
+  .slide--act::before, .slide--opening::before { left: 0; box-shadow: .6cqw 0 0 #5c1220; }
+  .slide--act::after, .slide--opening::after { right: 0; box-shadow: -.6cqw 0 0 #5c1220; }
   .curtain-top {
     position: absolute; top: 0; left: 0; right: 0; height: 9cqh; z-index: 1;
     background:
@@ -194,6 +195,25 @@
   .act-num { font-size: 10cqw; font-weight: 700; line-height: 1; color: var(--accent); text-shadow: .5cqw .5cqw 0 #0b0812; }
   .act-title { font-size: 4.2cqw; font-weight: 700; }
   .act-sub { font-size: 2.2cqw; color: #d8d2e6; }
+
+  .slide--opening.from-next, .slide--opening.from-prev { animation: none; }
+  .slide--opening::before, .slide--opening::after {
+    z-index: 1; pointer-events: none;
+    animation: curtain-open .9s cubic-bezier(.22, .61, .36, 1) both;
+  }
+  .slide--opening .curtain-top { z-index: 2; pointer-events: none; }
+  .slide--opening .act-num { font-size: 7.4cqw; }
+  .slide--opening .act-title { max-width: 66cqw; font-size: 4.1cqw; line-height: 1.4; }
+  .slide--opening .act-num, .slide--opening .act-title {
+    animation: stage-reveal .5s .3s both;
+  }
+  .slide--opening .say { z-index: 3; }
+  @keyframes curtain-open { from { width: 51cqw; } to { width: 13cqw; } }
+  @keyframes stage-reveal { from { opacity: 0; transform: translateY(1.2cqh); } }
+  @media (prefers-reduced-motion: reduce) {
+    .slide--opening::before, .slide--opening::after,
+    .slide--opening .act-num, .slide--opening .act-title { animation: none; }
+  }
 
   .hypo { display: grid; gap: 3cqh; flex: 1; align-content: center; }
   .hypo-label { justify-self: start; padding: .7cqh 1.2cqw; font-size: 1.7cqw; color: var(--accent); background: var(--ink); }
@@ -364,6 +384,7 @@
   - billboard.images: 전광판에 번갈아 나오는 사진들 (이미지를 화면에 끌어다 놓아도 바뀐다)
   - 포탈별 슬라이드는 slides/<포탈>.js에 있다. 첫 장 목차는 type: 'act' 슬라이드에서 자동으로 만들어진다.
   - 포탈에 sectionStyle: 'plain'을 지정하면 막 대신 번호와 구역 제목을 표시한다. tocTitle로 목차 제목을 바꿀 수 있다.
+  - sectionIntro: 'stage'를 함께 지정하면 번호형 구역의 도입을 커튼이 열리는 무대로 표시한다.
   - 슬라이드 필드
     type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' (생략하면 내용에 맞춰 자동 배치)
     kicker, title, subtitle, big, points, image, caption, images(사진 더미), claims, before/after, say(캐릭터 대사)
@@ -1392,6 +1413,12 @@ function slideMarkup(s) {
   if (s.type === 'toc') return { kind: 'toc', body: tocMarkup() };
   if (s.type === 'act') {
     if (deck.portal.sectionStyle === 'plain') {
+      if (deck.portal.sectionIntro === 'stage') {
+        return {
+          kind: 'opening',
+          body: `<div class="curtain-top" aria-hidden="true"></div><p class="act-num">${escapeHtml(actLabels(s).num)}</p><h2 class="act-title">${rich(s.title)}</h2>`,
+        };
+      }
       return { kind: 'statement', body: headingMarkup({ kicker: actLabels(s).num, title: s.title }) };
     }
     const act = ACTS[s.act];

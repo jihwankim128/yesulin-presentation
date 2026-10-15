@@ -2,11 +2,12 @@ window.PORTAL_SLIDES = window.PORTAL_SLIDES || {};
 
 PORTAL_SLIDES.soft = {
   sectionStyle: 'plain',
+  sectionIntro: 'stage',
   tocTitle: '발표 순서',
   tocSay: '저희의 소프트스킬 성장기, 함께 감상해보시죠.',
   slides: [
     {
-      type: 'act', act: 1, title: '정한 규칙, 왜 지키기 어려웠을까?',
+      type: 'act', act: 1, title: '정한 규칙,\n왜 지키기 어려웠을까?',
       items: ['반복되는 작업 지연', '데일리 다시 시작', '시간과 목표', '짧은 회고'],
       say: '규칙을 정했지만, 매일 지키는 건 또 다른 문제였어요.',
     },
@@ -49,7 +50,7 @@ PORTAL_SLIDES.soft = {
       say: '어제의 무리한 목표가 오늘도 그대로 복사되지는 않게 하려고요.',
     },
     {
-      type: 'act', act: 2, title: '친한데, 왜 말하기 어려울까?',
+      type: 'act', act: 2, title: '친한데,\n왜 말하기 어려울까?',
       items: ['말하기 어려웠던 마음', '대화와 역할 조율', '부탁의 범위', '기술 문서 공유'],
       say: '가까운 사이였지만, 불편한 이야기도 편하게 꺼낼 수 있었을까요?',
     },
