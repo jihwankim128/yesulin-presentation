@@ -241,28 +241,58 @@
   .card-detail { font-size: 1.75cqw; line-height: 1.45; color: #4f4a5e; }
   .cards-takeaway { font-size: 2cqw; line-height: 1.5; text-align: center; }
 
-  .slide--dialogue { gap: 1.7cqh; padding-top: 5cqh; }
-  .slide--dialogue .slide-title { font-size: 3.3cqw; }
-  .slide--dialogue .say-text { font-size: 2cqw; }
-  .dialogue-pair { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 3cqw; }
-  .dialogue-turn { --speaker-color: #1662c9; --speaker-soft: #e1efff; display: flex; flex-direction: column; gap: 1.5cqh; min-height: 0; }
-  .dialogue-turn:nth-child(2) { --speaker-color: #8a4e05; --speaker-soft: #fff0d2; }
-  .dialogue-bubble {
-    position: relative; flex: 1; display: grid; align-items: center;
-    padding: 2.1cqh 1.9cqw; background: #fff; border: .25cqw solid var(--speaker-color);
+  .slide--crossroads { gap: 1.5cqh; padding-top: 5cqh; }
+  .slide--crossroads .slide-title { font-size: 3.5cqw; line-height: 1.3; }
+  .slide--crossroads .say-text { font-size: 2cqw; }
+  .crossroad-scene { position: relative; flex: 1; min-height: 0; isolation: isolate; }
+  .scene-road { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+  .road-split, .road-joined { transition: opacity .7s; }
+  .road-joined { opacity: 0; }
+  .scene-bubble {
+    --speaker-color: #8a4e05; --speaker-soft: #fff0d2;
+    position: absolute; top: 0; left: 1%; width: 43%; min-height: 23cqh;
+    display: flex; flex-direction: column; justify-content: center; gap: .9cqh;
+    padding: 1.8cqh 1.7cqw; background: #fff; border: .25cqw solid var(--speaker-color);
     box-shadow: .4cqw .4cqw 0 var(--speaker-soft);
   }
-  .dialogue-bubble::after {
-    content: ''; position: absolute; left: calc(50% - 3cqw); bottom: -1cqh; width: 1.2cqw; height: 1.2cqw;
+  .scene-bubble--learner { --speaker-color: #1662c9; --speaker-soft: #e1efff; left: 56%; }
+  .scene-bubble::after {
+    content: ''; position: absolute; left: 50%; bottom: -1.2cqh; width: 1.2cqw; height: 1.2cqw;
     background: #fff; border-right: .25cqw solid var(--speaker-color); border-bottom: .25cqw solid var(--speaker-color); transform: rotate(45deg);
   }
-  .dialogue-quote { font-size: 1.85cqw; line-height: 1.6; }
-  .dialogue-person { display: flex; align-items: center; justify-content: center; gap: 1.2cqw; }
-  .dialogue-person img { width: 5.7cqw; height: 5.7cqw; image-rendering: pixelated; }
-  .dialogue-name { padding: .4cqh 1cqw; font-size: 2.2cqw; color: var(--speaker-color); background: var(--speaker-soft); }
-  .dialogue-turn.is-pending .dialogue-bubble { visibility: hidden; }
-  .dialogue-turn.is-pending .dialogue-person { opacity: .45; }
-  .dialogue-footer { min-height: 5.8cqh; display: grid; align-items: center; }
+  .scene-bubble--thought { border-style: dashed; background: #f4f8ff; }
+  .scene-bubble--thought::after { background: #f4f8ff; border-style: dashed; }
+  .scene-bubble-label { font-size: 1.35cqw; color: var(--speaker-color); }
+  .scene-quote { font-size: 2.1cqw; line-height: 1.45; }
+  .scene-note { font-size: 1.45cqw; line-height: 1.4; color: #615c68; }
+  .crossroad-scene--reunion .scene-quote { font-size: 1.65cqw; line-height: 1.5; }
+  .crossroad-scene--reunion .scene-bubble { min-height: 24cqh; }
+  .scene-actor {
+    position: absolute; left: 25%; bottom: 13%; display: grid; justify-items: center; gap: .4cqh;
+    transform: translateX(-50%); transition: left .7s steps(8), opacity .15s .6s;
+  }
+  .scene-actor--learner { left: 75%; }
+  .scene-actor img { width: 6.5cqw; height: 6.5cqw; image-rendering: pixelated; }
+  .scene-name { padding: .25cqh .7cqw; font-size: 1.7cqw; color: #68410a; background: #fff0d2; box-shadow: 0 0 0 .15cqw #a16d2d; }
+  .scene-actor--learner .scene-name, .handshake-names .scene-name:last-child { color: #13518e; background: #e1efff; box-shadow: 0 0 0 .15cqw #377bb5; }
+  .scene-bubble.is-pending { visibility: hidden; }
+  .scene-path-label { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); padding: .5cqh 1.1cqw; font-size: 1.25cqw; color: #655137; background: #fff9e8; border: .15cqw solid #b5a280; white-space: nowrap; }
+  .scene-handshake { position: absolute; bottom: 13%; left: 50%; transform: translateX(-50%); display: grid; justify-items: center; gap: .4cqh; visibility: hidden; }
+  .scene-handshake img { width: 16cqw; height: 7.2cqw; image-rendering: pixelated; }
+  .handshake-names { width: 100%; display: flex; justify-content: space-around; }
+  .crossroad-scene.is-reunited .road-split { opacity: 0; }
+  .crossroad-scene.is-reunited .road-joined { opacity: 1; }
+  .crossroad-scene.is-reunited .scene-actor { left: 50%; opacity: 0; }
+  .crossroad-scene.is-reunited .scene-handshake { visibility: visible; animation: handshake-arrive .2s .65s both, handshake-greet .45s .9s 2; }
+  .crossroad-scene.is-reunited .scene-bubble::after { opacity: 0; }
+  .scene-footer { min-height: 5.8cqh; display: grid; align-items: center; }
+  .scene-takeaway { text-align: center; font-size: 1.95cqw; line-height: 1.5; }
+  @keyframes handshake-arrive { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes handshake-greet { 50% { transform: translate(-50%, -.6cqh); } }
+  @media (prefers-reduced-motion: reduce) {
+    .road-split, .road-joined, .scene-actor { transition: none; }
+    .crossroad-scene.is-reunited .scene-handshake { animation: none; }
+  }
   .dialogue-controls { display: flex; align-items: center; justify-content: space-between; gap: 2cqw; }
   .dialogue-progress { font-size: 1.5cqw; color: #4f4a5e; }
   .dialogue-next { padding: .8cqh 1.3cqw; font-size: 1.6cqw; color: var(--ink); background: var(--accent-soft); box-shadow: 0 0 0 .2cqw var(--ink); }
@@ -433,10 +463,11 @@
   - 포탈에 sectionStyle: 'plain'을 지정하면 막 대신 번호와 구역 제목을 표시한다. tocTitle로 목차 제목을 바꿀 수 있다.
   - sectionIntro: 'stage'를 함께 지정하면 번호형 구역의 도입을 커튼이 열리는 무대로 표시한다.
   - 슬라이드 필드
-    type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' | 'cards' | 'dialogue' | 'table' (생략하면 내용에 맞춰 자동 배치)
+    type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' | 'cards' | 'crossroads' | 'dialogue' | 'table' (생략하면 내용에 맞춰 자동 배치)
     kicker, title, subtitle, big, points, image, caption, images(사진 더미), claims, before/after, say(캐릭터 대사)
     cards: [{ label, title, detail }], takeaway: 카드나 대화의 정리 문장
-    turns: [{ speaker: 'M' | 'D', text }], dialogue는 다음 버튼으로 대화와 정리를 차례로 공개한다.
+    turns: [{ speaker: '대O' | '맥O', label, text, note, thought }], scene: 'goals' | 'request' | 'reunion'
+    crossroads는 갈림길 장면, dialogue는 다음 버튼으로 대화와 길이 합쳐지는 악수 장면을 차례로 공개한다.
     **강조**는 형광펜으로 표시된다.
 */
 const CONFIG = {
@@ -1594,6 +1625,38 @@ function tocMarkup() {
   return `<p class="slide-kicker">${escapeHtml(deck.portal.label)}</p><h2 class="slide-title">${escapeHtml(deck.portal.tocTitle ?? '오늘의 공연 순서')}</h2><div class="toc${plain ? ' toc--sections' : ''}">${rows}</div>`;
 }
 
+function crossroadMarkup(s) {
+  const cast = ['대O', '맥O'];
+  const bubbles = cast.map((speaker, i) => {
+    const index = s.turns.findIndex(turn => turn.speaker === speaker);
+    const turn = s.turns[index];
+    return `<section class="scene-bubble${i ? ' scene-bubble--learner' : ''}${turn.thought ? ' scene-bubble--thought' : ''}" data-turn="${index}"><p class="scene-bubble-label">${escapeHtml(turn.label)}</p><p class="scene-quote">${rich(turn.text)}</p>${turn.note ? `<p class="scene-note">${rich(turn.note)}</p>` : ''}</section>`;
+  }).join('');
+  const actors = cast.map((speaker, i) => `<div class="scene-actor${i ? ' scene-actor--learner' : ''}" data-speaker="${escapeHtml(speaker)}"><img src="${dialoguePortraits[speaker]}" alt="${escapeHtml(speaker)} 캐릭터"><strong class="scene-name">${escapeHtml(speaker)}</strong></div>`).join('');
+  const road = `<svg class="scene-road" viewBox="0 0 1000 360" preserveAspectRatio="none" aria-hidden="true">
+    <g fill="#dce8cf"><path d="M60 280h12v-10h8v10h12v8H60z M888 285h12v-10h8v10h12v8h-32z M115 340h8v-8h6v8h9v6h-23z M865 340h8v-8h6v8h9v6h-23z"/></g>
+    <g class="road-split" fill="none" stroke-linejoin="round">
+      <path d="M500 360V315L250 275V155 M500 315L750 275V155" stroke="#ae9d7c" stroke-width="62"/>
+      <path d="M500 360V315L250 275V155 M500 315L750 275V155" stroke="#efdfba" stroke-width="52"/>
+      <path d="M500 315L250 275V155" stroke="#c88c38" stroke-width="5" stroke-dasharray="13 10"/>
+      <path d="M500 315L750 275V155" stroke="#5b93be" stroke-width="5" stroke-dasharray="13 10"/>
+      <path d="M500 360V315" stroke="#fffaf0" stroke-width="5" stroke-dasharray="12 10"/>
+    </g>
+    <g class="road-joined" fill="none" stroke-linejoin="round">
+      <path d="M250 155V205L500 270L750 205V155 M500 270V360" stroke="#91ad96" stroke-width="62"/>
+      <path d="M250 155V205L500 270L750 205V155 M500 270V360" stroke="#e5edcf" stroke-width="52"/>
+      <path d="M250 155V205L500 270" stroke="#c88c38" stroke-width="5" stroke-dasharray="13 10"/>
+      <path d="M750 155V205L500 270" stroke="#5b93be" stroke-width="5" stroke-dasharray="13 10"/>
+      <path d="M500 270V360" stroke="#55825e" stroke-width="5" stroke-dasharray="13 10"/>
+    </g>
+  </svg>`;
+  const handshake = s.type === 'dialogue' ? `<div class="scene-handshake" aria-hidden="true"><img src="${handshakePortrait}" alt="대O과 맥O이 악수하는 모습"><div class="handshake-names"><strong class="scene-name">대O</strong><strong class="scene-name">맥O</strong></div></div>` : '';
+  const footer = s.type === 'dialogue'
+    ? `<div class="dialogue-controls"><span class="dialogue-progress" aria-live="polite"></span><button class="dialogue-next" data-dialogue-next></button></div><p class="dialogue-takeaway" hidden>${rich(s.takeaway)}</p>`
+    : s.takeaway ? `<p class="scene-takeaway">${rich(s.takeaway)}</p>` : '';
+  return `${headingMarkup(s)}<div class="crossroad-scene crossroad-scene--${escapeHtml(s.scene)}">${road}${bubbles}${actors}${handshake}<p class="scene-path-label">같은 프로젝트</p></div><div class="scene-footer">${footer}</div>`;
+}
+
 function slideMarkup(s) {
   if (s.type === 'toc') return { kind: 'toc', body: tocMarkup() };
   if (s.type === 'act') {
@@ -1645,13 +1708,7 @@ function slideMarkup(s) {
     const cards = s.cards.map(card => `<section class="info-card"><p class="card-label">${escapeHtml(card.label)}</p><h3 class="card-title">${rich(card.title)}</h3>${card.detail ? `<p class="card-detail">${rich(card.detail)}</p>` : ''}</section>`).join('');
     return { kind: 'cards', body: `${headingMarkup(s)}<div class="cards">${cards}</div>${s.takeaway ? `<p class="cards-takeaway">${rich(s.takeaway)}</p>` : ''}` };
   }
-  if (s.type === 'dialogue') {
-    const turns = s.turns.map(turn => `<section class="dialogue-turn"><div class="dialogue-bubble"><p class="dialogue-quote">${rich(turn.text)}</p></div><div class="dialogue-person"><img src="${dialoguePortraits[turn.speaker]}" alt="${escapeHtml(turn.speaker)} 캐릭터"><strong class="dialogue-name">${escapeHtml(turn.speaker)}</strong></div></section>`).join('');
-    return {
-      kind: 'dialogue',
-      body: `${headingMarkup(s)}<div class="dialogue-pair">${turns}</div><div class="dialogue-footer"><div class="dialogue-controls"><span class="dialogue-progress" aria-live="polite"></span><button class="dialogue-next" data-dialogue-next></button></div><p class="dialogue-takeaway" hidden>${rich(s.takeaway)}</p></div>`,
-    };
-  }
+  if (s.type === 'crossroads' || s.type === 'dialogue') return { kind: 'crossroads', body: crossroadMarkup(s) };
 
   const points = s.points ? `<ul class="slide-points">${s.points.map(pt => `<li>${rich(pt)}</li>`).join('')}</ul>` : '';
   const media = mediaMarkup(s);
@@ -1664,10 +1721,28 @@ function slideMarkup(s) {
 const heroPortrait = makeCanvas(16, 16);
 heroPortrait.getContext('2d').drawImage(HERO.down.idle, 0, 0);
 const heroPortraitUrl = heroPortrait.toDataURL();
-const dialoguePortraits = {
-  M: sprite([...HAT, ...FACE_FRONT, ...BODY_FRONT, ...LEGS_IDLE], { ...HERO_PALETTE, R: '#4ba4d9', r: '#245a92', B: '#347ec4', b: '#a6d8fa' }).toDataURL(),
-  D: sprite([...HAT, ...FACE_FRONT, ...BODY_FRONT, ...LEGS_IDLE], { ...HERO_PALETTE, R: '#e5a139', r: '#9c6323', B: '#d58a30', b: '#f8d48a' }).toDataURL(),
+const teamPalettes = {
+  '대O': { ...HERO_PALETTE, R: '#e5a139', r: '#9c6323', B: '#d58a30', b: '#f8d48a' },
+  '맥O': { ...HERO_PALETTE, R: '#4ba4d9', r: '#245a92', B: '#347ec4', b: '#a6d8fa' },
 };
+const dialoguePortraits = Object.fromEntries(Object.entries(teamPalettes).map(([name, palette]) => [name, sprite([...HAT, ...FACE_FRONT, ...BODY_FRONT, ...LEGS_IDLE], palette).toDataURL()]));
+const handshakePortrait = (() => {
+  const canvas = makeCanvas(40, 18);
+  const ctx = canvas.getContext('2d');
+  const side = name => sprite([...HAT, ...FACE_SIDE, ...BODY_SIDE, ...LEGS_SIDE_IDLE], teamPalettes[name]);
+  ctx.drawImage(side('대O'), 0, 1);
+  ctx.drawImage(flipped(side('맥O')), 24, 1);
+  ctx.fillStyle = HERO_PALETTE.K;
+  ctx.fillRect(10, 10, 6, 4); ctx.fillRect(14, 11, 12, 4); ctx.fillRect(24, 10, 6, 4);
+  ctx.fillStyle = teamPalettes['대O'].B;
+  ctx.fillRect(11, 11, 5, 2); ctx.fillRect(15, 12, 3, 2);
+  ctx.fillStyle = teamPalettes['맥O'].B;
+  ctx.fillRect(24, 11, 5, 2); ctx.fillRect(22, 12, 3, 2);
+  ctx.fillStyle = HERO_PALETTE.S;
+  ctx.fillRect(18, 11, 4, 3); ctx.fillRect(17, 12, 6, 2);
+  ctx.fillStyle = '#cb9774'; ctx.fillRect(20, 12, 1, 2);
+  return canvas.toDataURL();
+})();
 
 function sayMarkup() {
   return `<div class="say talking"><span class="say-name">${escapeHtml(CONFIG.narrator)}</span><img class="say-portrait" src="${heroPortraitUrl}" alt=""><p class="say-text"></p></div>`;
@@ -1710,12 +1785,16 @@ function renderSlide(direction) {
 function renderDialogueState() {
   const slide = deck.slides[deck.index];
   const step = deck.dialogueStep;
-  frameEl.querySelectorAll('.dialogue-turn').forEach((turn, index) => turn.classList.toggle('is-pending', index > step));
+  frameEl.querySelectorAll('.scene-bubble').forEach(bubble => bubble.classList.toggle('is-pending', Number(bubble.dataset.turn) > step));
   const complete = step === slide.turns.length;
+  frameEl.querySelector('.crossroad-scene').classList.toggle('is-reunited', complete);
+  frameEl.querySelector('.scene-handshake').setAttribute('aria-hidden', String(!complete));
+  frameEl.querySelectorAll('.scene-actor').forEach(actor => actor.setAttribute('aria-hidden', String(complete)));
+  frameEl.querySelector('.scene-path-label').textContent = complete ? '다시 함께' : '같은 프로젝트';
   frameEl.querySelector('.dialogue-controls').hidden = complete;
   frameEl.querySelector('.dialogue-takeaway').hidden = !complete;
   frameEl.querySelector('.dialogue-progress').textContent = `${step + 1} / ${slide.turns.length + 1} · ${slide.turns[step]?.speaker ?? '함께 정한 것'}${complete ? '' : '의 이야기'}`;
-  frameEl.querySelector('.dialogue-next').textContent = step + 1 < slide.turns.length ? `${slide.turns[step + 1].speaker}의 이야기 보기 ▶` : '함께 정한 것 보기 ▶';
+  frameEl.querySelector('.dialogue-next').textContent = step + 1 < slide.turns.length ? `${slide.turns[step + 1].speaker}의 이야기 보기 ▶` : '다시 함께하기 ▶';
 }
 
 function updateTyping() {
