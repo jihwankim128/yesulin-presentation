@@ -272,6 +272,21 @@
   .cycle-step:last-child { background: var(--accent-soft); box-shadow: 0 0 0 .3cqw var(--ink), .5cqw .5cqw 0 .3cqw var(--accent); }
   .cycle-arrow { font-size: 2.4cqw; color: var(--accent-deep); }
   .cycle-loop { padding: 1.8cqh 2cqw; text-align: center; font-size: 2.1cqw; font-weight: 700; color: var(--accent); background: var(--ink); }
+
+  .confirm { position: fixed; left: 0; right: 0; bottom: 64px; display: grid; justify-items: center; padding: 0 16px; }
+  .confirm-box {
+    position: relative; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 22px;
+    width: min(760px, 100%); padding: 22px 26px; color: #fff; background: #1d1626;
+    box-shadow: 0 0 0 5px #fff, 0 0 0 10px #1d1626, 10px 10px 0 10px rgba(0, 0, 0, .35);
+  }
+  .confirm-name { position: absolute; top: -22px; left: 22px; padding: 3px 12px; font-size: 15px; color: var(--ink); background: #ffd34d; box-shadow: 0 0 0 3px #1d1626; }
+  .confirm-portrait { width: 72px; height: 72px; image-rendering: pixelated; background: #ffd34d; box-shadow: 0 0 0 3px #fff; }
+  .confirm-text { font-size: 21px; line-height: 1.55; }
+  .confirm-actions { display: flex; gap: 12px; margin-top: 14px; }
+  .confirm-actions button { min-width: 108px; padding: 8px 14px; font-size: 18px; text-align: left; background: rgba(255, 255, 255, .08); }
+  .confirm-actions button::before { content: '▶ '; visibility: hidden; color: #ffd34d; }
+  .confirm-actions button.selected { color: #1d1626; background: #ffd34d; }
+  .confirm-actions button.selected::before { visibility: visible; color: #1d1626; }
 </style>
 </head>
 <body>
@@ -310,6 +325,20 @@
     </div>
   </footer>
 </section>
+
+<div class="confirm" id="confirm" hidden>
+  <div class="confirm-box" role="dialog" aria-modal="true" aria-labelledby="confirm-text">
+    <span class="confirm-name">예술in</span>
+    <img class="confirm-portrait" id="confirm-portrait" alt="">
+    <div>
+      <p class="confirm-text" id="confirm-text">어 이건 뭐지? 반짝이는 무언가가 있어요.<br>예술in 사이트를 열어보시겠습니까?</p>
+      <div class="confirm-actions">
+        <button data-confirm="yes" class="selected">예</button>
+        <button data-confirm="no">아니오</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="lightbox" id="lightbox" hidden>
   <figure class="lightbox-frame">
@@ -577,6 +606,7 @@ const LINK_SIGN = { x: 272, y: 214, url: 'https://yesulin.art', text: '어 이�
 props.push({ y: LINK_SIGN.y, draw: drawLinkSign });
 SOLIDS.push({ x: LINK_SIGN.x - 7, y: LINK_SIGN.y - 4, w: 14, h: 5 });
 let hovering = null;
+let goldArmed = true;
 
 const background = buildBackground();
 
@@ -1080,6 +1110,7 @@ function drawLabels() {
   ctx.fillStyle = '#3a2412';
   ctx.fillText('예술in', sx, sy);
   drawLinkBubble();
+  drawBillboardHint();
 }
 
 function drawLinkBubble() {
@@ -1101,6 +1132,29 @@ function drawLinkBubble() {
   ctx.fillRect(cx - border, top + h, border * 2, border);
   ctx.fillStyle = '#1d1626';
   ctx.fillText(LINK_SIGN.text, cx, top + h / 2 + 1);
+}
+
+function drawBillboardHint() {
+  const ready = billboardImages.filter(isLoaded);
+  if (!ready.length) return;
+  const index = currentBillboardIndex();
+  const text = ready.length > 1 ? `눌러서 크게 보기  ${index + 1} / ${ready.length}` : '눌러서 크게 보기';
+  const size = Math.round(scale * 4);
+  ctx.font = `700 ${size}px Galmuri11, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const bob = hovering === 'billboard' ? 0 : Math.round(Math.sin(time * 3) * scale * 0.4);
+  const [cx, cy] = toScreen(BILLBOARD.x + BILLBOARD.w / 2, BILLBOARD.y + BILLBOARD.h + 3.5);
+  const w = ctx.measureText(text).width + size * 1.6;
+  const h = size * 1.7;
+  const left = Math.round(cx - w / 2), top = Math.round(cy - h / 2 + bob);
+  const border = Math.max(2, Math.round(scale * 0.5));
+  ctx.fillStyle = '#1d1626';
+  ctx.fillRect(left - border, top - border, w + border * 2, h + border * 2);
+  ctx.fillStyle = hovering === 'billboard' ? '#ffd34d' : '#2d3352';
+  ctx.fillRect(left, top, w, h);
+  ctx.fillStyle = hovering === 'billboard' ? '#1d1626' : '#ffe27a';
+  ctx.fillText(text, cx, top + h / 2 + 1);
 }
 
 function drawBillboardSign() {
@@ -1155,6 +1209,14 @@ function updatePlay(dt) {
   if (!blocked(hero.x, hero.y + dy * step)) hero.y += dy * step;
   hero.dir = dx < 0 ? 'left' : dx > 0 ? 'right' : dy < 0 ? 'up' : 'down';
   hero.animT += dt;
+
+  const goldDistance = Math.hypot(hero.x - LINK_SIGN.x, hero.y - LINK_SIGN.y);
+  if (goldDistance > 26) goldArmed = true;
+  if (goldDistance < 15 && goldArmed) {
+    goldArmed = false;
+    openConfirm();
+    return;
+  }
 
   const portal = portalUnderHero();
   if (portal) startWarp(portal);
@@ -1483,6 +1545,13 @@ function toggleFullscreen() {
 addEventListener('keydown', e => {
   if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); return; }
 
+  if (state === 'confirm') {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key)) { e.preventDefault(); selectConfirm(1 - confirmChoice); }
+    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); answerConfirm(confirmChoice === 0); }
+    else if (e.key === 'Escape') answerConfirm(false);
+    return;
+  }
+
   if (state === 'zoom') {
     if (e.key === 'ArrowRight') stepLightbox(1);
     else if (e.key === 'ArrowLeft') stepLightbox(-1);
@@ -1523,7 +1592,7 @@ addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === ' ') {
     const near = nearPortal();
     if (near) { e.preventDefault(); startWarp(near); return; }
-    if (Math.hypot(hero.x - LINK_SIGN.x, hero.y - LINK_SIGN.y) < 26) { e.preventDefault(); openLink(); }
+    if (Math.hypot(hero.x - LINK_SIGN.x, hero.y - LINK_SIGN.y) < 26) { e.preventDefault(); openConfirm(); }
   }
 });
 
@@ -1588,7 +1657,36 @@ view.addEventListener('click', e => {
   if (state !== 'play') return;
   const target = hitTarget(e);
   if (target === 'billboard') openLightbox();
-  if (target === 'link') openLink();
+  if (target === 'link') openConfirm();
+});
+
+const confirmEl = document.getElementById('confirm');
+const confirmButtons = [...confirmEl.querySelectorAll('[data-confirm]')];
+let confirmChoice = 0;
+document.getElementById('confirm-portrait').src = heroPortraitUrl;
+
+function openConfirm() {
+  keys.clear();
+  hero.moving = false;
+  state = 'confirm';
+  confirmEl.hidden = false;
+  selectConfirm(0);
+}
+
+function selectConfirm(index) {
+  confirmChoice = index;
+  confirmButtons.forEach((button, i) => button.classList.toggle('selected', i === index));
+}
+
+function answerConfirm(yes) {
+  confirmEl.hidden = true;
+  state = 'play';
+  if (yes) openLink();
+}
+
+confirmEl.addEventListener('click', e => {
+  const answer = e.target.closest('[data-confirm]')?.dataset.confirm;
+  if (answer) answerConfirm(answer === 'yes');
 });
 lightboxEl.addEventListener('click', e => {
   const action = e.target.closest('[data-lightbox]')?.dataset.lightbox;

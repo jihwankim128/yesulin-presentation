@@ -53,7 +53,7 @@ PORTAL_SLIDES.product = {
         'assets/product/gong-go/hongbo/clipboard_20261015_015504.png',
         'assets/product/gong-go/hongbo/clipboard_20261015_020107.jpg',
         'assets/product/gong-go/hongbo/clipboard_20261015_020140.jpg',
-        'assets/product/gong-go/hongbo/clipboard_20261015_020155.jpg',
+        'assets/product/gong-go/hongbo/yonsei-board.png',
       ],
       say: '이미 아는 사람 말고, 아직 모르는 사람에게 가봤어요.',
     },
@@ -61,7 +61,7 @@ PORTAL_SLIDES.product = {
       kicker: '결과', title: '배우들이 모였습니다',
       big: '100명+',
       subtitle: '공고 알림 오픈채팅방에 모인 배우들',
-      image: 'assets/product/gong-go/result/clipboard_20261015_022849.jpg',
+      image: 'assets/product/gong-go/result/openchat-101.png',
       say: '알림 하나에 이렇게 모일 줄은 몰랐어요.',
     },
     {
