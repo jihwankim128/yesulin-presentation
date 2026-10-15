@@ -259,7 +259,8 @@
   .scene-bubble-copy { display: grid; gap: .9cqh; }
   .scene-bubble--learner { --speaker-color: #1662c9; --speaker-soft: #e1efff; top: 8%; left: 53%; transition-duration: 1.6s, 1.6s, .6s; }
   .crossroad-scene--request .scene-bubble { top: 9%; left: 9%; }
-  .crossroad-scene--request .scene-bubble--learner { top: 15%; left: 56%; }
+  .crossroad-scene--request .scene-bubble--learner { top: 8%; left: 53%; }
+  .crossroad-scene--request.is-request-complete .scene-bubble--learner { top: 15%; left: 56%; }
   .scene-bubble::after {
     content: ''; position: absolute; left: 50%; bottom: -1.2cqh; width: 1.2cqw; height: 1.2cqw;
     background: #fff; border-right: .25cqw solid var(--speaker-color); border-bottom: .25cqw solid var(--speaker-color); transform: rotate(45deg);
@@ -280,7 +281,8 @@
   }
   .scene-actor--learner { --travel-time: 1.6s; --travel-delay: .12s; left: 72%; top: 90%; }
   .crossroad-scene--request .scene-actor, .crossroad-scene--reunion .scene-actor { left: 34%; top: 96%; }
-  .crossroad-scene--request .scene-actor--learner, .crossroad-scene--reunion .scene-actor--learner { left: 78%; top: 98%; }
+  .crossroad-scene--request .scene-actor--learner { left: 72%; top: 90%; }
+  .crossroad-scene--request.is-request-complete .scene-actor--learner, .crossroad-scene--reunion .scene-actor--learner { left: 78%; top: 98%; }
   .scene-avatar { position: relative; width: 6.5cqw; height: 6.5cqw; }
   .scene-avatar img { width: 100%; height: 100%; image-rendering: pixelated; }
   .scene-walk { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
@@ -1574,6 +1576,16 @@ function moveSlide(delta) {
       return;
     }
   }
+  if (slide.scene === 'request') {
+    const step = deck.requestStep + delta;
+    if (step >= 0 && step < slide.turns.length) {
+      const movingSpeakers = [...frameEl.querySelectorAll('.scene-actor.is-walking')].map(actor => actor.dataset.speaker);
+      cancelSceneMotion();
+      deck.requestStep = step;
+      renderRequestState(true, movingSpeakers);
+      return;
+    }
+  }
   if (slide.type === 'dialogue') {
     const step = deck.dialogueStep + delta;
     if (step >= 0 && step <= slide.turns.length) {
@@ -1795,6 +1807,7 @@ function renderSlide(direction) {
   cancelSceneMotion();
   const { index, slides } = deck;
   const slide = slides[index];
+  if (slide.scene === 'request') deck.requestStep = direction === 'prev' ? slide.turns.length - 1 : 0;
   const { kind, body } = slideMarkup(slide);
   const say = slide.say ? sayMarkup() : '';
   if (kind === 'crossroads' && frameEl.querySelector('.crossroad-scene')) {
@@ -1807,6 +1820,7 @@ function renderSlide(direction) {
     deck.castStep = direction === 'prev' ? slide.turns.length - 1 : 0;
     renderGoalState(direction === 'next' ? 0 : null);
   }
+  if (slide.scene === 'request') renderRequestState();
 
   frameEl.querySelectorAll('.slide-media img, .stack-card img').forEach(img => img.addEventListener('error', () => {
     const missing = document.createElement('div');
@@ -1877,9 +1891,25 @@ function revealCrossroadCast(index) {
   if (index === actors.length - 1) reveal(frameEl.querySelector('.scene-takeaway'), 480);
 }
 
-function walkSceneActors() {
+function renderRequestState(animate = false, movingSpeakers = []) {
+  const complete = deck.requestStep === 1;
+  const scene = frameEl.querySelector('.crossroad-scene');
+  const thought = scene.querySelector('.scene-bubble--learner');
+  scene.classList.toggle('is-request-complete', complete);
+  thought.classList.toggle('is-pending', !complete);
+  if (!animate) return;
+  walkSceneActors([...movingSpeakers, '맥O']);
+  if (complete && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    animateSceneElement(thought.querySelector('.scene-bubble-copy'), [
+      { opacity: 0, transform: 'translateY(-1.2cqh)' }, { opacity: 1, transform: 'translateY(0)' },
+    ], { duration: 450, delay: 120, fill: 'backwards' });
+  }
+}
+
+function walkSceneActors(speakers = null) {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   frameEl.querySelectorAll('.scene-actor').forEach((actor, index) => {
+    if (speakers && !speakers.includes(actor.dataset.speaker)) return;
     actor.classList.add('is-walking');
     const walk = animateSceneElement(actor.querySelector('.scene-avatar'), [
       { transform: 'translateY(0)' }, { transform: 'translateY(-.25cqh)' }, { transform: 'translateY(0)' },
@@ -1890,6 +1920,8 @@ function walkSceneActors() {
 
 function continueCrossroadScene(slide, wasWalking) {
   const scene = frameEl.querySelector('.crossroad-scene');
+  const wasWaitingForThought = scene.classList.contains('crossroad-scene--request') && !scene.classList.contains('is-request-complete');
+  const waitsForThought = slide.scene === 'request' && deck.requestStep === 0;
   const changesPosition = wasWalking || scene.classList.contains('is-reunited') || scene.classList.contains('crossroad-scene--goals') !== (slide.scene === 'goals');
   frameEl.querySelector('.slide').classList.remove('from-next', 'from-prev');
   frameEl.querySelector('.slide-title').innerHTML = rich(slide.title);
@@ -1912,8 +1944,9 @@ function continueCrossroadScene(slide, wasWalking) {
   frameEl.querySelector('.say').classList.replace('done', 'talking');
   frameEl.querySelector('.say-text').textContent = '';
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (changesPosition) walkSceneActors();
+  if (changesPosition) walkSceneActors(waitsForThought || (wasWaitingForThought && slide.scene === 'goals') ? ['대O'] : null);
   scene.querySelectorAll('.scene-bubble-copy').forEach((copy, index) => {
+    if (waitsForThought && index === 1) return;
     animateSceneElement(copy, [
       { opacity: 0, transform: 'translateY(-1.2cqh)' }, { opacity: 1, transform: 'translateY(0)' },
     ], { duration: 450, delay: changesPosition ? (index ? 550 : 250) : 0, fill: 'backwards' });
