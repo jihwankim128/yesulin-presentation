@@ -3,10 +3,10 @@ window.PORTAL_SLIDES = window.PORTAL_SLIDES || {};
 PORTAL_SLIDES.soft = {
   sectionStyle: 'plain',
   tocTitle: '발표 순서',
-  tocSay: '저희의 소프트스킬 성장기, 지금부터 막을 올립니다.',
+  tocSay: '저희의 소프트스킬 성장기, 함께 감상해보시죠.',
   slides: [
     {
-      type: 'act', act: 1, title: '데일리',
+      type: 'act', act: 1, title: '정한 규칙, 왜 지키기 어려웠을까?',
       items: ['반복되는 작업 지연', '데일리 다시 시작', '시간과 목표', '짧은 회고'],
       say: '규칙을 정했지만, 매일 지키는 건 또 다른 문제였어요.',
     },
