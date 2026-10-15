@@ -3,7 +3,7 @@ window.PORTAL_SLIDES = window.PORTAL_SLIDES || {};
 PORTAL_SLIDES.soft = {
   sectionStyle: 'plain',
   tocTitle: '발표 순서',
-  tocSay: '다들 열심히 하고 있는데… 팀 분위기는 왜 예전 같지 않지?',
+  tocSay: '저희의 소프트스킬 성장기, 지금부터 막을 올립니다.',
   slides: [
     {
       type: 'act', act: 1, title: '데일리',
