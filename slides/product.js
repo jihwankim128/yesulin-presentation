@@ -96,7 +96,7 @@ PORTAL_SLIDES.product = {
     },
     {
       type: 'act', act: 3, title: '빈틈에서 가치를',
-      items: ['공고와 배우 풀', '세 번째 가설', '실패해도 다시', '진행 중인 빈틈', 'OTR', '지원 관리', '남극장'],
+      items: ['공고와 배우 풀', '세 번째 가설', '실패해도 다시', '진행 중인 빈틈', '예매', 'OTR', '지원 관리', '남극장'],
       say: '불편함은 해결했고... 발견한 빈틈, 넓혀도 될까?',
     },
     {
@@ -118,8 +118,20 @@ PORTAL_SLIDES.product = {
     },
     {
       kicker: '이 사이클 위에서', title: '지금도 여러 빈틈을 돌리는 중',
-      points: ['**OTR**: 기존 플랫폼과 연 쌓기', '**예매**: 무료 공연 티켓팅', '**지원 관리**: 지원서부터 쉽게', '**한 제작사 타게팅**: 남극장 스케줄 관리'],
+      points: ['**예매**: 무료 공연 티켓팅', '**OTR**: 기존 플랫폼과 연 쌓기', '**지원 관리**: 지원서부터 쉽게', '**한 제작사 타게팅**: 남극장 스케줄 관리'],
       say: '빈틈 후보는 이미 여러 개 돌고 있어요.',
+    },
+    {
+      kicker: '다음 빈틈 후보', title: '무료 공연 예매',
+      big: '69건',
+      points: ['스레드 활동 중 **무료 공연 티켓팅** 연결', '1곳에서 예매 69건, 그 외 제작사 **3곳**과도 연결'],
+      images: [
+        'assets/product/reservation/clipboard_20261015_031837.jpg',
+        'assets/product/reservation/clipboard_20261015_032602.jpg',
+        'assets/product/reservation/clipboard_20261015_031850.jpg',
+        'assets/product/reservation/clipboard_20261015_033028.jpg',
+      ],
+      say: '예매는 생각보다 반응이 괜찮았어요!',
     },
     {
       title: '막강한 OTR과 연 쌓기',

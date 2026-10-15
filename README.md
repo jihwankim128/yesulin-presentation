@@ -32,5 +32,6 @@ python3 -m http.server 4173 --bind 127.0.0.1
   - `type: 'compare'` + `before`/`after`: 전후 비교
   - `type: 'gaps'` + `rows: [{ tag, who, why, need }]`: 누가, 왜, 무엇이 필요한지 비교하는 표
   - `type: 'cycle'` + `steps`, `loop`: 반복 사이클
+  - `type: 'table'` + `head`, `rows`: 표. 마지막 열이 강조된다
   - `say`: 캐릭터 대사창
 - 이미지는 `assets/` 아래에 둔다. 전광판 사진은 `CONFIG.billboard.images`.
