@@ -1,6 +1,7 @@
 window.PORTAL_SLIDES = window.PORTAL_SLIDES || {};
 
 PORTAL_SLIDES.tech = {
+  actRoles: { 1: '무대 세우기', 2: '관객이 몰리다', 3: '커튼콜' },
   tocSay: '손으로 하던 알림을 서비스로, 그리고 그 서비스가 얼마나 버티는지까지.',
   slides: [
     {

@@ -1,6 +1,7 @@
 window.PORTAL_SLIDES = window.PORTAL_SLIDES || {};
 
 PORTAL_SLIDES.product = {
+  actRoles: { 1: '리허설', 2: '본 공연', 3: '앙코르' },
   tocSay: '오늘 공연은 3막으로 준비했어요. 편하게 봐주세요!',
   slides: [
     {

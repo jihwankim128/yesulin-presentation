@@ -2071,7 +2071,8 @@ function actLabels(slide) {
   if (deck.portal.sectionStyle === 'plain') {
     return { num: String(slide.act).padStart(2, '0'), role: slide.title };
   }
-  return { ...ACTS[slide.act], subtitle: slide.title };
+  const role = deck.portal.actRoles?.[slide.act];
+  return { ...ACTS[slide.act], ...(role ? { role } : {}), subtitle: slide.title };
 }
 
 function tocMarkup() {
