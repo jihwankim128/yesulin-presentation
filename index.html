@@ -477,6 +477,21 @@
   .sensor-pad.is-hidden, .sensor-row.is-hidden { display: none; }
   @keyframes pad-stick { from { transform: scale(1.8); opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .sensor-pad, .sensor-row { animation: none; } }
+
+  .hud-apples { position: absolute; top: 16px; left: 112px; display: flex; align-items: center; gap: .5rem; padding: .5rem .9rem; font-size: 15px; background: rgba(15, 20, 36, .82); box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px rgba(255, 255, 255, .85); }
+  .hud-apples i { width: 12px; height: 12px; background: #e2474b; box-shadow: inset -3px -3px 0 #9e2a33, 0 -4px 0 -2px #4f9a3a; }
+  .doodle { position: fixed; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(9, 11, 22, .85); }
+  .doodle-box { display: grid; justify-items: center; gap: 14px; padding: 22px 26px; color: #fff; background: #1d1626; box-shadow: 0 0 0 5px #fff, 0 0 0 10px #1d1626; }
+  .doodle-title { font-size: 20px; font-weight: 700; }
+  .doodle-hint { font-size: 14px; color: #c6cde6; }
+  #doodle-canvas { width: min(84vw, 720px); aspect-ratio: 30 / 12; image-rendering: pixelated; cursor: crosshair; touch-action: none; box-shadow: 0 0 0 4px #1d1626, 0 0 0 7px #c99358; }
+  .doodle-palette { display: flex; gap: 8px; }
+  .doodle-palette button { width: 34px; height: 34px; background: var(--c); box-shadow: 0 0 0 2px #fff; }
+  .doodle-palette button.selected { box-shadow: 0 0 0 2px #1d1626, 0 0 0 5px #ffd34d; }
+  .doodle-palette button[data-color="0"] { background: repeating-linear-gradient(45deg, #b07a46 0 6px, #c99358 6px 12px); }
+  .doodle-actions { display: flex; gap: 10px; }
+  .doodle-actions button { padding: .5rem .9rem; font-size: 15px; background: rgba(255, 255, 255, .1); }
+  .doodle-actions button:hover { background: rgba(255, 255, 255, .2); }
 </style>
 </head>
 <body>
@@ -484,6 +499,7 @@
 
 <div class="hud" id="hud" hidden>
   <div class="hud-place">예술in</div>
+  <div class="hud-apples" id="hud-apples" hidden><i></i><span id="apple-count">0</span></div>
   <div class="hud-keys">
     <span><kbd>←↑↓→</kbd>이동</span>
     <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd>포탈 바로가기</span>
@@ -527,6 +543,19 @@
         <button data-confirm="yes" class="selected">예</button>
         <button data-confirm="no">아니오</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="doodle" id="doodle" hidden>
+  <div class="doodle-box" role="dialog" aria-modal="true" aria-labelledby="doodle-title">
+    <p class="doodle-title" id="doodle-title">예술in 표지판에 낙서하기</p>
+    <canvas id="doodle-canvas" width="30" height="12"></canvas>
+    <div class="doodle-palette" id="doodle-palette"></div>
+    <p class="doodle-hint">드래그해서 그려요. 지우개는 맨 앞 칸이에요.</p>
+    <div class="doodle-actions">
+      <button data-doodle="clear">다 지우기</button>
+      <button data-doodle="save">저장하고 닫기</button>
     </div>
   </div>
 </div>
@@ -690,6 +719,25 @@ function sfx(name) {
   if (name === 'warp') {
     tone(220, at, 0.7, { type: 'triangle', volume: 0.22, slideTo: 1760 });
     tone(330, at + 0.05, 0.65, { volume: 0.05, slideTo: 2640 });
+    return;
+  }
+  if (name === 'meow') {
+    tone(700, at, 0.18, { type: 'triangle', volume: 0.14, slideTo: 1100 });
+    tone(1000, at + 0.18, 0.28, { type: 'triangle', volume: 0.12, slideTo: 560 });
+    return;
+  }
+  if (name === 'thud') {
+    tone(160, at, 0.18, { type: 'square', volume: 0.12, slideTo: 60 });
+    return;
+  }
+  if (name === 'knock') {
+    tone(220, at, 0.07, { type: 'square', volume: 0.12, slideTo: 120 });
+    tone(220, at + 0.16, 0.07, { type: 'square', volume: 0.12, slideTo: 120 });
+    return;
+  }
+  if (name === 'boom') {
+    tone(240, at, 0.3, { type: 'triangle', volume: 0.1, slideTo: 50 });
+    tone(1800, at + 0.05, 0.25, { type: 'square', volume: 0.025, slideTo: 2400 });
     return;
   }
   if (name === 'flatline') {
@@ -890,8 +938,11 @@ const SOLIDS = [
 ];
 
 const props = [];
+const shakeTrees = [];
 function addTreeProp(x, y) {
-  props.push({ y, draw: () => g.drawImage(TREE, x - 8, y - 15) });
+  const tree = { x, y, shake: 0, cooldown: 0 };
+  shakeTrees.push(tree);
+  props.push({ y, draw: () => g.drawImage(TREE, x - 8 + Math.round(Math.sin(time * 45) * tree.shake), y - 15) });
   SOLIDS.push({ x: x - 5, y: y - 4, w: 10, h: 5 });
 }
 function addLamp(x, y) {
@@ -1204,6 +1255,11 @@ function drawSign(x, y) {
   g.fillRect(x - 15, y - 20, 30, 12);
   g.fillStyle = '#c99358';
   g.fillRect(x - 15, y - 20, 30, 1);
+  doodle.cells.forEach((color, i) => {
+    if (!color) return;
+    g.fillStyle = DOODLE_COLORS[color];
+    g.fillRect(x - 15 + (i % 30), y - 20 + Math.floor(i / 30), 1, 1);
+  });
 }
 
 function drawPortalSwirl(p) {
@@ -1261,6 +1317,266 @@ function spawnParticles(dt) {
   }
 }
 
+const DOODLE_COLORS = ['', '#1d1626', '#ffffff', '#e2474b', '#ffd34d', '#246bfe', '#7bc96f', '#ff7ab6'];
+const doodle = { cells: new Array(360).fill(0), color: 1, drawing: false };
+try {
+  const saved = localStorage.getItem('yesulin-doodle');
+  if (saved && saved.length === 360) doodle.cells = [...saved].map(Number);
+} catch {}
+
+const cat = { x: 260, y: 206, tx: 300, ty: 210, mode: 'walk', timer: 0, dir: 1, step: 0 };
+const CAT_AREAS = [[30, 120, 182, 222], [214, 360, 182, 222], [104, 170, 124, 150], [216, 280, 124, 150]];
+const apples = [];
+const speech = [];
+const fireworks = { until: 0, spawn: 0, sparks: [] };
+const houseKnocks = [{ x: 40, y: 46, until: 0 }, { x: 304, y: 46, until: 0 }];
+let appleCount = 0;
+
+function say(text, x, y, seconds = 1.6) {
+  speech.push({ text, x, y, until: time + seconds });
+}
+
+function pickCatTarget() {
+  const [x0, x1, y0, y1] = CAT_AREAS[Math.floor(Math.random() * CAT_AREAS.length)];
+  cat.tx = x0 + Math.random() * (x1 - x0);
+  cat.ty = y0 + Math.random() * (y1 - y0);
+  cat.mode = 'walk';
+}
+
+function updateEasterEggs(dt) {
+  cat.timer -= dt;
+  if (cat.mode === 'walk') {
+    const dx = cat.tx - cat.x, dy = cat.ty - cat.y, dist = Math.hypot(dx, dy);
+    if (dist < 1) {
+      cat.mode = Math.random() < 0.35 ? 'sleep' : 'sit';
+      cat.timer = cat.mode === 'sleep' ? 6 + Math.random() * 4 : 2 + Math.random() * 3;
+    } else {
+      cat.x += dx / dist * 16 * dt;
+      cat.y += dy / dist * 16 * dt;
+      cat.dir = dx >= 0 ? 1 : -1;
+      cat.step += dt;
+    }
+  } else if (cat.timer <= 0) pickCatTarget();
+  if (cat.mode === 'sleep' && Math.floor(time) % 3 === 0 && !speech.some(b => b.cat)) speech.push({ text: 'zZ', x: cat.x, y: cat.y - 12, until: time + 1, cat: true });
+
+  shakeTrees.forEach(tree => {
+    tree.shake = Math.max(0, tree.shake - dt * 3);
+    tree.cooldown -= dt;
+  });
+  for (let i = apples.length - 1; i >= 0; i--) {
+    const a = apples[i];
+    if (a.z > 0 || a.vz > 0) {
+      a.vz -= 220 * dt;
+      a.z = Math.max(0, a.z + a.vz * dt);
+      if (a.z === 0 && a.vz < 0) a.vz = Math.abs(a.vz) > 40 ? -a.vz * 0.35 : 0;
+    } else if (state === 'play' && Math.hypot(hero.x - a.x, hero.y - a.ground) < 9) {
+      apples.splice(i, 1);
+      appleCount += 1;
+      document.getElementById('apple-count').textContent = `사과 ${appleCount}`;
+      document.getElementById('hud-apples').hidden = false;
+      say('사과 +1', hero.x, hero.y - 22, 1);
+      sfx('yes');
+    }
+  }
+
+  if (time < fireworks.until) {
+    fireworks.spawn -= dt;
+    if (fireworks.spawn <= 0) {
+      fireworks.spawn = 0.35;
+      const cx = BILLBOARD.x + 10 + Math.random() * (BILLBOARD.w - 20), cy = 14 + Math.random() * 40;
+      const color = ['#ffd34d', '#ff7ab6', '#4cc8ff', '#7bf18a', '#ffffff'][Math.floor(Math.random() * 5)];
+      for (let i = 0; i < 26; i++) {
+        const angle = i / 26 * Math.PI * 2, speed = 18 + Math.random() * 14;
+        fireworks.sparks.push({ x: cx, y: cy, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 1, color });
+      }
+      sfx('boom');
+    }
+  }
+  fireworks.sparks.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 30 * dt; p.life -= dt * 0.9; });
+  fireworks.sparks = fireworks.sparks.filter(p => p.life > 0);
+  for (let i = speech.length - 1; i >= 0; i--) if (time > speech[i].until) speech.splice(i, 1);
+}
+
+function drawCat() {
+  const x = Math.round(cat.x), y = Math.round(cat.y), d = cat.dir;
+  const px = (ox2, oy, w, h, color) => { g.fillStyle = color; g.fillRect(d > 0 ? x + ox2 : x - ox2 - w + 1, y + oy, w, h); };
+  const O = '#f2a33a', D = '#c46d1d', K = '#3a2412';
+  g.fillStyle = 'rgba(20, 30, 20, 0.25)';
+  g.fillRect(x - 5, y, 10, 1);
+  if (cat.mode === 'walk') {
+    const s = Math.floor(cat.step * 8) % 2;
+    px(-5, -5, 9, 4, K); px(-4, -4, 7, 2, O); px(-3, -4, 1, 2, D); px(-1, -4, 1, 2, D);
+    px(2, -8, 5, 5, K); px(3, -7, 3, 3, O); px(2, -9, 1, 1, K); px(5, -9, 1, 1, K); px(4, -6, 1, 1, K);
+    px(-7, -8, 1, 4, K); px(-6, -5, 1, 1, K);
+    px(s ? -4 : -3, -1, 1, 1, K); px(s ? 1 : 2, -1, 1, 1, K);
+  } else if (cat.mode === 'sit') {
+    px(-3, -7, 6, 7, K); px(-2, -6, 4, 5, O); px(-1, -5, 1, 3, D);
+    px(-2, -11, 5, 5, K); px(-1, -10, 3, 3, O); px(-2, -12, 1, 1, K); px(1, -12, 1, 1, K); px(1, -9, 1, 1, K);
+    px(-6, -1, 4, 1, K);
+  } else {
+    px(-5, -4, 10, 4, K); px(-4, -3, 8, 2, O); px(-2, -3, 1, 2, D); px(0, -3, 1, 2, D);
+    px(3, -5, 1, 1, K); px(5, -5, 1, 1, K); px(3, -2, 2, 1, K);
+  }
+}
+
+function drawApple(a) {
+  const x = Math.round(a.x), y = Math.round(a.ground - a.z);
+  if (a.z < 1) { g.fillStyle = 'rgba(20, 30, 20, 0.25)'; g.fillRect(x - 1, a.ground + 1, 4, 1); }
+  g.fillStyle = '#1d1626'; g.fillRect(x - 1, y - 3, 5, 4);
+  g.fillStyle = '#e2474b'; g.fillRect(x, y - 2, 3, 2);
+  g.fillStyle = '#ff9aa2'; g.fillRect(x, y - 2, 1, 1);
+  g.fillStyle = '#4f9a3a'; g.fillRect(x + 1, y - 4, 1, 1);
+}
+
+function drawFireworks() {
+  fireworks.sparks.forEach(p => {
+    g.globalAlpha = Math.max(0, p.life);
+    g.fillStyle = p.color;
+    g.fillRect(Math.round(p.x), Math.round(p.y), 1, 1);
+  });
+  g.globalAlpha = 1;
+}
+
+function drawHouseKnocks() {
+  houseKnocks.forEach(h => {
+    if (time > h.until) return;
+    g.fillStyle = Math.floor(time * 8) % 2 ? '#2d3352' : '#fff3a0';
+    g.fillRect(h.x + 6, h.y + 17, 6, 5);
+    g.fillRect(h.x + 28, h.y + 17, 6, 5);
+  });
+}
+
+function drawSpeechBubbles() {
+  speech.forEach(b => {
+    const [cx, cy] = toScreen(b.x, b.y);
+    const size = Math.round(scale * 3.6);
+    ctx.font = `700 ${size}px Galmuri11, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const w = ctx.measureText(b.text).width + size * 1.2, h = size * 1.7;
+    const left = Math.round(cx - w / 2), top = Math.round(cy - h / 2);
+    const border = Math.max(2, Math.round(scale * 0.5));
+    ctx.fillStyle = '#1d1626';
+    ctx.fillRect(left - border, top - border, w + border * 2, h + border * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(left, top, w, h);
+    ctx.fillStyle = '#1d1626';
+    ctx.fillText(b.text, cx, top + h / 2 + 1);
+  });
+}
+
+function kickTree(tree) {
+  if (tree.cooldown > 0) return;
+  tree.shake = 1.2;
+  tree.cooldown = 1;
+  sfx('thud');
+  if (Math.random() < 0.8) {
+    apples.push({ x: tree.x - 6 + Math.random() * 12, ground: tree.y + 4 + Math.random() * 4, z: 16, vz: 0 });
+  } else {
+    say('...아무것도 안 떨어졌다', tree.x, tree.y - 22, 1.4);
+  }
+}
+
+function petCat() {
+  sfx('meow');
+  say(cat.mode === 'sleep' ? '...야옹?' : '야옹', cat.x, cat.y - 14, 1.4);
+  say('♥', cat.x + 8, cat.y - 20, 1);
+  if (cat.mode === 'sleep') { cat.mode = 'sit'; cat.timer = 2; }
+}
+
+function knockHouse(index) {
+  const house = houseKnocks[index];
+  house.until = time + 1.4;
+  sfx('knock');
+  say('누구세요?', house.x + 20, house.y - 6, 1.6);
+}
+
+function nearbyTree() {
+  return shakeTrees.find(t => Math.hypot(hero.x - t.x, hero.y - t.y) < 18);
+}
+
+function interactNearby() {
+  if (Math.hypot(hero.x - 150, hero.y - 208) < 24) { openDoodle(); return true; }
+  const tree = nearbyTree();
+  if (tree) { kickTree(tree); return true; }
+  if (Math.hypot(hero.x - cat.x, hero.y - cat.y) < 18) { petCat(); return true; }
+  return false;
+}
+
+const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+let konamiStep = 0;
+
+function trackKonami(e) {
+  konamiStep = e.code === KONAMI[konamiStep] ? konamiStep + 1 : (e.code === KONAMI[0] ? 1 : 0);
+  if (konamiStep < KONAMI.length) return;
+  konamiStep = 0;
+  fireworks.until = time + 6;
+  say('치트키 발견!', hero.x, hero.y - 22, 2);
+  sfx('yes');
+}
+
+const doodleEl = document.getElementById('doodle');
+const doodleCanvas = document.getElementById('doodle-canvas');
+const doodleCtx = doodleCanvas.getContext('2d');
+let doodleResume = 'play';
+
+function paintDoodleCanvas() {
+  doodleCtx.fillStyle = '#b07a46';
+  doodleCtx.fillRect(0, 0, 30, 12);
+  doodle.cells.forEach((color, i) => {
+    if (!color) return;
+    doodleCtx.fillStyle = DOODLE_COLORS[color];
+    doodleCtx.fillRect(i % 30, Math.floor(i / 30), 1, 1);
+  });
+}
+
+function openDoodle() {
+  doodleResume = state;
+  keys.clear();
+  hero.moving = false;
+  state = 'doodle';
+  doodleEl.hidden = false;
+  paintDoodleCanvas();
+  sfx('open');
+}
+
+function closeDoodle(save) {
+  if (save) {
+    try { localStorage.setItem('yesulin-doodle', doodle.cells.join('')); } catch {}
+    say('낙서 완료!', 150, 180, 1.4);
+  }
+  doodleEl.hidden = true;
+  state = doodleResume;
+  sfx(save ? 'yes' : 'close');
+}
+
+function paintAt(e) {
+  const rect = doodleCanvas.getBoundingClientRect();
+  const cx = Math.floor((e.clientX - rect.left) / rect.width * 30);
+  const cy = Math.floor((e.clientY - rect.top) / rect.height * 12);
+  if (cx < 0 || cx >= 30 || cy < 0 || cy >= 12) return;
+  doodle.cells[cy * 30 + cx] = doodle.color;
+  paintDoodleCanvas();
+}
+
+document.getElementById('doodle-palette').innerHTML = DOODLE_COLORS
+  .map((color, i) => `<button data-color="${i}" style="--c: ${color || 'transparent'}" aria-label="${i === 0 ? '지우개' : `색 ${i}`}"${i === 1 ? ' class="selected"' : ''}></button>`).join('');
+document.getElementById('doodle-palette').addEventListener('click', e => {
+  const button = e.target.closest('[data-color]');
+  if (!button) return;
+  doodle.color = Number(button.dataset.color);
+  document.querySelectorAll('#doodle-palette button').forEach(b => b.classList.toggle('selected', b === button));
+});
+doodleCanvas.addEventListener('pointerdown', e => { doodle.drawing = true; doodleCanvas.setPointerCapture(e.pointerId); paintAt(e); });
+doodleCanvas.addEventListener('pointermove', e => { if (doodle.drawing) paintAt(e); });
+doodleCanvas.addEventListener('pointerup', () => { doodle.drawing = false; });
+doodleEl.addEventListener('click', e => {
+  const action = e.target.closest('[data-doodle]')?.dataset.doodle;
+  if (action === 'clear') { doodle.cells.fill(0); paintDoodleCanvas(); }
+  if (action === 'save') closeDoodle(true);
+  if (e.target === doodleEl) closeDoodle(false);
+});
+
 function renderWorld() {
   g.imageSmoothingEnabled = false;
   g.drawImage(background, 0, 0);
@@ -1272,7 +1588,10 @@ function renderWorld() {
     g.fillRect(Math.round(pt.x), Math.round(pt.y), 1, 1);
   });
   g.globalAlpha = 1;
-  [...props, { y: hero.y, draw: drawHero }].sort((a, b) => a.y - b.y).forEach(p => p.draw());
+  drawHouseKnocks();
+  [...props, { y: hero.y, draw: drawHero }, { y: cat.y, draw: drawCat }, ...apples.map(a => ({ y: a.ground, draw: () => drawApple(a) }))]
+    .sort((a, b) => a.y - b.y).forEach(p => p.draw());
+  drawFireworks();
 }
 
 const toScreen = (x, y) => [ox + x * scale, oy + y * scale];
@@ -1429,6 +1748,7 @@ function drawLabels() {
   ctx.fillText('예술in', sx, sy);
   drawLinkBubble();
   drawBillboardHint();
+  drawSpeechBubbles();
 }
 
 function drawLinkBubble() {
@@ -2521,6 +2841,12 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyF') { toggleFullscreen(); return; }
   if (e.code === 'KeyM') { toggleSound(); return; }
 
+  if (state === 'doodle') {
+    if (e.key === 'Escape') closeDoodle(false);
+    return;
+  }
+  if (state === 'play') trackKonami(e);
+
   if (state === 'confirm') {
     if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key)) { e.preventDefault(); sfx('tick'); selectConfirm(1 - confirmChoice); }
     else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); answerConfirm(confirmChoice === 0); }
@@ -2569,7 +2895,8 @@ addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === ' ') {
     const near = nearPortal();
     if (near) { e.preventDefault(); startWarp(near); return; }
-    if (Math.hypot(hero.x - LINK_SIGN.x, hero.y - LINK_SIGN.y) < 26) { e.preventDefault(); openConfirm(); }
+    if (Math.hypot(hero.x - LINK_SIGN.x, hero.y - LINK_SIGN.y) < 26) { e.preventDefault(); openConfirm(); return; }
+    if (interactNearby()) e.preventDefault();
   }
 });
 
@@ -2622,6 +2949,12 @@ function hitTarget(e) {
   const { x: bx, y: by, w, h } = BILLBOARD;
   if (x >= bx && x <= bx + w && y >= by && y <= by + h) return 'billboard';
   if (Math.abs(x - LINK_SIGN.x) <= 20 && y >= LINK_SIGN.y - 46 && y <= LINK_SIGN.y + 2) return 'link';
+  if (x >= 134 && x <= 166 && y >= 186 && y <= 210) return 'sign';
+  if (Math.abs(x - cat.x) <= 8 && y >= cat.y - 12 && y <= cat.y + 2) return 'cat';
+  const tree = shakeTrees.findIndex(t => Math.abs(x - t.x) <= 9 && y >= t.y - 16 && y <= t.y + 1);
+  if (tree >= 0) return `tree:${tree}`;
+  const door = houseKnocks.findIndex(h => x >= h.x + 14 && x <= h.x + 26 && y >= h.y + 12 && y <= h.y + 32);
+  if (door >= 0) return `house:${door}`;
   return null;
 }
 
@@ -2638,6 +2971,10 @@ view.addEventListener('click', e => {
   const target = hitTarget(e);
   if (target === 'billboard') openLightbox();
   if (target === 'link') openConfirm();
+  if (target === 'sign') openDoodle();
+  if (target === 'cat') petCat();
+  if (target?.startsWith('tree:')) kickTree(shakeTrees[Number(target.slice(5))]);
+  if (target?.startsWith('house:')) knockHouse(Number(target.slice(6)));
 });
 
 const confirmEl = document.getElementById('confirm');
@@ -2749,6 +3086,7 @@ function frame(now) {
     if (state === 'deck') updateStamina(dt);
     updateBgm();
     spawnParticles(dt);
+    if (state !== 'deck') updateEasterEggs(dt);
     if (state !== 'deck') render();
   } finally {
     requestAnimationFrame(frame);
