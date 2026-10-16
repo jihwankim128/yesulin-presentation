@@ -492,6 +492,21 @@
   .doodle-actions { display: flex; gap: 10px; }
   .doodle-actions button { padding: .5rem .9rem; font-size: 15px; background: rgba(255, 255, 255, .1); }
   .doodle-actions button:hover { background: rgba(255, 255, 255, .2); }
+
+  .hud-qr {
+    position: absolute; top: 16px; right: 16px; display: grid; justify-items: center; gap: 6px; padding: 8px;
+    pointer-events: auto; color: var(--ink); background: #fff;
+    box-shadow: 0 0 0 3px var(--ink), 0 0 0 6px #ffd34d, 6px 6px 0 6px rgba(0, 0, 0, .3);
+  }
+  .hud-qr img { width: clamp(72px, 9vw, 120px); height: auto; image-rendering: pixelated; }
+  .hud-qr span { font-size: 13px; font-weight: 700; }
+  .hud-qr:hover { transform: translateY(-2px); }
+  .hud-qr:active { transform: translate(1px, 1px); }
+  .qr-zoom { position: fixed; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(9, 11, 22, .88); }
+  .qr-zoom figure { display: grid; justify-items: center; gap: 16px; padding: 22px; background: #fff; box-shadow: 0 0 0 6px #1d1626, 0 0 0 12px #ffd34d, 0 0 0 16px #1d1626; }
+  .qr-zoom img { width: min(70vmin, 560px); height: auto; image-rendering: pixelated; }
+  .qr-zoom figcaption { font-size: 20px; font-weight: 700; color: var(--ink); text-align: center; }
+  .qr-zoom figcaption small { display: block; margin-top: 6px; font-size: 14px; font-weight: 400; color: #4f4a5e; }
 </style>
 </head>
 <body>
@@ -499,6 +514,7 @@
 
 <div class="hud" id="hud" hidden>
   <div class="hud-place">예술in</div>
+  <button class="hud-qr" id="hud-qr" aria-label="예술in QR 크게 보기"><img src="assets/qr.png" alt=""><span>눌러서 크게</span></button>
   <div class="hud-apples" id="hud-apples" hidden><i></i><span id="apple-count">0</span></div>
   <div class="hud-keys">
     <span><kbd>←↑↓→</kbd>이동</span>
@@ -546,6 +562,13 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="qr-zoom" id="qr-zoom" hidden role="dialog" aria-modal="true" aria-label="예술in QR">
+  <figure>
+    <img src="assets/qr.png" alt="예술in QR 코드">
+    <figcaption>휴대폰 카메라로 찍어보세요<small>ESC 또는 아무 곳이나 눌러 닫기</small></figcaption>
+  </figure>
 </div>
 
 <div class="doodle" id="doodle" hidden>
@@ -1578,6 +1601,28 @@ function drawInteractHint() {
   ctx.fillStyle = '#1d1626';
   ctx.fillText(text, cx, top + h / 2 + 1);
 }
+
+const qrEl = document.getElementById('qr-zoom');
+let qrResume = 'play';
+
+function openQr() {
+  if (state !== 'play') return;
+  qrResume = state;
+  keys.clear();
+  hero.moving = false;
+  state = 'qr';
+  qrEl.hidden = false;
+  sfx('open');
+}
+
+function closeQr() {
+  qrEl.hidden = true;
+  state = qrResume;
+  sfx('close');
+}
+
+document.getElementById('hud-qr').addEventListener('click', e => { e.currentTarget.blur(); openQr(); });
+qrEl.addEventListener('click', closeQr);
 
 const doodleEl = document.getElementById('doodle');
 const doodleCanvas = document.getElementById('doodle-canvas');
@@ -2908,6 +2953,10 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyF') { toggleFullscreen(); return; }
   if (e.code === 'KeyM') { toggleSound(); return; }
 
+  if (state === 'qr') {
+    if (['Escape', 'Enter', ' '].includes(e.key) || e.code === 'Escape') { e.preventDefault(); closeQr(); }
+    return;
+  }
   if (state === 'doodle') {
     if (e.key === 'Escape' || e.code === 'Escape') { e.preventDefault(); closeDoodle(false); }
     return;
