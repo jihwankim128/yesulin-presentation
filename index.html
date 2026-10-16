@@ -197,6 +197,14 @@
   .act-sub { font-size: 2.2cqw; color: #d8d2e6; }
 
   .slide--opening.from-next, .slide--opening.from-prev { animation: none; }
+  .slide--act.from-next, .slide--act.from-prev { animation: none; }
+  .slide--act::before, .slide--act::after {
+    z-index: 1; pointer-events: none;
+    animation: curtain-open .9s cubic-bezier(.22, .61, .36, 1) both;
+  }
+  .slide--act .curtain-top { z-index: 2; pointer-events: none; }
+  .slide--act .act-num, .slide--act .act-title, .slide--act .act-sub { animation: stage-reveal .5s .3s both; }
+  .slide--act .say { z-index: 3; }
   .slide--opening::before, .slide--opening::after {
     z-index: 1; pointer-events: none;
     animation: curtain-open .9s cubic-bezier(.22, .61, .36, 1) both;
@@ -213,6 +221,7 @@
   @media (prefers-reduced-motion: reduce) {
     .slide--opening::before, .slide--opening::after,
     .slide--opening .act-num, .slide--opening .act-title { animation: none; }
+    .slide--act::before, .slide--act::after, .slide--act .act-num, .slide--act .act-title, .slide--act .act-sub { animation: none; }
   }
 
   .hypo { display: grid; gap: 3cqh; flex: 1; align-content: center; }
@@ -2143,10 +2152,10 @@ function slideMarkup(s) {
       }
       return { kind: 'statement', body: headingMarkup({ kicker: actLabels(s).num, title: s.title }) };
     }
-    const act = ACTS[s.act];
+    const act = actLabels(s);
     return {
       kind: 'act',
-      body: `<div class="curtain-top"></div><p class="act-num">${act.num}</p><p class="act-title">${act.role}</p><p class="act-sub">${rich(s.title)}</p>`,
+      body: `<div class="curtain-top"></div><p class="act-num">${act.num}</p><p class="act-title">${escapeHtml(act.role)}</p><p class="act-sub">${rich(s.title)}</p>`,
     };
   }
   if (s.type === 'hypothesis') {
