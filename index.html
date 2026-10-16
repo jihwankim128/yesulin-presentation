@@ -49,8 +49,9 @@
 
   /* 마을 HUD */
   .hud { position: fixed; inset: 0; pointer-events: none; }
+  .hud-top { position: absolute; top: 16px; left: 16px; display: flex; gap: 14px; align-items: center; }
   .hud-place {
-    position: absolute; top: 16px; left: 16px; padding: .5rem .9rem; font-size: 15px;
+    padding: .5rem .9rem; font-size: 15px;
     background: rgba(15, 20, 36, .82); box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px rgba(255, 255, 255, .85);
   }
   .hud-keys {
@@ -478,7 +479,7 @@
   @keyframes pad-stick { from { transform: scale(1.8); opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .sensor-pad, .sensor-row { animation: none; } }
 
-  .hud-apples { position: absolute; top: 16px; left: 112px; display: flex; align-items: center; gap: .5rem; padding: .5rem .9rem; font-size: 15px; background: rgba(15, 20, 36, .82); box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px rgba(255, 255, 255, .85); }
+  .hud-apples { display: flex; align-items: center; gap: .5rem; padding: .5rem .9rem; font-size: 15px; background: rgba(15, 20, 36, .82); box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px rgba(255, 255, 255, .85); }
   .hud-apples i { width: 12px; height: 12px; background: #e2474b; box-shadow: inset -3px -3px 0 #9e2a33, 0 -4px 0 -2px #4f9a3a; }
   .doodle { position: fixed; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(9, 11, 22, .85); }
   .doodle-box { display: grid; justify-items: center; gap: 14px; padding: 22px 26px; color: #fff; background: #1d1626; box-shadow: 0 0 0 5px #fff, 0 0 0 10px #1d1626; }
@@ -507,15 +508,27 @@
   .qr-zoom img { width: min(70vmin, 560px); height: auto; image-rendering: pixelated; }
   .qr-zoom figcaption { font-size: 20px; font-weight: 700; color: var(--ink); text-align: center; }
   .qr-zoom figcaption small { display: block; margin-top: 6px; font-size: 14px; font-weight: 400; color: #4f4a5e; }
+
+  .hud-eggs { display: flex; align-items: center; gap: .4rem; padding: .5rem .9rem; font-size: 15px; color: #ffd34d; background: rgba(15, 20, 36, .82); box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px rgba(255, 255, 255, .85); }
+  .hud-eggs.done { color: var(--ink); background: #ffd34d; }
+  .room { position: fixed; inset: 0; display: grid; place-items: center; align-content: center; gap: 14px; padding: 16px; background: #0f1424; }
+  #room-canvas { width: min(92vw, calc((100dvh - 150px) * 16 / 9)); aspect-ratio: 16 / 9; image-rendering: pixelated; box-shadow: 0 0 0 6px #1d1626, 0 0 0 12px #ffd34d; }
+  .room-caption { display: grid; justify-items: center; gap: 4px; text-align: center; }
+  .room-caption b { font-size: 22px; }
+  .room-caption span { font-size: 15px; color: #c6cde6; }
+  .room-hint { font-size: 13px; color: #8a93b3; }
 </style>
 </head>
 <body>
 <canvas id="view" aria-label="예술in 마을 지도"></canvas>
 
 <div class="hud" id="hud" hidden>
-  <div class="hud-place">예술in</div>
+  <div class="hud-top">
+    <div class="hud-place">예술in</div>
+    <div class="hud-eggs" id="hud-eggs" hidden>★ <span id="egg-count">0/5</span></div>
+    <div class="hud-apples" id="hud-apples" hidden><i></i><span id="apple-count">0</span></div>
+  </div>
   <button class="hud-qr" id="hud-qr" aria-label="예술in QR 크게 보기"><img src="assets/qr.png" alt=""><span>눌러서 크게</span></button>
-  <div class="hud-apples" id="hud-apples" hidden><i></i><span id="apple-count">0</span></div>
   <div class="hud-keys">
     <span><kbd>←↑↓→</kbd>이동</span>
     <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd>포탈 바로가기</span>
@@ -562,6 +575,12 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="room" id="room" hidden role="dialog" aria-modal="true" aria-labelledby="room-title">
+  <canvas id="room-canvas" width="192" height="108"></canvas>
+  <p class="room-caption"><b id="room-title"></b><span id="room-note"></span></p>
+  <p class="room-hint">← → 걷기 · 왼쪽 문으로 나가거나 ESC</p>
 </div>
 
 <div class="qr-zoom" id="qr-zoom" hidden role="dialog" aria-modal="true" aria-label="예술in QR">
@@ -1401,6 +1420,7 @@ function updateEasterEggs(dt) {
     } else if (state === 'play' && Math.hypot(hero.x - a.x, hero.y - a.ground) < 9) {
       apples.splice(i, 1);
       appleCount += 1;
+      findEgg('apple');
       document.getElementById('apple-count').textContent = `사과 ${appleCount}`;
       document.getElementById('hud-apples').hidden = false;
       say('사과 +1', hero.x, hero.y - 22, 1);
@@ -1523,7 +1543,177 @@ function kickTree(tree) {
   }
 }
 
+const EGG_TOTAL = 5;
+const eggs = { found: new Set(), unlocked: false };
+
+function findEgg(name) {
+  if (eggs.found.has(name)) return;
+  eggs.found.add(name);
+  document.getElementById('hud-eggs').hidden = false;
+  document.getElementById('egg-count').textContent = `${eggs.found.size}/${EGG_TOTAL}`;
+  if (eggs.found.size < EGG_TOTAL) return;
+  eggs.unlocked = true;
+  document.getElementById('hud-eggs').classList.add('done');
+  setTimeout(() => {
+    sfx('start');
+    fireworks.until = time + 3;
+    say('비밀을 모두 찾았다! 집 문이 열렸어요', hero.x, hero.y - 26, 3.2);
+    houseKnocks.forEach(h => say('문을 눌러보세요', h.x + 20, h.y - 6, 4));
+  }, 600);
+}
+
+function drawOpenDoors() {
+  if (!eggs.unlocked) return;
+  houseKnocks.forEach(h => {
+    g.fillStyle = 'rgba(255, 227, 122, 0.35)';
+    g.fillRect(h.x + 14, h.y + 32, 12, 3);
+    g.fillStyle = '#1d1626';
+    g.fillRect(h.x + 16, h.y + 19, 8, 12);
+    g.fillStyle = Math.floor(time * 4) % 2 ? '#ffe9a0' : '#ffd34d';
+    g.fillRect(h.x + 17, h.y + 20, 6, 11);
+    g.fillStyle = '#8a5a3c';
+    g.fillRect(h.x + 22, h.y + 20, 2, 11);
+    const bob = Math.round(Math.sin(time * 5) * 1.5);
+    g.fillStyle = '#ffd34d';
+    g.fillRect(h.x + 18, h.y + 12 + bob, 5, 1);
+    g.fillRect(h.x + 19, h.y + 13 + bob, 3, 1);
+    g.fillRect(h.x + 20, h.y + 14 + bob, 1, 1);
+  });
+}
+
+const ROOMS = [
+  { wall: '#f3e6c8', stripe: '#ead6ae', floor: '#b07a46', floorDark: '#93633a', rug: '#e2474b', photo: 1, title: '예술in 팀의 작업실', note: '여기까지 찾아오다니! 모든 이스터에그를 찾아줘서 고마워요.' },
+  { wall: '#dceaff', stripe: '#c9dcf7', floor: '#8a6a4a', floorDark: '#6f5238', rug: '#246bfe', photo: 2, title: '소요유의 비밀 방', note: '다음 공연에서 또 만나요!' },
+];
+const roomEl = document.getElementById('room');
+const roomCtx = document.getElementById('room-canvas').getContext('2d');
+const room = { house: 0, x: 30, dir: 'right', moving: false, animT: 0 };
+
+function openRoom(index) {
+  if (state !== 'play') return;
+  room.house = index;
+  room.x = 30;
+  room.dir = 'right';
+  keys.clear();
+  hero.moving = false;
+  state = 'room';
+  const r = ROOMS[index];
+  document.getElementById('room-title').textContent = r.title;
+  document.getElementById('room-note').textContent = r.note;
+  roomEl.hidden = false;
+  sfx('open');
+}
+
+function closeRoom() {
+  roomEl.hidden = true;
+  keys.clear();
+  state = 'play';
+  sfx('close');
+}
+
+function updateRoom(dt) {
+  const dx = (keys.has('right') ? 1 : 0) - (keys.has('left') ? 1 : 0);
+  room.moving = dx !== 0;
+  if (room.moving) {
+    room.x = Math.max(16, Math.min(176, room.x + dx * 50 * dt));
+    room.dir = dx > 0 ? 'right' : 'left';
+    room.animT += dt;
+    if (room.x <= 16 && dx < 0) return closeRoom();
+  } else room.animT = 0;
+  drawRoom();
+}
+
+function drawRoom() {
+  const r = ROOMS[room.house];
+  const c = roomCtx;
+  const px = (x, y, w, h, color) => { c.fillStyle = color; c.fillRect(x, y, w, h); };
+  c.imageSmoothingEnabled = false;
+  px(0, 0, 192, 74, r.wall);
+  for (let x = 6; x < 192; x += 12) px(x, 0, 4, 72, r.stripe);
+  px(0, 72, 192, 2, '#1d1626');
+  px(0, 74, 192, 34, r.floor);
+  for (let y = 80, row = 0; y < 108; y += 7, row++) {
+    px(0, y, 192, 1, r.floorDark);
+    for (let x = (row % 2) * 16; x < 192; x += 32) px(x, y - 6, 1, 6, r.floorDark);
+  }
+
+  px(4, 38, 22, 36, '#1d1626');
+  px(6, 40, 18, 34, '#8a5a3c');
+  px(8, 42, 14, 14, '#9b6a48');
+  px(20, 58, 2, 2, '#ffd34d');
+
+  px(34, 12, 36, 28, '#1d1626');
+  px(36, 14, 32, 24, '#8fd3ff');
+  c.save();
+  c.beginPath();
+  c.rect(36, 14, 32, 24);
+  c.clip();
+  const cloud = 30 + ((time * 6) % 50);
+  px(cloud, 20, 10, 3, '#ffffff');
+  px(cloud + 2, 18, 5, 2, '#ffffff');
+  px(cloud - 24, 28, 8, 2, '#ffffff');
+  c.restore();
+  px(51, 14, 2, 24, '#1d1626');
+  px(36, 25, 32, 2, '#1d1626');
+
+  px(82, 8, 54, 36, '#1d1626');
+  px(84, 10, 50, 32, '#c99358');
+  px(87, 13, 44, 26, '#2d3352');
+  const photo = billboardImages[r.photo] || billboardImages[0];
+  if (photo && isLoaded(photo)) {
+    const k = Math.max(44 / photo.naturalWidth, 26 / photo.naturalHeight);
+    c.save();
+    c.beginPath();
+    c.rect(87, 13, 44, 26);
+    c.clip();
+    c.imageSmoothingEnabled = true;
+    c.drawImage(photo, 109 - photo.naturalWidth * k / 2, 26 - photo.naturalHeight * k / 2, photo.naturalWidth * k, photo.naturalHeight * k);
+    c.restore();
+    c.imageSmoothingEnabled = false;
+  }
+
+  px(146, 52, 42, 4, '#1d1626');
+  px(147, 53, 40, 2, '#7a4a2b');
+  px(149, 56, 3, 18, '#1d1626');
+  px(182, 56, 3, 18, '#1d1626');
+  px(156, 38, 20, 14, '#1d1626');
+  px(158, 40, 16, 10, Math.floor(time * 2) % 2 ? '#246bfe' : '#4c8bff');
+  px(162, 43, 8, 1, '#ffffff');
+  px(160, 46, 12, 1, '#cfe0ff');
+  px(152, 50, 28, 2, '#434b73');
+  for (let i = 0; i < Math.min(appleCount, 5); i++) {
+    px(178 - i * 4, 47, 3, 3, '#e2474b');
+    px(179 - i * 4, 46, 1, 1, '#4f9a3a');
+  }
+
+  px(60, 90, 72, 12, '#1d1626');
+  px(62, 91, 68, 10, r.rug);
+  px(62, 95, 68, 2, '#ffffff');
+
+  if (eggs.found.has('cat')) {
+    const cx = 120, cy = 96;
+    px(cx - 3, cy - 7, 6, 7, '#3a2412');
+    px(cx - 2, cy - 6, 4, 5, '#f2a33a');
+    px(cx - 2, cy - 11, 5, 5, '#3a2412');
+    px(cx - 1, cy - 10, 3, 3, '#f2a33a');
+    px(cx - 2, cy - 12, 1, 1, '#3a2412');
+    px(cx + 1, cy - 12, 1, 1, '#3a2412');
+    px(cx - 6, cy - 1, 4, 1, '#3a2412');
+    if (Math.floor(time) % 4 === 0) {
+      px(cx + 4, cy - 16, 3, 2, '#ffffff');
+      px(cx + 5, cy - 14, 1, 1, '#ffffff');
+    }
+  }
+
+  const set = HERO[room.dir];
+  const frame = Math.floor(room.animT / 0.13) % set.walk.length;
+  const img = room.moving ? set.walk[frame] : set.idle;
+  px(Math.round(room.x) - 5, 100, 10, 2, 'rgba(20, 30, 20, 0.25)');
+  c.drawImage(img, Math.round(room.x) - 8, 85 - (room.moving && frame % 2 === 0 ? 1 : 0));
+}
+
 function petCat() {
+  findEgg('cat');
   sfx('meow');
   say(cat.mode === 'sleep' ? '...야옹?' : '야옹', cat.x, cat.y - 14, 1.4);
   say('♥', cat.x + 8, cat.y - 20, 1);
@@ -1531,6 +1721,7 @@ function petCat() {
 }
 
 function knockHouse(index) {
+  findEgg('door');
   const house = houseKnocks[index];
   house.until = time + 1.4;
   sfx('knock');
@@ -1561,6 +1752,7 @@ function jump() {
     jumpTimes.length = 0;
     fireworks.until = time + 5;
     say('신난다!', hero.x, hero.y - 26, 1.8);
+    findEgg('fireworks');
   }
 }
 
@@ -1653,6 +1845,7 @@ function closeDoodle(save) {
   if (save) {
     try { localStorage.setItem('yesulin-doodle', doodle.cells.join('')); } catch {}
     say('낙서 완료!', 150, 180, 1.4);
+    findEgg('doodle');
   }
   doodleEl.hidden = true;
   state = doodleResume;
@@ -1699,6 +1892,7 @@ function renderWorld() {
   });
   g.globalAlpha = 1;
   drawHouseKnocks();
+  drawOpenDoors();
   [...props, { y: hero.y, draw: drawHero }, { y: cat.y, draw: drawCat }, ...apples.map(a => ({ y: a.ground, draw: () => drawApple(a) }))]
     .sort((a, b) => a.y - b.y).forEach(p => p.draw());
 }
@@ -2953,6 +3147,12 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyF') { toggleFullscreen(); return; }
   if (e.code === 'KeyM') { toggleSound(); return; }
 
+  if (state === 'room') {
+    if (e.key === 'Escape' || e.code === 'Escape') { e.preventDefault(); closeRoom(); return; }
+    const direction = directionOf(e);
+    if (direction) { e.preventDefault(); keys.add(direction); }
+    return;
+  }
   if (state === 'qr') {
     if (['Escape', 'Enter', ' '].includes(e.key) || e.code === 'Escape') { e.preventDefault(); closeQr(); }
     return;
@@ -3090,7 +3290,10 @@ view.addEventListener('click', e => {
   if (target === 'sign') openDoodle();
   if (target === 'cat') petCat();
   if (target?.startsWith('tree:')) kickTree(shakeTrees[Number(target.slice(5))]);
-  if (target?.startsWith('house:')) knockHouse(Number(target.slice(6)));
+  if (target?.startsWith('house:')) {
+    const index = Number(target.slice(6));
+    if (eggs.unlocked) openRoom(index); else knockHouse(index);
+  }
 });
 
 const confirmEl = document.getElementById('confirm');
@@ -3204,6 +3407,7 @@ function frame(now) {
     spawnParticles(dt);
     if (state !== 'deck') updateEasterEggs(dt);
     updateJump(dt);
+    if (state === 'room') updateRoom(dt);
     if (state !== 'deck') render();
   } finally {
     requestAnimationFrame(frame);
