@@ -2507,8 +2507,10 @@ function flipStack(direction) {
 
 const DIRECTION_KEYS = {
   ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down',
-  a: 'left', d: 'right', w: 'up', s: 'down', A: 'left', D: 'right', W: 'up', S: 'down',
+  KeyA: 'left', KeyD: 'right', KeyW: 'up', KeyS: 'down',
 };
+
+const directionOf = e => DIRECTION_KEYS[e.key] || DIRECTION_KEYS[e.code];
 
 function toggleFullscreen() {
   if (document.fullscreenElement) document.exitFullscreen();
@@ -2516,8 +2518,8 @@ function toggleFullscreen() {
 }
 
 addEventListener('keydown', e => {
-  if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); return; }
-  if (e.key === 'm' || e.key === 'M') { toggleSound(); return; }
+  if (e.code === 'KeyF') { toggleFullscreen(); return; }
+  if (e.code === 'KeyM') { toggleSound(); return; }
 
   if (state === 'confirm') {
     if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key)) { e.preventDefault(); sfx('tick'); selectConfirm(1 - confirmChoice); }
@@ -2549,10 +2551,11 @@ addEventListener('keydown', e => {
   }
 
   if (state !== 'play') return;
-  if (DIRECTION_KEYS[e.key]) {
+  const direction = directionOf(e);
+  if (direction) {
     e.preventDefault();
-    keys.add(DIRECTION_KEYS[e.key]);
-    tappedKeys.add(DIRECTION_KEYS[e.key]);
+    keys.add(direction);
+    tappedKeys.add(direction);
     return;
   }
   if (e.repeat) return;
@@ -2675,7 +2678,7 @@ lightboxEl.addEventListener('click', e => {
 });
 
 addEventListener('keyup', e => {
-  const direction = DIRECTION_KEYS[e.key];
+  const direction = directionOf(e);
   if (tappedKeys.has(direction)) releasedKeys.add(direction);
   else keys.delete(direction);
 });
