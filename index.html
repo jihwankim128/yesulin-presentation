@@ -503,6 +503,7 @@
   <div class="hud-keys">
     <span><kbd>←↑↓→</kbd>이동</span>
     <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd>포탈 바로가기</span>
+    <span><kbd>Space</kbd>점프</span>
     <span><kbd>F</kbd>전체화면</span>
     <span><kbd>M</kbd><span id="sound-label">소리 켬</span></span>
   </div>
@@ -719,6 +720,10 @@ function sfx(name) {
   if (name === 'warp') {
     tone(220, at, 0.7, { type: 'triangle', volume: 0.22, slideTo: 1760 });
     tone(330, at + 0.05, 0.65, { volume: 0.05, slideTo: 2640 });
+    return;
+  }
+  if (name === 'jump') {
+    tone(330, at, 0.16, { type: 'square', volume: 0.08, slideTo: 880 });
     return;
   }
   if (name === 'meow') {
@@ -1297,7 +1302,7 @@ function drawHero() {
   g.fillStyle = 'rgba(20, 30, 20, 0.28)';
   g.fillRect(-5, -2, 10, 3);
   g.fillRect(-6, -1, 12, 1);
-  g.drawImage(img, -8, -16 + bob);
+  g.drawImage(img, -8, -16 + bob - jumpHeight());
   g.restore();
 }
 
@@ -1432,7 +1437,7 @@ function drawFireworks() {
   fireworks.sparks.forEach(p => {
     g.globalAlpha = Math.max(0, p.life);
     g.fillStyle = p.color;
-    g.fillRect(Math.round(p.x), Math.round(p.y), 1, 1);
+    g.fillRect(Math.round(p.x), Math.round(p.y), 2, 2);
   });
   g.globalAlpha = 1;
 }
@@ -1503,16 +1508,57 @@ function interactNearby() {
   return false;
 }
 
-const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
-let konamiStep = 0;
+const jumpTimes = [];
 
-function trackKonami(e) {
-  konamiStep = e.code === KONAMI[konamiStep] ? konamiStep + 1 : (e.code === KONAMI[0] ? 1 : 0);
-  if (konamiStep < KONAMI.length) return;
-  konamiStep = 0;
-  fireworks.until = time + 6;
-  say('치트키 발견!', hero.x, hero.y - 22, 2);
-  sfx('yes');
+function jump() {
+  if (hero.jumpT > 0) return;
+  hero.jumpT = 0.001;
+  sfx('jump');
+  jumpTimes.push(time);
+  while (jumpTimes.length && time - jumpTimes[0] > 2.4) jumpTimes.shift();
+  if (jumpTimes.length >= 3) {
+    jumpTimes.length = 0;
+    fireworks.until = time + 5;
+    say('신난다!', hero.x, hero.y - 26, 1.8);
+  }
+}
+
+function updateJump(dt) {
+  if (!hero.jumpT) return;
+  hero.jumpT += dt;
+  if (hero.jumpT >= 0.42) hero.jumpT = 0;
+}
+
+const jumpHeight = () => hero.jumpT ? Math.round(Math.sin(Math.PI * hero.jumpT / 0.42) * 9) : 0;
+
+function nearbyInteractable() {
+  if (Math.hypot(hero.x - 150, hero.y - 208) < 24) return { x: 150, y: 182, label: '낙서하기' };
+  const tree = nearbyTree();
+  if (tree) return { x: tree.x, y: tree.y - 20, label: '흔들기' };
+  if (Math.hypot(hero.x - cat.x, hero.y - cat.y) < 18) return { x: cat.x, y: cat.y - 16, label: '쓰다듬기' };
+  return null;
+}
+
+function drawInteractHint() {
+  if (state !== 'play') return;
+  const target = nearbyInteractable();
+  if (!target) return;
+  const bob = Math.round(Math.sin(time * 6) * scale * 0.5);
+  const [cx, cy] = toScreen(target.x, target.y);
+  const size = Math.round(scale * 3.2);
+  ctx.font = `700 ${size}px Galmuri11, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const text = `Space ${target.label}`;
+  const w = ctx.measureText(text).width + size * 1.2, h = size * 1.7;
+  const left = Math.round(cx - w / 2), top = Math.round(cy - h / 2 + bob);
+  const border = Math.max(2, Math.round(scale * 0.5));
+  ctx.fillStyle = '#1d1626';
+  ctx.fillRect(left - border, top - border, w + border * 2, h + border * 2);
+  ctx.fillStyle = '#ffd34d';
+  ctx.fillRect(left, top, w, h);
+  ctx.fillStyle = '#1d1626';
+  ctx.fillText(text, cx, top + h / 2 + 1);
 }
 
 const doodleEl = document.getElementById('doodle');
@@ -1749,6 +1795,7 @@ function drawLabels() {
   drawLinkBubble();
   drawBillboardHint();
   drawSpeechBubbles();
+  drawInteractHint();
 }
 
 function drawLinkBubble() {
@@ -1946,6 +1993,7 @@ function enterVillage() {
     hero.x = SPAWN.x;
     hero.y = H + 10;
     state = 'intro';
+    setTimeout(() => { if (state === 'play') say('Space를 눌러봐요!', hero.x, hero.y - 26, 2.4); }, 2200);
   });
 }
 
@@ -2845,7 +2893,6 @@ addEventListener('keydown', e => {
     if (e.key === 'Escape') closeDoodle(false);
     return;
   }
-  if (state === 'play') trackKonami(e);
 
   if (state === 'confirm') {
     if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key)) { e.preventDefault(); sfx('tick'); selectConfirm(1 - confirmChoice); }
@@ -2896,7 +2943,8 @@ addEventListener('keydown', e => {
     const near = nearPortal();
     if (near) { e.preventDefault(); startWarp(near); return; }
     if (Math.hypot(hero.x - LINK_SIGN.x, hero.y - LINK_SIGN.y) < 26) { e.preventDefault(); openConfirm(); return; }
-    if (interactNearby()) e.preventDefault();
+    if (interactNearby()) { e.preventDefault(); return; }
+    if (e.key === ' ') { e.preventDefault(); jump(); }
   }
 });
 
@@ -3087,6 +3135,7 @@ function frame(now) {
     updateBgm();
     spawnParticles(dt);
     if (state !== 'deck') updateEasterEggs(dt);
+    updateJump(dt);
     if (state !== 'deck') render();
   } finally {
     requestAnimationFrame(frame);
