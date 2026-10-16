@@ -1499,7 +1499,11 @@ function render() {
   if (state !== 'title') drawLabels();
 }
 
+const EXIT_PATH = { left: 184, right: 200 };
+
 function blocked(x, y) {
+  const onExitPath = x >= EXIT_PATH.left && x <= EXIT_PATH.right && y > BOUNDS.bottom;
+  if (onExitPath) return false;
   if (x < BOUNDS.left || x > BOUNDS.right || y < BOUNDS.top || y > BOUNDS.bottom) return true;
   const fx = x - 5, fy = y - 3;
   return SOLIDS.some(s => fx < s.x + s.w && fx + 10 > s.x && fy < s.y + s.h && fy + 3 > s.y);
@@ -1527,6 +1531,11 @@ function updatePlay(dt) {
   if (!blocked(hero.x, hero.y + dy * step)) hero.y += dy * step;
   hero.dir = dx < 0 ? 'left' : dx > 0 ? 'right' : dy < 0 ? 'up' : 'down';
   hero.animT += dt;
+
+  if (hero.y > H + 6) {
+    leaveVillage();
+    return;
+  }
 
   const goldDistance = Math.hypot(hero.x - LINK_SIGN.x, hero.y - LINK_SIGN.y);
   if (goldDistance > 26) goldArmed = true;
@@ -1588,6 +1597,21 @@ function updateFade() {
   pendingFade = null;
   midway();
   fadeEl.classList.remove('on');
+}
+
+function leaveVillage() {
+  keys.clear();
+  hero.moving = false;
+  setBgm(false);
+  sfx('close');
+  fadeThrough(() => {
+    hudEl.hidden = true;
+    hero.visible = false;
+    hero.x = SPAWN.x;
+    hero.y = SPAWN.y;
+    titleEl.hidden = false;
+    state = 'title';
+  });
 }
 
 function enterVillage() {
