@@ -557,6 +557,7 @@
     <div class="doodle-actions">
       <button data-doodle="clear">다 지우기</button>
       <button data-doodle="save">저장하고 닫기</button>
+      <button data-doodle="close">ESC 나가기</button>
     </div>
   </div>
 </div>
@@ -1333,7 +1334,7 @@ const cat = { x: 260, y: 206, tx: 300, ty: 210, mode: 'walk', timer: 0, dir: 1, 
 const CAT_AREAS = [[30, 120, 182, 222], [214, 360, 182, 222], [104, 170, 124, 150], [216, 280, 124, 150]];
 const apples = [];
 const speech = [];
-const fireworks = { until: 0, spawn: 0, sparks: [] };
+const fireworks = { until: 0, spawn: 0, sparks: [], flashes: [] };
 const houseKnocks = [{ x: 40, y: 46, until: 0 }, { x: 304, y: 46, until: 0 }];
 let appleCount = 0;
 
@@ -1390,15 +1391,18 @@ function updateEasterEggs(dt) {
       fireworks.spawn = 0.35;
       const cx = BILLBOARD.x + 10 + Math.random() * (BILLBOARD.w - 20), cy = 14 + Math.random() * 40;
       const color = ['#ffd34d', '#ff7ab6', '#4cc8ff', '#7bf18a', '#ffffff'][Math.floor(Math.random() * 5)];
-      for (let i = 0; i < 26; i++) {
-        const angle = i / 26 * Math.PI * 2, speed = 18 + Math.random() * 14;
-        fireworks.sparks.push({ x: cx, y: cy, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 1, color });
+      for (let i = 0; i < 36; i++) {
+        const angle = i / 36 * Math.PI * 2, speed = 24 + Math.random() * 18;
+        fireworks.sparks.push({ x: cx, y: cy, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 1.3, color });
       }
+      fireworks.flashes.push({ x: cx, y: cy, life: 0.25 });
       sfx('boom');
     }
   }
   fireworks.sparks.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 30 * dt; p.life -= dt * 0.9; });
   fireworks.sparks = fireworks.sparks.filter(p => p.life > 0);
+  fireworks.flashes.forEach(f => { f.life -= dt; });
+  fireworks.flashes = fireworks.flashes.filter(f => f.life > 0);
   for (let i = speech.length - 1; i >= 0; i--) if (time > speech[i].until) speech.splice(i, 1);
 }
 
@@ -1434,12 +1438,26 @@ function drawApple(a) {
 }
 
 function drawFireworks() {
-  fireworks.sparks.forEach(p => {
-    g.globalAlpha = Math.max(0, p.life);
-    g.fillStyle = p.color;
-    g.fillRect(Math.round(p.x), Math.round(p.y), 2, 2);
+  const k = scale;
+  fireworks.flashes.forEach(f => {
+    const [x, y] = toScreen(f.x, f.y);
+    const r = ((0.25 - f.life) * 40 + 2) * k;
+    ctx.globalAlpha = Math.min(1, f.life * 4);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(x - r, y - k, r * 2, k * 2);
+    ctx.fillRect(x - k, y - r, k * 2, r * 2);
   });
-  g.globalAlpha = 1;
+  fireworks.sparks.forEach(p => {
+    const [x, y] = toScreen(Math.round(p.x), Math.round(p.y));
+    ctx.globalAlpha = Math.min(1, Math.max(0, p.life) * 1.5);
+    ctx.fillStyle = '#1d1626';
+    ctx.fillRect(x - k * 0.6, y - k * 0.6, k * 3.2, k * 3.2);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(x, y, k * 2, k * 2);
+    const [tx, ty] = toScreen(Math.round(p.x - p.vx * 0.06), Math.round(p.y - p.vy * 0.06));
+    ctx.fillRect(tx, ty, k, k);
+  });
+  ctx.globalAlpha = 1;
 }
 
 function drawHouseKnocks() {
@@ -1620,6 +1638,7 @@ doodleEl.addEventListener('click', e => {
   const action = e.target.closest('[data-doodle]')?.dataset.doodle;
   if (action === 'clear') { doodle.cells.fill(0); paintDoodleCanvas(); }
   if (action === 'save') closeDoodle(true);
+  if (action === 'close') closeDoodle(false);
   if (e.target === doodleEl) closeDoodle(false);
 });
 
@@ -1637,7 +1656,6 @@ function renderWorld() {
   drawHouseKnocks();
   [...props, { y: hero.y, draw: drawHero }, { y: cat.y, draw: drawCat }, ...apples.map(a => ({ y: a.ground, draw: () => drawApple(a) }))]
     .sort((a, b) => a.y - b.y).forEach(p => p.draw());
-  drawFireworks();
 }
 
 const toScreen = (x, y) => [ox + x * scale, oy + y * scale];
@@ -1794,6 +1812,7 @@ function drawLabels() {
   ctx.fillText('예술in', sx, sy);
   drawLinkBubble();
   drawBillboardHint();
+  drawFireworks();
   drawSpeechBubbles();
   drawInteractHint();
 }
@@ -2890,7 +2909,7 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyM') { toggleSound(); return; }
 
   if (state === 'doodle') {
-    if (e.key === 'Escape') closeDoodle(false);
+    if (e.key === 'Escape' || e.code === 'Escape') { e.preventDefault(); closeDoodle(false); }
     return;
   }
 
