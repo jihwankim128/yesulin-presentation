@@ -403,6 +403,71 @@
   .table-cell { padding: 1.5cqh 0; font-size: 2.1cqw; box-shadow: inset 0 -.15cqw 0 rgba(29, 22, 38, .15); }
   .table-label { font-weight: 700; }
   .table-last { padding-left: 1.2cqw; padding-right: 1.2cqw; font-weight: 700; background: var(--accent-soft); }
+
+  .chat-scene { flex: 1; min-height: 0; display: grid; grid-template-columns: 1.15fr 1fr; gap: 3cqw; align-items: stretch; }
+  .chat-phone { position: relative; display: grid; grid-template-rows: auto 1fr; min-height: 0; overflow: hidden; background: #b9cde4; box-shadow: 0 0 0 .3cqw var(--ink); }
+  .chat-head { display: flex; justify-content: space-between; align-items: center; padding: 1.2cqh 1.4cqw; font-size: 1.55cqw; background: #a9c0dc; box-shadow: inset 0 -.15cqw 0 rgba(29, 22, 38, .2); }
+  .chat-room { font-weight: 700; }
+  .chat-members { color: #3d4a63; }
+  .chat-body { display: flex; flex-direction: column; justify-content: flex-end; gap: 1.2cqh; padding: 1.4cqh 1.4cqw; min-height: 0; overflow: hidden; }
+  .chat-msg { max-width: 88%; animation: chat-pop .25s steps(3) both; }
+  .chat-msg.is-hidden, .chat-notes li.is-hidden, .chat-popup.is-hidden { display: none; }
+  .chat-name { display: block; margin-bottom: .4cqh; font-size: 1.2cqw; color: #3d4a63; }
+  .chat-text { padding: 1cqh 1.1cqw; font-size: 1.45cqw; line-height: 1.45; background: #fff; border-radius: .6cqw; }
+  .chat-link { color: #1662c9; text-decoration: underline; word-break: break-all; }
+  .chat-msg--system { align-self: center; max-width: 100%; }
+  .chat-msg--system .chat-text { padding: .5cqh 1cqw; font-size: 1.2cqw; color: #3d4a63; background: rgba(255, 255, 255, .5); border-radius: 2cqw; }
+  .chat-msg--server .chat-text { font-family: 'GalmuriMono11', monospace; font-size: 1.25cqw; color: #9be9ff; background: #1d1626; border-radius: 0; }
+  .chat-msg--slack .chat-text { background: #fff; border-radius: 0; box-shadow: inset .5cqw 0 0 #611f69; }
+  .chat-msg--bot .chat-text { background: #fff7d6; }
+  .chat-popup { position: absolute; inset: 8% 4% 6%; display: grid; grid-template-rows: 1fr auto; gap: 1cqh; padding: 1cqh; background: #fff; box-shadow: 0 0 0 .3cqw var(--ink), .8cqw .8cqw 0 rgba(29, 22, 38, .25); animation: chat-pop .3s steps(3) both; }
+  .chat-popup img { width: 100%; height: 100%; min-height: 0; object-fit: contain; }
+  .chat-popup figcaption { font-size: 1.3cqw; text-align: center; color: #4f4a5e; }
+  .chat-notes { list-style: none; display: grid; align-content: center; gap: 2.2cqh; counter-reset: note; }
+  .chat-notes li { position: relative; padding-left: 3.4cqw; font-size: 2cqw; line-height: 1.45; color: #8a8496; counter-increment: note; }
+  .chat-notes li::before { content: counter(note); position: absolute; left: 0; top: .1em; width: 2.2cqw; height: 2.2cqw; display: grid; place-items: center; font-size: 1.3cqw; color: #fff; background: #b9b3c4; }
+  .chat-notes li.is-current { color: var(--ink); }
+  .chat-notes li.is-current::before { background: var(--accent-deep); }
+  @keyframes chat-pop { from { opacity: 0; transform: translateY(1cqh); } }
+
+  .arena { position: relative; flex: 1; min-height: 0; background: #eaf4ff; box-shadow: 0 0 0 .3cqw var(--ink); }
+  .arena-canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+  .arena-hud { position: absolute; top: 1.6cqh; left: 1.4cqw; display: flex; gap: 1cqw; }
+  .arena-meter { display: grid; gap: .3cqh; padding: .8cqh 1.1cqw; min-width: 10cqw; background: rgba(255, 255, 255, .92); box-shadow: 0 0 0 .2cqw var(--ink); }
+  .arena-meter span { font-size: 1.15cqw; color: #4f4a5e; }
+  .arena-meter b { font-size: 2.3cqw; }
+  .arena[data-mode="slow"] [data-arena="p95"] { color: #b86a00; }
+  .arena[data-mode="down"] [data-arena="p95"], .arena[data-mode="down"] [data-arena="err"] { color: #c62828; }
+  .arena-note { position: absolute; left: 1.4cqw; bottom: 1.6cqh; padding: .8cqh 1.2cqw; font-size: 1.7cqw; color: #fff; background: var(--ink); }
+  .arena-note mark { color: #ffd34d; background: none; }
+  .arena-steps { position: absolute; right: 1.4cqw; top: 1.6cqh; display: flex; gap: .5cqw; }
+  .arena-steps i { width: 1.4cqw; height: 1.4cqw; background: rgba(29, 22, 38, .2); }
+  .arena-steps i.on { background: var(--accent-deep); }
+  @media (prefers-reduced-motion: reduce) { .chat-msg, .chat-popup { animation: none; } }
+
+  .stamina { position: relative; flex: 1; min-height: 0; background: #f2f6ff; box-shadow: 0 0 0 .3cqw var(--ink); }
+  .stamina-canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+  .stamina-hud { position: absolute; top: 1.6cqh; left: 1.4cqw; display: flex; gap: 1cqw; }
+  .stamina[data-mode="run"] [data-stamina="bpm"] { color: #c62828; }
+  .stamina[data-unknown="true"] [data-stamina="hp"] { color: #8a8496; }
+
+  .sensor-scene { flex: 1; min-height: 0; display: grid; grid-template-columns: .8fr 1.2fr; gap: 3cqw; align-items: center; }
+  .sensor-body { position: relative; justify-self: center; width: 18cqw; height: 44cqh; background: #2d3352; box-shadow: 0 0 0 .4cqw var(--ink), .8cqw .8cqw 0 .4cqw rgba(29, 22, 38, .2); }
+  .sensor-body::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(transparent 0 2.4cqh, rgba(255, 255, 255, .06) 2.4cqh 2.6cqh); }
+  .sensor-face { position: absolute; left: 50%; top: 9%; transform: translateX(-50%); display: flex; gap: 3cqw; }
+  .sensor-face i { width: 1.6cqw; height: 1.6cqw; background: #fff; box-shadow: inset -.6cqw -.6cqw 0 #1d1626; }
+  .sensor-pad { position: absolute; width: 2.4cqw; height: 2.4cqw; background: var(--c); box-shadow: 0 0 0 .25cqw #fff, 0 0 0 .45cqw var(--ink); animation: pad-stick .35s steps(3) both; }
+  .sensor-pad::after { content: ''; position: absolute; left: 100%; top: 45%; width: 30cqw; height: .25cqw; background: var(--c); opacity: .5; }
+  .sensor-list { list-style: none; display: grid; gap: 1.8cqh; align-content: center; }
+  .sensor-note { font-size: 2.1cqw; line-height: 1.45; }
+  .sensor-row { display: grid; grid-template-columns: auto 10cqw auto 1fr; align-items: center; gap: 1cqw; padding: 1.2cqh 1.2cqw; background: #fff; box-shadow: 0 0 0 .25cqw var(--ink); animation: chat-pop .3s steps(3) both; }
+  .sensor-row i { width: 1.6cqw; height: 1.6cqw; background: var(--c); }
+  .sensor-row span { font-size: 1.8cqw; color: #4f4a5e; }
+  .sensor-row em { font-style: normal; font-size: 1.8cqw; color: #8a8496; }
+  .sensor-row b { font-size: 1.9cqw; }
+  .sensor-pad.is-hidden, .sensor-row.is-hidden { display: none; }
+  @keyframes pad-stick { from { transform: scale(1.8); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .sensor-pad, .sensor-row { animation: none; } }
 </style>
 </head>
 <body>
@@ -483,7 +548,7 @@
   - 포탈에 sectionStyle: 'plain'을 지정하면 막 대신 번호와 구역 제목을 표시한다. tocTitle로 목차 제목을 바꿀 수 있다.
   - sectionIntro: 'stage'를 함께 지정하면 번호형 구역의 도입을 커튼이 열리는 무대로 표시한다.
   - 슬라이드 필드
-    type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' | 'cards' | 'crossroads' | 'dialogue' | 'table' (생략하면 내용에 맞춰 자동 배치)
+    type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' | 'flow' | 'cards' | 'crossroads' | 'dialogue' | 'table' | 'chat' | 'arena' | 'stamina' | 'sensors' (생략하면 내용에 맞춰 자동 배치)
     kicker, title, subtitle, big, points, image, caption, images(사진 더미), claims, before/after, say(캐릭터 대사)
     cards: [{ label, title, detail }], takeaway: 카드나 대화의 정리 문장
     turns: [{ speaker: '대O' | '맥O', label, text, note, thought }], scene: 'goals' | 'request' | 'reunion'
@@ -616,6 +681,10 @@ function sfx(name) {
   if (name === 'warp') {
     tone(220, at, 0.7, { type: 'triangle', volume: 0.22, slideTo: 1760 });
     tone(330, at + 0.05, 0.65, { volume: 0.05, slideTo: 2640 });
+    return;
+  }
+  if (name === 'flatline') {
+    tone(988, at, 1.6, { type: 'sine', volume: 0.12 });
     return;
   }
   if (name === 'flip') {
@@ -1529,6 +1598,351 @@ function enterVillage() {
 
 let deck = null;
 let sceneAnimations = [];
+let arena = null;
+
+function chatMarkup(s) {
+  const messages = s.messages.map(m => {
+    const name = m.name ? `<span class="chat-name">${escapeHtml(m.name)}</span>` : '';
+    const link = m.link ? `<br><span class="chat-link">${escapeHtml(m.link)}</span>` : '';
+    return `<div class="chat-msg chat-msg--${m.from}" data-stage="${m.stage}">${name}<p class="chat-text">${rich(m.text)}${link}</p></div>`;
+  }).join('');
+  const notes = s.stages.map((stage, i) => `<li data-stage="${i}">${rich(stage.note)}</li>`).join('');
+  const popup = s.popup
+    ? `<figure class="chat-popup" data-stage="${s.popup.stage}"><img src="${escapeHtml(s.popup.image)}" alt="${escapeHtml(s.popup.caption)}"><figcaption>${escapeHtml(s.popup.caption)}</figcaption></figure>`
+    : '';
+  return `${headingMarkup(s)}<div class="chat-scene"><div class="chat-phone"><header class="chat-head"><span class="chat-room">${escapeHtml(s.room)}</span><span class="chat-members" data-members></span></header><div class="chat-body">${messages}</div>${popup}</div><ol class="chat-notes">${notes}</ol></div>`;
+}
+
+function arenaMarkup(s) {
+  const meter = (label, key) => `<div class="arena-meter"><span>${label}</span><b data-arena="${key}"></b></div>`;
+  const steps = s.stages.map(() => '<i></i>').join('');
+  return `${headingMarkup(s)}<div class="arena"><canvas class="arena-canvas"></canvas><div class="arena-hud">${meter('목표', 'rps')}${meter('p95', 'p95')}${meter('오류율', 'err')}</div><div class="arena-steps">${steps}</div><p class="arena-note" data-arena="note"></p></div>`;
+}
+
+function staminaMarkup(s) {
+  const meter = (label, key) => `<div class="arena-meter"><span>${label}</span><b data-stamina="${key}"></b></div>`;
+  const steps = s.stages.map(() => '<i></i>').join('');
+  return `${headingMarkup(s)}<div class="stamina"><canvas class="stamina-canvas"></canvas><div class="stamina-hud">${meter('속도', 'speed')}${meter('심박', 'bpm')}${meter('체력', 'hp')}</div><div class="arena-steps">${steps}</div><p class="arena-note" data-stamina="note"></p></div>`;
+}
+
+function sensorsMarkup(s) {
+  const pads = s.sensors.map(sensor => `<span class="sensor-pad" data-stage="${sensor.stage}" style="--c: ${sensor.color}; left: ${sensor.x}%; top: ${sensor.y}%"></span>`).join('');
+  const rows = s.sensors.map(sensor => `<li class="sensor-row" data-stage="${sensor.stage}" style="--c: ${sensor.color}"><i></i><span>${escapeHtml(sensor.body)}</span><em>=</em><b>${rich(sensor.metric)}</b></li>`).join('');
+  return `${headingMarkup(s)}<div class="sensor-scene"><div class="sensor-body"><div class="sensor-face"><i></i><i></i></div>${pads}</div><ul class="sensor-list"><li class="sensor-note" data-note></li>${rows}</ul></div>`;
+}
+
+let stamina = null;
+
+function setupStamina() {
+  const canvas = frameEl.querySelector('.stamina-canvas');
+  stamina = { canvas, ctx: canvas.getContext('2d'), belt: 0, phase: 0, ecg: [], ecgAcc: 0 };
+}
+
+const STAMINA_SPEED = { rest: 0.8, jog: 2.2, run: 4.2, dead: 0 };
+
+function updateStamina(dt) {
+  if (!stamina || !stamina.canvas.isConnected) { stamina = null; return; }
+  const stage = deck.slides[deck.index].stages[deck.stage];
+  const speed = STAMINA_SPEED[stage.mode];
+  stamina.belt = (stamina.belt + speed * 14 * dt) % 6;
+  stamina.phase += speed * 3 * dt;
+  const bpm = typeof stage.bpm === 'number' ? stage.bpm : 180;
+  stamina.ecgAcc += dt * 60;
+  while (stamina.ecgAcc >= 1) {
+    stamina.ecgAcc -= 1;
+    stamina.beat = (stamina.beat || 0) + bpm / 60 / 60;
+    const f = stamina.beat % 1;
+    const v = stage.mode === 'dead' ? 0 : f < 0.06 ? -f * 120 : f < 0.1 ? (f - 0.06) * 360 - 7 : f < 0.14 ? 7 - (f - 0.1) * 200 : 0;
+    stamina.ecg.push(v);
+    if (stamina.ecg.length > 120) stamina.ecg.shift();
+  }
+  drawStamina(stage);
+}
+
+function drawStamina(stage) {
+  const { canvas, ctx: c } = stamina;
+  const dpr = window.devicePixelRatio || 1;
+  const w = Math.round(canvas.clientWidth * dpr), h = Math.round(canvas.clientHeight * dpr);
+  if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+  const k = Math.min(w / ARENA_W, h / ARENA_H);
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  c.fillStyle = '#f2f6ff';
+  c.fillRect(0, 0, w, h);
+  c.setTransform(k, 0, 0, k, (w - ARENA_W * k) / 2, h - ARENA_H * k);
+  c.imageSmoothingEnabled = false;
+  c.fillStyle = '#dfe6f5';
+  c.fillRect(-40, 86, ARENA_W + 80, 14);
+
+  const px = (x, y, ww, hh, color) => { c.fillStyle = color; c.fillRect(x, y, ww, hh); };
+  px(38, 78, 104, 9, '#1d1626');
+  px(39, 79, 102, 6, '#4a4f6b');
+  for (let x = 39 - stamina.belt; x < 141; x += 6) px(Math.max(39, x), 80, 2, 4, '#2d3352');
+  px(132, 46, 3, 33, '#1d1626');
+  px(120, 44, 18, 4, '#1d1626');
+  px(121, 45, 16, 2, stage.mode === 'run' ? '#ff4d4d' : '#7bf18a');
+
+  const mode = stage.mode;
+  if (mode === 'dead') {
+    drawFallenServer(px);
+    drawStaminaMonitor(px, c, mode);
+    return;
+  }
+  const fast = mode === 'run' ? 1 : 0;
+  const bob = mode === 'rest' ? 0 : Math.round(Math.sin(stamina.phase * 2) * (1 + fast));
+  const bx = 80, by = 40 + bob;
+  const stride = Math.sin(stamina.phase * 2) > 0;
+  px(bx + 6, by + 34, 3, 5 - (mode !== 'rest' && stride ? 2 : 0), '#1d1626');
+  px(bx + 15, by + 34, 3, 5 - (mode !== 'rest' && !stride ? 2 : 0), '#1d1626');
+  px(bx - 1, by - 1, 26, 36, '#1d1626');
+  px(bx, by, 24, 34, '#2d3352');
+  for (let row = 0; row < 3; row++) {
+    px(bx + 3, by + 14 + row * 6, 18, 3, '#434b73');
+    const blink = Math.floor(time * (mode === 'run' ? 14 : mode === 'jog' ? 6 : 2) + row) % 2 === 0;
+    px(bx + 18, by + 15 + row * 6, 2, 1, blink ? (mode === 'run' ? '#ff4d4d' : '#7bf18a') : '#2f6b3a');
+  }
+  px(bx + 5, by + 4, 4, 4, '#ffffff');
+  px(bx + 15, by + 4, 4, 4, '#ffffff');
+  px(bx + 7, by + 6, 2, 2, '#1d1626');
+  px(bx + 17, by + 6, 2, 2, '#1d1626');
+  if (mode === 'run') {
+    px(bx + 4, by + 3, 5, 1, '#1d1626');
+    px(bx + 15, by + 3, 5, 1, '#1d1626');
+    px(bx + 3, by + 9, 3, 2, '#ff9aa2');
+    px(bx + 18, by + 9, 3, 2, '#ff9aa2');
+    px(bx + 9, by + 10, 6, 2, '#1d1626');
+    if (Math.floor(time * 3) % 2 === 0) { px(bx - 4, by + 2, 2, 3, '#4cc8ff'); px(bx + 27, by + 6, 2, 3, '#4cc8ff'); }
+  } else {
+    px(bx + 9, by + 10, 6, 1, '#1d1626');
+  }
+  const arm = mode === 'rest' ? 0 : (stride ? -3 : 3);
+  px(bx - 4, by + 15 + arm, 4, 2, '#1d1626');
+  px(bx + 24, by + 15 - arm, 4, 2, '#1d1626');
+
+  drawStaminaMonitor(px, c, mode);
+}
+
+function drawFallenServer(px) {
+  const bx = 62, by = 64;
+  px(bx - 1, by - 1, 36, 16, '#1d1626');
+  px(bx, by, 34, 14, '#2d3352');
+  for (let col = 0; col < 3; col++) px(bx + 12 + col * 7, by + 3, 4, 8, '#434b73');
+  const eye = (x, y) => { px(x, y, 1, 1, '#fff'); px(x + 2, y, 1, 1, '#fff'); px(x + 1, y + 1, 1, 1, '#fff'); px(x, y + 2, 1, 1, '#fff'); px(x + 2, y + 2, 1, 1, '#fff'); };
+  eye(bx + 3, by + 2);
+  eye(bx + 3, by + 8);
+  const rise = (time * 6) % 26;
+  const sway = Math.round(Math.sin(time * 3) * 2);
+  const gx = bx + 8 + sway, gy = by - 10 - rise;
+  px(gx, gy, 7, 6, 'rgba(255, 255, 255, 0.85)');
+  px(gx + 1, gy + 6, 1, 2, 'rgba(255, 255, 255, 0.85)');
+  px(gx + 3, gy + 6, 1, 1, 'rgba(255, 255, 255, 0.85)');
+  px(gx + 5, gy + 6, 1, 2, 'rgba(255, 255, 255, 0.85)');
+  px(gx + 2, gy + 2, 1, 1, '#1d1626');
+  px(gx + 4, gy + 2, 1, 1, '#1d1626');
+  px(bx + 6, by - 4, 8, 1, '#ffd34d');
+}
+
+function drawStaminaMonitor(px, c, mode) {
+  px(168, 18, 66, 46, '#1d1626');
+  px(170, 20, 62, 42, mode === 'dead' && Math.floor(time * 2) % 2 === 0 ? '#3a0d12' : '#0d2b2b');
+  c.strokeStyle = mode === 'run' || mode === 'dead' ? '#ff6b6b' : '#7bf18a';
+  c.lineWidth = 1;
+  c.beginPath();
+  stamina.ecg.forEach((v, i) => {
+    const x = 171 + i / 2, y = 41 + v * 1.6;
+    if (i === 0) c.moveTo(x, y); else c.lineTo(x, y);
+  });
+  c.stroke();
+  px(176, 66, 50, 18, '#1d1626');
+  px(177, 67, 48, 16, '#2d3352');
+}
+
+function renderStage(withSound) {
+  const slide = deck.slides[deck.index];
+  const stage = slide.stages[deck.stage];
+  if (slide.type === 'sensors') {
+    frameEl.querySelectorAll('.sensor-scene [data-stage]').forEach(el => el.classList.toggle('is-hidden', Number(el.dataset.stage) > deck.stage));
+    frameEl.querySelector('[data-note]').innerHTML = rich(stage.note);
+    if (withSound) sfx('open');
+  }
+  if (slide.type === 'stamina') {
+    const box = frameEl.querySelector('.stamina');
+    box.dataset.mode = stage.mode;
+    box.dataset.unknown = String(stage.hp === '???');
+    box.querySelector('[data-stamina="speed"]').textContent = stage.speed;
+    box.querySelector('[data-stamina="bpm"]').textContent = typeof stage.bpm === 'number' ? `${stage.bpm}` : stage.bpm;
+    box.querySelector('[data-stamina="hp"]').textContent = stage.hp;
+    box.querySelector('[data-stamina="note"]').innerHTML = rich(stage.note);
+    box.querySelectorAll('.arena-steps i').forEach((dot, i) => dot.classList.toggle('on', i <= deck.stage));
+    if (withSound) sfx(stage.mode === 'dead' ? 'flatline' : 'next');
+  }
+  if (slide.type === 'chat') {
+    frameEl.querySelectorAll('.chat-scene [data-stage]').forEach(el => {
+      const at = Number(el.dataset.stage);
+      el.classList.toggle('is-hidden', at > deck.stage);
+      el.classList.toggle('is-current', at === deck.stage);
+    });
+    frameEl.querySelector('[data-members]').textContent = stage.members ? `참여 ${stage.members}` : '';
+    if (withSound) sfx('tick');
+  }
+  if (slide.type === 'arena') {
+    const box = frameEl.querySelector('.arena');
+    box.dataset.mode = stage.mode;
+    box.querySelector('[data-arena="rps"]').textContent = `${stage.rps} RPS`;
+    box.querySelector('[data-arena="p95"]').textContent = stage.p95;
+    box.querySelector('[data-arena="err"]').textContent = stage.err;
+    box.querySelector('[data-arena="note"]').innerHTML = rich(stage.note);
+    box.querySelectorAll('.arena-steps i').forEach((dot, i) => dot.classList.toggle('on', i <= deck.stage));
+    if (arena) arena.stage = stage;
+    if (withSound) sfx(stage.mode === 'down' ? 'close' : 'next');
+  }
+}
+
+const ARENA_W = 240, ARENA_H = 100, ARENA_DOOR = 196;
+const ARENA_COLORS = ['#246bfe', '#ff7ab6', '#ffb938', '#4cc8ff', '#7bc96f', '#b48cff'];
+
+function setupArena(slide) {
+  const canvas = frameEl.querySelector('.arena-canvas');
+  arena = { canvas, ctx: canvas.getContext('2d'), people: [], queue: [], spawn: 0, serve: 0, stage: slide.stages[deck.stage], rand: mulberry32(11) };
+}
+
+function arenaRates(stage) {
+  const spawn = Math.min(36, Math.max(1.2, stage.rps / 4));
+  const serve = stage.mode === 'ok' ? Infinity : stage.mode === 'slow' ? spawn * 0.55 : spawn * 0.25;
+  return { spawn, serve, patience: stage.mode === 'down' ? 2.2 : 7 };
+}
+
+function updateArena(dt) {
+  if (!arena || !arena.canvas.isConnected) { arena = null; return; }
+  const { people, queue, rand } = arena;
+  const { spawn, serve, patience } = arenaRates(arena.stage);
+  arena.spawn += spawn * dt;
+  while (arena.spawn >= 1) {
+    arena.spawn -= 1;
+    people.push({ x: -4, y: 58 + rand() * 30, lane: rand(), color: ARENA_COLORS[Math.floor(rand() * ARENA_COLORS.length)], mode: 'walk', age: 0, fade: 1 });
+  }
+  if (serve === Infinity) queue.splice(0).forEach(p => { p.mode = 'enter'; });
+  else {
+    arena.serve += serve * dt;
+    while (arena.serve >= 1 && queue.length) { arena.serve -= 1; queue.shift().mode = 'enter'; }
+    if (!queue.length) arena.serve = Math.min(arena.serve, 1);
+  }
+  queue.forEach((p, i) => {
+    p.age += dt;
+    p.tx = ARENA_DOOR - 6 - Math.floor(i / 4) * 5;
+    p.ty = 62 + (i % 4) * 7;
+    if (p.age > patience || i > 90) p.mode = 'timeout';
+  });
+  for (let i = queue.length - 1; i >= 0; i--) if (queue[i].mode !== 'queue') queue.splice(i, 1);
+  for (let i = people.length - 1; i >= 0; i--) {
+    const p = people[i];
+    if (p.mode === 'walk') {
+      p.x += 55 * dt;
+      p.y += (72 - p.y) * dt * 0.8;
+      const stop = serve === Infinity ? ARENA_DOOR : ARENA_DOOR - 6 - Math.floor(queue.length / 4) * 5;
+      if (p.x >= stop) {
+        if (serve === Infinity) p.mode = 'enter';
+        else { p.mode = 'queue'; p.age = 0; queue.push(p); }
+      }
+    } else if (p.mode === 'queue') {
+      p.x += (p.tx - p.x) * Math.min(1, dt * 6);
+      p.y += (p.ty - p.y) * Math.min(1, dt * 6);
+    } else if (p.mode === 'enter') {
+      p.x += 70 * dt;
+      p.y += (72 - p.y) * dt * 4;
+      if (p.x > ARENA_DOOR + 8) people.splice(i, 1);
+    } else if (p.mode === 'timeout') {
+      p.y -= 18 * dt;
+      p.fade -= dt * 1.4;
+      if (p.fade <= 0) people.splice(i, 1);
+    }
+  }
+  drawArena();
+}
+
+function drawArenaFire(c) {
+  const flame = (x, base, height, seed) => {
+    const flicker = Math.floor(time * 10 + seed) % 3;
+    const h = height - flicker;
+    c.fillStyle = '#c62828';
+    c.fillRect(x, base - h, 5, h);
+    c.fillStyle = '#ff8a1f';
+    c.fillRect(x + 1, base - h + 2, 3, h - 2);
+    c.fillStyle = '#ffd34d';
+    c.fillRect(x + 2, base - h + 4, 1, Math.max(1, h - 5));
+  };
+  [[ARENA_DOOR + 1, 9, 0], [ARENA_DOOR + 7, 13, 1.3], [ARENA_DOOR + 14, 8, 2.1], [ARENA_DOOR + 20, 12, 0.7], [ARENA_DOOR + 26, 9, 1.8]]
+    .forEach(([x, h, seed]) => flame(x, 17, h, seed));
+  flame(ARENA_DOOR - 3, 46, 7, 2.6);
+  flame(ARENA_DOOR + 31, 38, 8, 0.4);
+  for (let i = 0; i < 4; i++) {
+    const rise = (time * 9 + i * 7) % 26;
+    c.fillStyle = `rgba(90, 90, 100, ${0.45 - rise / 70})`;
+    c.fillRect(ARENA_DOOR + 6 + i * 6 + Math.round(Math.sin(time * 2 + i) * 2), 2 - rise, 4, 3);
+  }
+}
+
+function drawArena() {
+  const { canvas, ctx: c, people } = arena;
+  const dpr = window.devicePixelRatio || 1;
+  const w = Math.round(canvas.clientWidth * dpr), h = Math.round(canvas.clientHeight * dpr);
+  if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+  const k = Math.min(w / ARENA_W, h / ARENA_H);
+  const offX = (w - ARENA_W * k) / 2, offY = h - ARENA_H * k;
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  c.fillStyle = '#eaf4ff';
+  c.fillRect(0, 0, w, h);
+  c.setTransform(k, 0, 0, k, offX, offY);
+  c.imageSmoothingEnabled = false;
+  c.fillStyle = '#cfe3c4';
+  c.fillRect(-40, 54, ARENA_W + 80, 46);
+  c.fillStyle = '#dcbb83';
+  c.fillRect(-40, 64, ARENA_W + 80, 22);
+
+  const mode = arena.stage.mode;
+  const flash = mode === 'down' && Math.floor(time * 4) % 2 === 0;
+  c.fillStyle = '#1d1626';
+  c.fillRect(ARENA_DOOR - 1, 16, 34, 72);
+  c.fillStyle = flash ? '#7a1f2b' : '#2d3352';
+  c.fillRect(ARENA_DOOR, 17, 32, 70);
+  for (let row = 0; row < 6; row++) {
+    c.fillStyle = '#434b73';
+    c.fillRect(ARENA_DOOR + 3, 21 + row * 8, 26, 5);
+    const on = mode === 'ok' ? (Math.floor(time * 3 + row) % 3 !== 0) : Math.floor(time * (mode === 'slow' ? 10 : 16) + row) % 2 === 0;
+    c.fillStyle = mode === 'ok' ? (on ? '#7bf18a' : '#2f6b3a') : mode === 'slow' ? (on ? '#ffd34d' : '#7a6a3a') : (on ? '#ff4d4d' : '#5c1220');
+    c.fillRect(ARENA_DOOR + 24, 22 + row * 8, 3, 3);
+  }
+  c.fillStyle = '#1d1626';
+  c.fillRect(ARENA_DOOR + 10, 74, 12, 14);
+  c.fillStyle = mode === 'down' ? '#c62828' : '#ffe9a0';
+  c.fillRect(ARENA_DOOR + 11, 75, 10, 13);
+  if (mode === 'down') drawArenaFire(c);
+  if (mode === 'slow' && Math.floor(time * 2) % 2 === 0) {
+    c.fillStyle = '#4cc8ff';
+    c.fillRect(ARENA_DOOR - 4, 20, 2, 3);
+    c.fillRect(ARENA_DOOR + 35, 26, 2, 3);
+  }
+
+  people.slice().sort((a, b) => a.y - b.y).forEach(p => {
+    const x = Math.round(p.x), y = Math.round(p.y);
+    c.globalAlpha = Math.max(0, p.fade);
+    const step = p.mode === 'walk' || p.mode === 'enter' ? Math.floor(time * 8 + p.lane * 10) % 2 : 0;
+    c.fillStyle = '#1d1626';
+    c.fillRect(x - 1, y - 9, 5, 10);
+    c.fillStyle = '#ffd5b0';
+    c.fillRect(x, y - 8, 3, 3);
+    c.fillStyle = p.mode === 'timeout' ? '#ff4d4d' : p.color;
+    c.fillRect(x, y - 5, 3, 3);
+    c.fillStyle = '#2b3557';
+    c.fillRect(x + (step ? 0 : 2), y - 2, 1, 2);
+    c.fillRect(x + (step ? 2 : 0), y - 2, 1, 1);
+    if (p.mode === 'timeout') {
+      c.fillStyle = '#c62828';
+      c.fillRect(x, y - 14, 1, 1); c.fillRect(x + 2, y - 14, 1, 1); c.fillRect(x + 1, y - 13, 1, 1); c.fillRect(x, y - 12, 1, 1); c.fillRect(x + 2, y - 12, 1, 1);
+    }
+  });
+  c.globalAlpha = 1;
+}
+
 
 function openDeck(portal) {
   deck = { portal, index: 0, slides: [{ type: 'toc', say: portal.tocSay }, ...portal.slides], typing: null };
@@ -1567,6 +1981,14 @@ function closeDeck() {
 function moveSlide(delta) {
   if (state !== 'deck') return;
   const slide = deck.slides[deck.index];
+  if (slide.stages) {
+    const step = deck.stage + delta;
+    if (step >= 0 && step < slide.stages.length) {
+      deck.stage = step;
+      renderStage(true);
+      return;
+    }
+  }
   if (slide.scene === 'goals') {
     const step = deck.castStep + delta;
     if (step >= 0 && step < slide.turns.length) {
@@ -1705,6 +2127,10 @@ function crossroadMarkup(s) {
 }
 
 function slideMarkup(s) {
+  if (s.type === 'chat') return { kind: 'chat', body: chatMarkup(s) };
+  if (s.type === 'arena') return { kind: 'arena', body: arenaMarkup(s) };
+  if (s.type === 'stamina') return { kind: 'stamina', body: staminaMarkup(s) };
+  if (s.type === 'sensors') return { kind: 'sensors', body: sensorsMarkup(s) };
   if (s.type === 'toc') return { kind: 'toc', body: tocMarkup() };
   if (s.type === 'act') {
     if (deck.portal.sectionStyle === 'plain') {
@@ -1734,9 +2160,10 @@ function slideMarkup(s) {
     ].join('');
     return { kind: 'table', body: `${headingMarkup(s)}<div class="table" style="--cols: ${s.head.length}">${cells}</div>` };
   }
-  if (s.type === 'cycle') {
+  if (s.type === 'cycle' || s.type === 'flow') {
     const steps = s.steps.map(step => `<span class="cycle-step">${rich(step)}</span>`).join('<span class="cycle-arrow">▶</span>');
-    return { kind: 'cycle', body: `${headingMarkup(s)}<div class="cycle"><div class="cycle-steps">${steps}</div><p class="cycle-loop">↺ ${rich(s.loop)}</p></div>` };
+    const loop = s.type === 'cycle' ? `↺ ${rich(s.loop)}` : rich(s.loop);
+    return { kind: 'cycle', body: `${headingMarkup(s)}<div class="cycle"><div class="cycle-steps">${steps}</div><p class="cycle-loop">${loop}</p></div>` };
   }
   if (s.type === 'gaps') {
     const head = ['', '누가', '왜 우리에게?', '필요한 것'].map(label => `<span class="gaps-head">${label}</span>`).join('');
@@ -1821,6 +2248,14 @@ function renderSlide(direction) {
     renderGoalState(direction === 'next' ? 0 : null);
   }
   if (slide.scene === 'request') renderRequestState();
+  arena = null;
+  stamina = null;
+  if (slide.stages) {
+    deck.stage = direction === 'prev' ? slide.stages.length - 1 : 0;
+    if (slide.type === 'arena') setupArena(slide);
+    if (slide.type === 'stamina') setupStamina();
+    renderStage(false);
+  }
 
   frameEl.querySelectorAll('.slide-media img, .stack-card img').forEach(img => img.addEventListener('error', () => {
     const missing = document.createElement('div');
@@ -2273,6 +2708,8 @@ function frame(now) {
     else if (state === 'intro') updateIntro(dt);
     updateFade();
     if (state === 'deck') updateTyping();
+    if (state === 'deck') updateArena(dt);
+    if (state === 'deck') updateStamina(dt);
     updateBgm();
     spawnParticles(dt);
     if (state !== 'deck') render();
