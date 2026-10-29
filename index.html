@@ -419,6 +419,16 @@
   .card-title { font-size: 2.7cqw; line-height: 1.35; font-weight: 700; }
   .card-detail { font-size: 1.75cqw; line-height: 1.45; color: #4f4a5e; }
   .cards-takeaway { font-size: 2cqw; line-height: 1.5; text-align: center; }
+  .slide--evidence { gap: 1.8cqh; padding-top: 4.5cqh; word-break: keep-all; }
+  .slide--evidence .slide-title { font-size: 3.7cqw; }
+  .evidence-grid { display: grid; grid-template-columns: 1.65fr 1fr; gap: 2.5cqw; flex: 1; min-height: 0; }
+  .evidence-grid .slide-media { height: 100%; gap: .8cqh; }
+  .evidence-grid .slide-media figcaption { font-size: 1.2cqw; }
+  .evidence-grid .cards { grid-template-columns: 1fr; grid-template-rows: repeat(2, 1fr); gap: 1.8cqh; }
+  .evidence-grid .info-card { padding: 1.5cqh 2cqw; gap: .5cqh; }
+  .evidence-grid .card-title { font-size: 4.2cqw; color: var(--accent-deep); }
+  .evidence-grid .card-detail { font-size: 1.45cqw; }
+  .slide--evidence .cards-takeaway { font-size: 1.6cqw; }
 
   .slide--crossroads { gap: 1.5cqh; padding-top: 5cqh; }
   .slide--crossroads .slide-title { font-size: 3.5cqw; line-height: 1.3; }
@@ -782,7 +792,7 @@
   - 슬라이드 필드
     type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' | 'flow' | 'cards' | 'crossroads' | 'dialogue' | 'table' | 'chat' | 'arena' | 'stamina' | 'sensors' | 'sequence' (생략하면 내용에 맞춰 자동 배치)
     kicker, title, subtitle, big, points, image, caption, images(사진 더미), claims, before/after, say(캐릭터 대사)
-    cards: [{ label, title, detail }], takeaway: 카드나 대화의 정리 문장
+    cards: [{ label, title, detail }], takeaway: 카드나 대화의 정리 문장. image를 함께 쓰면 근거 이미지 옆에 카드 2개를 세로로 배치한다.
     turns: [{ speaker: '대O' | '맥O', label, text, note, thought }], scene: 'goals' | 'request' | 'reunion'
     sequence: stages: [{ label, image, alt, note, say }], 다음/이전으로 그림을 한 단계씩 공개한다.
     sequence + layout: 'handoff': source/router: { label, detail }, servers: [A, B], stages: [{ serving: 0 | 1 | [0, 1], servingDetail, servingLabel?, note, say }]. 같은 그림에서 요청 경로와 서버 상태를 교대한다.
@@ -3190,6 +3200,7 @@ function slideMarkup(s) {
   }
   if (s.type === 'cards') {
     const cards = s.cards.map(card => `<section class="info-card"><p class="card-label">${escapeHtml(card.label)}</p><h3 class="card-title">${rich(card.title)}</h3>${card.detail ? `<p class="card-detail">${rich(card.detail)}</p>` : ''}</section>`).join('');
+    if (s.image) return { kind: 'evidence', body: `${headingMarkup(s)}<div class="evidence-grid">${mediaMarkup(s)}<div class="cards">${cards}</div></div>${s.takeaway ? `<p class="cards-takeaway">${rich(s.takeaway)}</p>` : ''}` };
     return { kind: 'cards', body: `${headingMarkup(s)}<div class="cards">${cards}</div>${s.takeaway ? `<p class="cards-takeaway">${rich(s.takeaway)}</p>` : ''}` };
   }
   if (s.type === 'crossroads' || s.type === 'dialogue') return { kind: 'crossroads', body: crossroadMarkup(s) };

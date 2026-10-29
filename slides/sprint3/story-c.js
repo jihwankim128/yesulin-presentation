@@ -88,6 +88,8 @@ PORTAL_SLIDES['story-c'] = {
     {
       "type": "cards",
       "title": "관심은 보였습니다, 신청은 이제부터",
+      "image": "assets/story-c/networking/interest-survey.png",
+      "caption": "Threads 사전 설문 원본 · 10.28 자료 기준",
       "cards": [
         {
           "label": "Threads 설문",
