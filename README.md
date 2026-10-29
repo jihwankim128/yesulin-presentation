@@ -14,13 +14,22 @@ python3 -m http.server 4173 --bind 127.0.0.1
 
 | 화면 | 키 |
 | --- | --- |
-| 시작 | Enter 또는 클릭 |
-| 마을 | 방향키·WASD 이동, `1` `2` `3` 포탈 바로가기, `F` 전체화면 |
+| 시작 | ↑/↓ 채널 고르기, Enter 또는 클릭으로 입장 |
+| 마을 | 방향키·WASD 이동, 숫자 키로 포탈 바로가기, 아래 길로 나가면 채널 선택, `F` 전체화면 |
 | 슬라이드 | ←/→ 넘기기, ↓/↑ 사진 더미 넘기기, ESC 마을로 |
 
 ## 내용 수정
 
 포탈별 슬라이드는 `slides/soft.js`, `slides/product.js`, `slides/tech.js`에 나뉘어 있다. 맡은 포탈 파일만 고치면 된다. 전광판 등 마을 설정은 `index.html` 상단의 `CONFIG`에 있다.
+
+### 채널(스프린트)과 포탈
+
+시작 화면은 채널 선택이다. 채널마다 마을의 포탈 구성이 다르고, 포탈 수에 맞춰 마을이 자동으로 다시 그려진다(1~4개 권장).
+
+- 채널 목록은 `index.html`의 `CONFIG.channels`에 있다.
+- 포탈 하나는 `{ slides: 'PORTAL_SLIDES 키', file: '슬라이드 파일 경로', label, theme }` 한 줄이다. `theme`은 `pink`, `gold`, `sky`, `mint`, `violet`, `coral` 중 하나.
+- 스토리를 늘리려면 `slides/sprint3/story-d.js`를 만들고 `PORTAL_SLIDES['story-d']`를 채운 뒤 채널의 `portals`에 한 줄을 추가한다. 줄이려면 그 줄을 지운다.
+- 새 채널은 `{ id, label, isNew, portals: [...] }`를 `CONFIG.channels`에 추가한다.
 
 - 포탈 파일의 `slides` 배열을 채운다. 첫 장 목차는 `type: 'act'` 슬라이드에서 자동으로 만들어진다.
 - 막은 `act: 1`(지난 무대), `act: 2`(지금 무대), `act: 3`(다음 무대)로 나눈다. `items`가 목차의 세부 항목이 된다.

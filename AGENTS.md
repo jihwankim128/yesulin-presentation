@@ -4,7 +4,8 @@
 
 ## 어디를 고치나
 
-- 슬라이드 내용은 `slides/<포탈>.js`만 고친다. `soft.js`(소프트 스킬), `product.js`(제품), `tech.js`(기술).
+- 슬라이드 내용은 포탈 파일만 고친다. 스프린트 2는 `slides/soft.js`, `product.js`, `tech.js`, 스프린트 3은 `slides/sprint3/story-*.js`.
+- 채널과 포탈 구성은 `index.html`의 `CONFIG.channels`에서 바꾼다. 포탈 수에 맞춰 마을이 다시 그려진다.
 - 맡은 포탈 파일만 수정한다. 마을·전광판·레이아웃을 바꿀 때만 `index.html`을 건드린다.
 - 슬라이드 필드는 `index.html` 상단 주석과 `README.md`를 따른다.
 

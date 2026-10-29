@@ -29,23 +29,37 @@
     position: fixed; inset: 0; display: grid; place-items: center;
     background: radial-gradient(ellipse at center, rgba(15, 20, 36, .55), rgba(15, 20, 36, .88));
   }
-  .title-card { display: grid; justify-items: center; gap: 1.6rem; text-align: center; padding: 0 16px; }
+  .title-card { display: grid; justify-items: center; gap: 1.2rem; text-align: center; padding: 0 16px; width: min(100%, 720px); }
   .title-sub { font-size: clamp(16px, 2vw, 22px); color: #cfe0ff; letter-spacing: .08em; }
   .title-logo {
     font-weight: 700; line-height: 1.05;
-    font-size: clamp(72px, 13vw, 176px);
+    font-size: clamp(56px, 9vw, 128px);
     color: #fff;
     text-shadow: .06em .06em 0 var(--brand), .12em .12em 0 #0b1a4a;
   }
-  .title-start {
-    margin-top: 1rem; padding: .9rem 1.6rem; font-size: clamp(18px, 2.2vw, 26px);
-    background: var(--paper); color: var(--ink);
-    box-shadow: 0 0 0 4px var(--ink), 0 0 0 8px #fff, 8px 8px 0 8px rgba(0, 0, 0, .4);
-    white-space: nowrap;
-  }
-  .title-start:active { transform: translate(2px, 2px); }
-  .title-start .arrow { display: inline-block; color: var(--brand); margin-right: .5em; animation: blink 1s steps(2) infinite; }
   .title-hint { font-size: 14px; color: #9fb0d6; }
+  .channel-panel {
+    width: 100%; margin-top: .4rem; text-align: left; background: rgba(15, 20, 36, .92);
+    box-shadow: 0 0 0 4px var(--ink), 0 0 0 7px #fff, 8px 8px 0 7px rgba(0, 0, 0, .4);
+  }
+  .channel-head { display: flex; justify-content: space-between; padding: .7rem 1rem; font-size: 15px; color: #cfe0ff; background: #2d3352; }
+  .channel-list { list-style: none; display: grid; }
+  .channel {
+    display: grid; grid-template-columns: 1.4rem 1fr auto; align-items: center; gap: .3rem 1rem; width: 100%;
+    padding: .9rem 1rem; text-align: left; box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .1);
+  }
+  .channel:hover, .channel.selected { background: rgba(36, 107, 254, .28); }
+  .channel-arrow { grid-row: span 2; color: #ffd34d; visibility: hidden; animation: blink 1s steps(2) infinite; }
+  .channel.selected .channel-arrow { visibility: visible; }
+  .channel-name { display: flex; align-items: center; gap: .6rem; font-size: clamp(18px, 2.2vw, 24px); font-weight: 700; color: #fff; }
+  .channel-new { padding: .1rem .45rem; font-size: 12px; color: var(--ink); background: #ffd34d; }
+  .channel-portals { grid-column: 2; font-size: 14px; color: #9fb0d6; }
+  .channel-status { grid-row: 1 / span 2; grid-column: 3; display: flex; align-items: center; gap: .5rem; font-size: 14px; color: #7bf18a; }
+  .channel-bars { display: flex; align-items: flex-end; gap: 3px; }
+  .channel-bars b { width: 5px; background: currentColor; }
+  .channel-bars b:nth-child(1) { height: 6px; }
+  .channel-bars b:nth-child(2) { height: 10px; }
+  .channel-bars b:nth-child(3) { height: 14px; opacity: .35; }
 
   /* 마을 HUD */
   .hud { position: fixed; inset: 0; pointer-events: none; }
@@ -134,7 +148,7 @@
   @keyframes in-next { from { opacity: 0; transform: translateX(3%); } }
   @keyframes in-prev { from { opacity: 0; transform: translateX(-3%); } }
   @media (prefers-reduced-motion: reduce) {
-    .slide.from-next, .slide.from-prev, .title-start .arrow { animation: none; }
+    .slide.from-next, .slide.from-prev, .channel-arrow { animation: none; }
     .fade { transition: none; }
   }
 
@@ -494,20 +508,6 @@
   .doodle-actions button { padding: .5rem .9rem; font-size: 15px; background: rgba(255, 255, 255, .1); }
   .doodle-actions button:hover { background: rgba(255, 255, 255, .2); }
 
-  .hud-qr {
-    position: absolute; top: 16px; right: 16px; display: grid; justify-items: center; gap: 6px; padding: 8px;
-    pointer-events: auto; color: var(--ink); background: #fff;
-    box-shadow: 0 0 0 3px var(--ink), 0 0 0 6px #ffd34d, 6px 6px 0 6px rgba(0, 0, 0, .3);
-  }
-  .hud-qr img { width: clamp(72px, 9vw, 120px); height: auto; image-rendering: pixelated; }
-  .hud-qr span { font-size: 13px; font-weight: 700; }
-  .hud-qr:hover { transform: translateY(-2px); }
-  .hud-qr:active { transform: translate(1px, 1px); }
-  .qr-zoom { position: fixed; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(9, 11, 22, .88); }
-  .qr-zoom figure { display: grid; justify-items: center; gap: 16px; padding: 22px; background: #fff; box-shadow: 0 0 0 6px #1d1626, 0 0 0 12px #ffd34d, 0 0 0 16px #1d1626; }
-  .qr-zoom img { width: min(70vmin, 560px); height: auto; image-rendering: pixelated; }
-  .qr-zoom figcaption { font-size: 20px; font-weight: 700; color: var(--ink); text-align: center; }
-  .qr-zoom figcaption small { display: block; margin-top: 6px; font-size: 14px; font-weight: 400; color: #4f4a5e; }
 
   .hud-eggs { display: flex; align-items: center; gap: .4rem; padding: .5rem .9rem; font-size: 15px; color: #ffd34d; background: rgba(15, 20, 36, .82); box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px rgba(255, 255, 255, .85); }
   .hud-eggs.done { color: var(--ink); background: #ffd34d; }
@@ -528,10 +528,9 @@
     <div class="hud-eggs" id="hud-eggs" hidden>★ <span id="egg-count">0/5</span></div>
     <div class="hud-apples" id="hud-apples" hidden><i></i><span id="apple-count">0</span></div>
   </div>
-  <button class="hud-qr" id="hud-qr" aria-label="예술in QR 크게 보기"><img src="assets/qr.png" alt=""><span>눌러서 크게</span></button>
   <div class="hud-keys">
     <span><kbd>←↑↓→</kbd>이동</span>
-    <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd>포탈 바로가기</span>
+    <span id="hud-shortcuts"></span>
     <span><kbd>Space</kbd>점프</span>
     <span><kbd>F</kbd>전체화면</span>
     <span><kbd>M</kbd><span id="sound-label">소리 켬</span></span>
@@ -542,8 +541,11 @@
   <div class="title-card">
     <p class="title-sub">예술의 문을 열다</p>
     <h1 class="title-logo">예술in</h1>
-    <button class="title-start" id="title-start"><span class="arrow">▶</span>마을 입장하기</button>
-    <p class="title-hint">Enter 또는 클릭</p>
+    <div class="channel-panel">
+      <p class="channel-head"><span>채널 선택</span><span id="channel-total"></span></p>
+      <ul class="channel-list" id="channel-list" role="listbox" aria-label="채널"></ul>
+    </div>
+    <p class="title-hint">↑↓ 채널 고르기 · Enter 또는 클릭으로 입장</p>
   </div>
 </div>
 
@@ -583,13 +585,6 @@
   <p class="room-hint">← → 걷기 · 왼쪽 문으로 나가거나 ESC</p>
 </div>
 
-<div class="qr-zoom" id="qr-zoom" hidden role="dialog" aria-modal="true" aria-label="예술in QR">
-  <figure>
-    <img src="assets/qr.png" alt="예술in QR 코드">
-    <figcaption>휴대폰 카메라로 찍어보세요<small>ESC 또는 아무 곳이나 눌러 닫기</small></figcaption>
-  </figure>
-</div>
-
 <div class="doodle" id="doodle" hidden>
   <div class="doodle-box" role="dialog" aria-modal="true" aria-labelledby="doodle-title">
     <p class="doodle-title" id="doodle-title">예술in 표지판에 낙서하기</p>
@@ -619,14 +614,14 @@
 
 <div class="fade" id="fade"></div>
 
-<script src="slides/soft.js"></script>
-<script src="slides/product.js"></script>
-<script src="slides/tech.js"></script>
 <script>
 /*
   발표 내용은 CONFIG만 고치면 된다.
   - billboard.images: 전광판에 번갈아 나오는 사진들 (이미지를 화면에 끌어다 놓아도 바뀐다)
-  - 포탈별 슬라이드는 slides/<포탈>.js에 있다. 첫 장 목차는 type: 'act' 슬라이드에서 자동으로 만들어진다.
+  - channels: 시작 화면의 채널(스프린트) 목록. 채널마다 portals 배열이 마을의 포탈이 되고, 포탈 수에 맞춰 마을이 다시 그려진다.
+    포탈: { slides: 'PORTAL_SLIDES 키', file: '슬라이드 파일 경로', label, theme: 'pink' | 'gold' | 'sky' | 'mint' | 'violet' | 'coral' }
+    채널이나 포탈을 늘리고 줄일 때는 이 목록과 슬라이드 파일만 고치면 된다. 파일은 채널에 들어갈 때 불러온다.
+  - 첫 장 목차는 type: 'act' 슬라이드에서 자동으로 만들어진다.
   - 포탈에 sectionStyle: 'plain'을 지정하면 막 대신 번호와 구역 제목을 표시한다. tocTitle로 목차 제목을 바꿀 수 있다.
   - sectionIntro: 'stage'를 함께 지정하면 번호형 구역의 도입을 커튼이 열리는 무대로 표시한다.
   - 슬라이드 필드
@@ -645,24 +640,22 @@ const CONFIG = {
     ledEffect: true,
     fallbackText: '예술in에 오신 것을 환영합니다!   포탈로 걸어 들어가 보세요',
   },
-  portals: [
+  channels: [
     {
-      id: 'soft', key: '1', label: '소프트 스킬',
-      accent: '#ff7ab6', accentDeep: '#c2306f', accentSoft: '#ffd6e8',
-      palette: ['#ff6fae', '#ffb3d6', '#c93a83', '#fff0f7'],
-      ...PORTAL_SLIDES.soft,
+      id: 'sprint2', label: '스프린트 2',
+      portals: [
+        { slides: 'soft', file: 'slides/soft.js', label: '소프트 스킬', theme: 'pink' },
+        { slides: 'product', file: 'slides/product.js', label: '제품', theme: 'gold' },
+        { slides: 'tech', file: 'slides/tech.js', label: '기술', theme: 'sky' },
+      ],
     },
     {
-      id: 'product', key: '2', label: '제품',
-      accent: '#ffb938', accentDeep: '#b86a00', accentSoft: '#ffe7b0',
-      palette: ['#ffb238', '#ffd66b', '#e07a12', '#fff4cc'],
-      ...PORTAL_SLIDES.product,
-    },
-    {
-      id: 'tech', key: '3', label: '기술',
-      accent: '#4cc8ff', accentDeep: '#1662c9', accentSoft: '#cdeeff',
-      palette: ['#3fd0ff', '#9be9ff', '#246bfe', '#e6fbff'],
-      ...PORTAL_SLIDES.tech,
+      id: 'sprint3', label: '스프린트 3', isNew: true,
+      portals: [
+        { slides: 'story-a', file: 'slides/sprint3/story-a.js', label: '스토리 A', theme: 'mint' },
+        { slides: 'story-b', file: 'slides/sprint3/story-b.js', label: '스토리 B', theme: 'violet' },
+        { slides: 'story-c', file: 'slides/sprint3/story-c.js', label: '스토리 C', theme: 'coral' },
+      ],
     },
   ],
 };
@@ -675,7 +668,16 @@ const ACTS = {
 
 const W = 384, H = 240;
 const SPEED = 78;
-const PORTAL_X = [80, 192, 304];
+const PORTAL_THEMES = {
+  pink: { accent: '#ff7ab6', accentDeep: '#c2306f', accentSoft: '#ffd6e8', palette: ['#ff6fae', '#ffb3d6', '#c93a83', '#fff0f7'] },
+  gold: { accent: '#ffb938', accentDeep: '#b86a00', accentSoft: '#ffe7b0', palette: ['#ffb238', '#ffd66b', '#e07a12', '#fff4cc'] },
+  sky: { accent: '#4cc8ff', accentDeep: '#1662c9', accentSoft: '#cdeeff', palette: ['#3fd0ff', '#9be9ff', '#246bfe', '#e6fbff'] },
+  mint: { accent: '#5fd3a0', accentDeep: '#16805a', accentSoft: '#cdf3e1', palette: ['#4fcf96', '#a6efcd', '#1f9a68', '#eafff4'] },
+  violet: { accent: '#b48cff', accentDeep: '#6a3fc7', accentSoft: '#e7dcff', palette: ['#a57dff', '#d4c2ff', '#7246d6', '#f5f0ff'] },
+  coral: { accent: '#ff8a6b', accentDeep: '#c2452a', accentSoft: '#ffddd3', palette: ['#ff7a57', '#ffb9a6', '#d24c2f', '#fff1ec'] },
+};
+const THEME_ORDER = Object.keys(PORTAL_THEMES);
+let PORTAL_X = [];
 const PORTAL_TOP = 112;
 const SPAWN = { x: 192, y: 212 };
 const RETURN_Y = 194;
@@ -976,26 +978,22 @@ const TREE = sprite([
 
 const hero = { x: SPAWN.x, y: SPAWN.y, dir: 'up', moving: false, animT: 0, visible: false, warp: null, scale: 1 };
 
-const portals = CONFIG.portals.map((p, i) => ({ ...p, cx: PORTAL_X[i] }));
+let portals = [];
+let channel = null;
 
-const SOLIDS = [
-  ...PORTAL_X.flatMap(cx => [
-    { x: cx - 18, y: PORTAL_TOP, w: 6, h: 44 },
-    { x: cx + 12, y: PORTAL_TOP, w: 6, h: 44 },
-  ]),
-];
+const SOLIDS = [];
 
 const props = [];
 const shakeTrees = [];
 function addTreeProp(x, y) {
-  const tree = { x, y, shake: 0, cooldown: 0 };
+  const tree = { x, y, shake: 0, cooldown: 0, hidden: false, solid: { x: x - 5, y: y - 4, w: 10, h: 5 } };
   shakeTrees.push(tree);
-  props.push({ y, draw: () => g.drawImage(TREE, x - 8 + Math.round(Math.sin(time * 45) * tree.shake), y - 15) });
-  SOLIDS.push({ x: x - 5, y: y - 4, w: 10, h: 5 });
+  props.push({ y, draw: () => { if (!tree.hidden) g.drawImage(TREE, x - 8 + Math.round(Math.sin(time * 45) * tree.shake), y - 15); } });
+  SOLIDS.push(tree.solid);
 }
 function addLamp(x, y) {
-  props.push({ y, draw: () => drawLamp(x, y) });
-  SOLIDS.push({ x: x - 3, y: y - 3, w: 6, h: 4 });
+  props.push({ y, draw: () => drawLamp(x, y), channel: true });
+  SOLIDS.push({ x: x - 3, y: y - 3, w: 6, h: 4, channel: true });
 }
 function addSign(x, y) {
   props.push({ y, draw: () => drawSign(x, y) });
@@ -1005,8 +1003,6 @@ addTreeProp(48, 204);
 addTreeProp(336, 204);
 addTreeProp(30, 134);
 addTreeProp(354, 134);
-addLamp(136, 156);
-addLamp(248, 156);
 addSign(150, 208);
 const LINK_SIGN = { x: 272, y: 214, url: 'https://yesulin.art', text: '어 이건 뭐지?' };
 props.push({ y: LINK_SIGN.y, draw: drawLinkSign });
@@ -1014,10 +1010,65 @@ SOLIDS.push({ x: LINK_SIGN.x - 7, y: LINK_SIGN.y - 4, w: 14, h: 5 });
 let hovering = null;
 let goldArmed = true;
 
-const background = buildBackground();
+let background = null;
+
+function portalPositions(count) {
+  const gap = Math.min(112, 300 / Math.max(1, count - 1));
+  return Array.from({ length: count }, (_, i) => Math.round(192 + (i - (count - 1) / 2) * gap));
+}
+
+const mainPathRange = () => [Math.min(56, PORTAL_X[0] - 24), Math.max(328, PORTAL_X[PORTAL_X.length - 1] + 24)];
+
+function setChannel(next) {
+  channel = next;
+  PORTAL_X = portalPositions(next.portals.length);
+  const library = window.PORTAL_SLIDES || {};
+  portals = next.portals.map((p, i) => {
+    const theme = PORTAL_THEMES[p.theme] || PORTAL_THEMES[THEME_ORDER[i % THEME_ORDER.length]];
+    const content = library[p.slides] || {
+      tocSay: `${p.label}는 아직 준비 중이에요.`,
+      slides: [{ type: 'act', act: 1, title: '준비 중', items: ['내용을 채워주세요'], say: '아직 대본을 쓰는 중이에요.' }],
+    };
+    return { ...theme, ...p, ...content, id: `${next.id}:${p.slides}`, key: String(i + 1), cx: PORTAL_X[i] };
+  });
+
+  for (let i = SOLIDS.length - 1; i >= 0; i--) if (SOLIDS[i].channel) SOLIDS.splice(i, 1);
+  for (let i = props.length - 1; i >= 0; i--) if (props[i].channel) props.splice(i, 1);
+  PORTAL_X.forEach(cx => {
+    SOLIDS.push({ x: cx - 18, y: PORTAL_TOP, w: 6, h: 44, channel: true });
+    SOLIDS.push({ x: cx + 12, y: PORTAL_TOP, w: 6, h: 44, channel: true });
+  });
+  shakeTrees.forEach(tree => {
+    tree.hidden = tree.y < 170 && PORTAL_X.some(cx => Math.abs(cx - tree.x) < 30);
+    tree.solid.w = tree.hidden ? 0 : 10;
+  });
+  for (let i = 0; i < PORTAL_X.length - 1; i++) addLamp(Math.round((PORTAL_X[i] + PORTAL_X[i + 1]) / 2), 156);
+
+  background = buildBackground();
+  document.querySelector('.hud-place').textContent = `예술in · ${next.label}`;
+  document.getElementById('hud-shortcuts').innerHTML = `${portals.map(p => `<kbd>${p.key}</kbd>`).join('')}포탈 바로가기`;
+}
+
+const loadedFiles = new Map();
+
+function loadScript(src) {
+  if (!loadedFiles.has(src)) {
+    loadedFiles.set(src, new Promise(resolve => {
+      const el = document.createElement('script');
+      el.src = src;
+      el.onload = resolve;
+      el.onerror = () => { console.warn(`슬라이드 파일을 불러오지 못했어요: ${src}`); resolve(); };
+      document.head.appendChild(el);
+    }));
+  }
+  return loadedFiles.get(src);
+}
+
+const loadChannel = next => Promise.all(next.portals.filter(p => p.file).map(p => loadScript(p.file)));
 
 function onPath(x, y) {
-  if (y >= 156 && y < 176 && x >= 56 && x < 328) return true;
+  const [pathLeft, pathRight] = mainPathRange();
+  if (y >= 156 && y < 176 && x >= pathLeft && x < pathRight) return true;
   if (x >= 180 && x < 204 && y >= 174) return true;
   return PORTAL_X.some(cx => x >= cx - 14 && x < cx + 14 && y >= 148 && y < 158);
 }
@@ -1034,8 +1085,9 @@ function buildBackground() {
     b.fillRect(Math.floor(rand() * W), Math.floor(rand() * H), 1, rand() < 0.5 ? 2 : 1);
   }
 
+  const [pathLeft, pathRight] = mainPathRange();
   const paths = [
-    { x: 56, y: 156, w: 272, h: 20 },
+    { x: pathLeft, y: 156, w: pathRight - pathLeft, h: 20 },
     { x: 180, y: 174, w: 24, h: 66 },
     ...PORTAL_X.map(cx => ({ x: cx - 14, y: 148, w: 28, h: 10 })),
   ];
@@ -1729,7 +1781,7 @@ function knockHouse(index) {
 }
 
 function nearbyTree() {
-  return shakeTrees.find(t => Math.hypot(hero.x - t.x, hero.y - t.y) < 18);
+  return shakeTrees.find(t => !t.hidden && Math.hypot(hero.x - t.x, hero.y - t.y) < 18);
 }
 
 function interactNearby() {
@@ -1793,28 +1845,6 @@ function drawInteractHint() {
   ctx.fillStyle = '#1d1626';
   ctx.fillText(text, cx, top + h / 2 + 1);
 }
-
-const qrEl = document.getElementById('qr-zoom');
-let qrResume = 'play';
-
-function openQr() {
-  if (state !== 'play') return;
-  qrResume = state;
-  keys.clear();
-  hero.moving = false;
-  state = 'qr';
-  qrEl.hidden = false;
-  sfx('open');
-}
-
-function closeQr() {
-  qrEl.hidden = true;
-  state = qrResume;
-  sfx('close');
-}
-
-document.getElementById('hud-qr').addEventListener('click', e => { e.currentTarget.blur(); openQr(); });
-qrEl.addEventListener('click', closeQr);
 
 const doodleEl = document.getElementById('doodle');
 const doodleCanvas = document.getElementById('doodle-canvas');
@@ -2239,10 +2269,17 @@ function leaveVillage() {
   });
 }
 
-function enterVillage() {
-  if (state !== 'title') return;
+let entering = false;
+
+async function enterVillage(index = selectedChannel) {
+  if (state !== 'title' || entering) return;
+  entering = true;
   unlockAudio();
   sfx('start');
+  const next = CONFIG.channels[index];
+  await loadChannel(next);
+  setChannel(next);
+  entering = false;
   setBgm(true);
   fadeThrough(() => {
     titleEl.hidden = true;
@@ -3153,10 +3190,6 @@ addEventListener('keydown', e => {
     if (direction) { e.preventDefault(); keys.add(direction); }
     return;
   }
-  if (state === 'qr') {
-    if (['Escape', 'Enter', ' '].includes(e.key) || e.code === 'Escape') { e.preventDefault(); closeQr(); }
-    return;
-  }
   if (state === 'doodle') {
     if (e.key === 'Escape' || e.code === 'Escape') { e.preventDefault(); closeDoodle(false); }
     return;
@@ -3177,7 +3210,9 @@ addEventListener('keydown', e => {
   }
 
   if (state === 'title') {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enterVillage(); }
+    if (e.key === 'ArrowDown' || e.code === 'KeyS') { e.preventDefault(); selectChannel(selectedChannel + 1); }
+    else if (e.key === 'ArrowUp' || e.code === 'KeyW') { e.preventDefault(); selectChannel(selectedChannel - 1); }
+    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enterVillage(selectedChannel); }
     return;
   }
 
@@ -3267,7 +3302,7 @@ function hitTarget(e) {
   if (Math.abs(x - LINK_SIGN.x) <= 20 && y >= LINK_SIGN.y - 46 && y <= LINK_SIGN.y + 2) return 'link';
   if (x >= 134 && x <= 166 && y >= 186 && y <= 210) return 'sign';
   if (Math.abs(x - cat.x) <= 8 && y >= cat.y - 12 && y <= cat.y + 2) return 'cat';
-  const tree = shakeTrees.findIndex(t => Math.abs(x - t.x) <= 9 && y >= t.y - 16 && y <= t.y + 1);
+  const tree = shakeTrees.findIndex(t => !t.hidden && Math.abs(x - t.x) <= 9 && y >= t.y - 16 && y <= t.y + 1);
   if (tree >= 0) return `tree:${tree}`;
   const door = houseKnocks.findIndex(h => x >= h.x + 14 && x <= h.x + 26 && y >= h.y + 12 && y <= h.y + 32);
   if (door >= 0) return `house:${door}`;
@@ -3340,7 +3375,38 @@ addEventListener('keyup', e => {
 });
 addEventListener('blur', () => keys.clear());
 
-document.getElementById('title-start').addEventListener('click', enterVillage);
+const channelList = document.getElementById('channel-list');
+let selectedChannel = 0;
+
+function renderChannelList() {
+  document.getElementById('channel-total').textContent = `${CONFIG.channels.length}개 채널`;
+  channelList.innerHTML = CONFIG.channels.map((ch, i) => `
+    <li><button class="channel${i === selectedChannel ? ' selected' : ''}" data-channel="${i}" role="option" aria-selected="${i === selectedChannel}">
+      <span class="channel-arrow">▶</span>
+      <span class="channel-name">${escapeHtml(ch.label)}${ch.isNew ? '<span class="channel-new">NEW</span>' : ''}</span>
+      <span class="channel-portals">${ch.portals.map(p => escapeHtml(p.label)).join(' · ')}</span>
+      <span class="channel-status"><span class="channel-bars"><b></b><b></b><b></b></span>원활</span>
+    </button></li>`).join('');
+}
+
+function selectChannel(index, withSound = true) {
+  selectedChannel = (index + CONFIG.channels.length) % CONFIG.channels.length;
+  renderChannelList();
+  setChannel(CONFIG.channels[selectedChannel]);
+  if (withSound) sfx('tick');
+}
+
+channelList.addEventListener('click', e => {
+  const button = e.target.closest('[data-channel]');
+  if (!button) return;
+  selectChannel(Number(button.dataset.channel), false);
+  enterVillage(selectedChannel);
+});
+channelList.addEventListener('mouseover', e => {
+  const button = e.target.closest('[data-channel]');
+  if (button && Number(button.dataset.channel) !== selectedChannel) selectChannel(Number(button.dataset.channel), false);
+});
+selectChannel(0, false);
 frameEl.addEventListener('click', e => {
   if (e.target.closest('[data-dialogue-next]')) return moveSlide(1);
   const target = e.target.closest('[data-goto]');
