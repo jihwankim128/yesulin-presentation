@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 290" role="img" aria-labelledby="title desc">
+<title id="title">새 버전에서 DB 컬럼 삭제</title>
+<desc id="desc">새 코드는 이 컬럼들을 사용하지 않는다. DB 컬럼 네 개가 차례로 사라지지만 새 코드는 정상 실행된다.</desc>
+<style>
+text{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif}
+@keyframes remove-column{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(14px)}}
+.removed{animation:remove-column .55s .3s ease both}.removed:nth-of-type(2){animation-delay:.38s}.removed:nth-of-type(3){animation-delay:.46s}.removed:nth-of-type(4){animation-delay:.54s}
+@media(prefers-reduced-motion:reduce){.removed{animation:none;opacity:0}}
+</style>
+<rect x="12" y="6" width="326" height="88" rx="10" fill="#fff" stroke="#b9a5da" stroke-width="2"/>
+<text x="175" y="42" text-anchor="middle" fill="#7450b4" font-size="29" font-weight="750">새 코드</text>
+<text x="175" y="77" text-anchor="middle" fill="#51465f" font-size="23">이 컬럼들은 사용 안 함</text>
+<path d="M175 104v22m-7-6 7 8 7-8" fill="none" stroke="#7450b4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="16" y="173" fill="#51465f" font-size="23" font-weight="750">DB</text>
+<g fill="#fff6f6" stroke="#b63e52" stroke-width="2" stroke-dasharray="4 4">
+<rect x="68" y="144" width="57" height="43" rx="5"/><rect x="136" y="144" width="57" height="43" rx="5"/><rect x="204" y="144" width="57" height="43" rx="5"/><rect x="272" y="144" width="57" height="43" rx="5"/>
+</g>
+<g fill="#b63e52" font-size="30" text-anchor="middle"><text x="96" y="176">×</text><text x="164" y="176">×</text><text x="232" y="176">×</text><text x="300" y="176">×</text></g>
+<g fill="#e0f1e8" stroke="#187863" stroke-width="2">
+<g class="removed"><rect x="68" y="144" width="57" height="43" rx="5"/><path d="m86 164 7 7 13-15" fill="none" stroke-width="3"/></g>
+<g class="removed"><rect x="136" y="144" width="57" height="43" rx="5"/><path d="m154 164 7 7 13-15" fill="none" stroke-width="3"/></g>
+<g class="removed"><rect x="204" y="144" width="57" height="43" rx="5"/><path d="m222 164 7 7 13-15" fill="none" stroke-width="3"/></g>
+<g class="removed"><rect x="272" y="144" width="57" height="43" rx="5"/><path d="m290 164 7 7 13-15" fill="none" stroke-width="3"/></g>
+</g>
+<text x="175" y="222" text-anchor="middle" fill="#b63e52" font-size="23">컬럼 4개 삭제</text>
+<rect x="12" y="246" width="326" height="39" rx="7" fill="#dceee5"/>
+<text x="175" y="274" text-anchor="middle" fill="#187863" font-size="26" font-weight="750">새 코드는 정상 실행</text>
+</svg>

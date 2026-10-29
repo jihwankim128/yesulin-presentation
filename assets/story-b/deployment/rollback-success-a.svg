@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 290" role="img" aria-labelledby="title desc"><title id="title">A부터 복구</title><desc id="desc">A를 복구하는 동안 B가 요청을 받는다. 그림은 복구 순서를 설명하는 개념도이며 실시간 요청 수가 아니다.</desc><style>text{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif}
+@keyframes enter-server{from{opacity:.2;transform:translateY(-9px)}to{opacity:1;transform:translateY(0)}}
+@keyframes request-arrive{from{opacity:0;transform:translateX(-46px)}to{opacity:1;transform:translateX(0)}}
+@keyframes result-appear{from{opacity:0}to{opacity:1}}
+.restore{animation:enter-server .6s ease both}.packet{animation:request-arrive .65s .15s ease both}.result{animation:result-appear .35s .4s ease both}
+@media(prefers-reduced-motion:reduce){.restore,.packet,.result{animation:none}}
+</style>
+<g class="restore"><rect x="92" y="16" width="246" height="88" rx="10" fill="#eee7fa" stroke="#7450b4" stroke-width="2"/><rect x="104" y="33" width="42" height="52" rx="6" fill="#fff" stroke="#7450b4" stroke-width="2"/><text x="125" y="69" fill="#7450b4" font-size="30" font-weight="800" text-anchor="middle">A</text><text x="163" y="52" fill="#7450b4" font-size="28" font-weight="750">복구 중</text><text x="163" y="83" fill="#655c70" font-size="20">요청 잠시 제외</text></g>
+<g class=""><rect x="92" y="128" width="246" height="88" rx="10" fill="#e0f1e8" stroke="#187863" stroke-width="2"/><rect x="104" y="145" width="42" height="52" rx="6" fill="#fff" stroke="#187863" stroke-width="2"/><text x="125" y="181" fill="#187863" font-size="30" font-weight="800" text-anchor="middle">B</text><text x="163" y="164" fill="#187863" font-size="28" font-weight="750">응답 중</text><text x="163" y="195" fill="#655c70" font-size="20">계속 요청 처리</text></g>
+<text x="41" y="155" fill="#187863" font-size="20" font-weight="650" text-anchor="middle">요청</text><path d="M12 181H82" stroke="#187863" stroke-width="3"/><path d="m74 175 9 6-9 6" fill="none" stroke="#187863" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle class="packet" cx="63" cy="181" r="5" fill="#187863"/>
+<g class="result"><rect x="12" y="246" width="326" height="39" rx="7" fill="#dceee5"/><text x="175" y="274" fill="#187863" font-size="26" font-weight="750" text-anchor="middle">B가 계속 응답</text></g></svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 290" role="img" aria-labelledby="title desc"><title id="title">운영에서 검증</title><desc id="desc">컬럼 삭제의 단계적 배포 예시. DB 컬럼을 유지하고 실제 기능의 동작과 구버전으로의 복구 가능 여부를 확인한다.</desc><style>text{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif}
+@keyframes code-enter{from{opacity:0;transform:translateY(-9px)}to{opacity:1;transform:translateY(0)}}
+@keyframes check-draw{from{stroke-dashoffset:34}to{stroke-dashoffset:0}}
+@keyframes remove-column{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(12px)}}
+.code{animation:code-enter .5s ease both}.check{stroke-dasharray:34;animation:check-draw .4s .2s ease both}.check.second{animation-delay:.55s}.removed{animation:remove-column .5s ease both}
+@media(prefers-reduced-motion:reduce){.code,.check,.removed{animation:none!important}.removed{opacity:0}}
+</style>
+<g class="code"><rect x="12" y="6" width="326" height="88" rx="10" fill="#fff" stroke="#b9a5da" stroke-width="2"/>
+<g fill="none" stroke="#187863" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path class="check" d="m33 34 7 7 13-15"/><path class="check second" d="m33 70 7 7 13-15"/></g><text x="69" y="42" fill="#7450b4" font-size="25" font-weight="750">실제 기능 확인</text><text x="69" y="78" fill="#7450b4" font-size="25" font-weight="750">구버전 복구 확인</text>
+</g><path d="M175 104v22m-7-6 7 8 7-8" fill="none" stroke="#7450b4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><text x="16" y="173" fill="#51465f" font-size="23" font-weight="750">DB</text>
+<g ><rect x="68" y="144" width="57" height="43" rx="5" fill="#e0f1e8" stroke="#187863" stroke-width="2"/><path d="m86 164 7 7 13-15" fill="none" stroke="#187863" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g ><rect x="136" y="144" width="57" height="43" rx="5" fill="#e0f1e8" stroke="#187863" stroke-width="2"/><path d="m154 164 7 7 13-15" fill="none" stroke="#187863" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g ><rect x="204" y="144" width="57" height="43" rx="5" fill="#e0f1e8" stroke="#187863" stroke-width="2"/><path d="m222 164 7 7 13-15" fill="none" stroke="#187863" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g ><rect x="272" y="144" width="57" height="43" rx="5" fill="#e0f1e8" stroke="#187863" stroke-width="2"/><path d="m290 164 7 7 13-15" fill="none" stroke="#187863" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="175" y="222" text-anchor="middle" fill="#51465f" font-size="23">DB 컬럼 유지</text><rect x="12" y="246" width="326" height="39" rx="7" fill="#dceee5"/><text x="175" y="274" text-anchor="middle" fill="#187863" font-size="26" font-weight="750">운영에서 검증</text></svg>

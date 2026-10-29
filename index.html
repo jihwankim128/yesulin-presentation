@@ -124,6 +124,102 @@
   .slide--media .slide-media { flex: 1; }
   .slide-media img { width: 100%; height: 100%; min-height: 0; object-fit: contain; }
   .slide-media figcaption { font-size: 1.6cqw; color: #4f4a5e; text-align: center; }
+  .slide--sequence { gap: 2.8cqh; }
+  .sequence-panels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5cqw; min-height: 0; }
+  .sequence-panel { position: relative; min-width: 0; padding: 1.5cqh 1cqw; background: #f3edf9; border: .16cqw solid #cbb8e7; border-radius: .8cqw; }
+  .sequence-panel + .sequence-panel::before { content: '→'; position: absolute; top: 45%; left: -2.35cqw; color: var(--accent-deep); font-size: 2.2cqw; }
+  .sequence-panel.is-pending { background: transparent; border-style: dashed; border-color: #d8d2dd; }
+  .sequence-panel.is-pending .sequence-label { color: #82798d; }
+  .sequence-panel.is-pending .sequence-visual { visibility: hidden; }
+  .sequence-label { font-size: 1.8cqw; font-weight: 700; margin-bottom: 1.2cqh; }
+  .sequence-label span { color: var(--accent-deep); margin-right: .65cqw; }
+  .sequence-visual { width: 100%; aspect-ratio: 350 / 290; }
+  .sequence-visual img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .sequence-panel.is-entering .sequence-visual { animation: sequence-reveal .4s ease both; }
+  .sequence-controls { display: flex; justify-content: space-between; align-items: center; gap: 1cqw; font-size: 1.45cqw; color: #655c70; }
+  .sequence-controls strong { font-size: 1.7cqw; color: var(--accent-deep); }
+  .slide--handoff { gap: 2.8cqh; }
+  .handoff { flex: 1; min-height: 0; background: #f3edf9; border-radius: 1cqw; }
+  .handoff svg { display: block; width: 100%; height: 100%; font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .handoff-node { fill: #fff; stroke: #cbb8e7; stroke-width: 2.5; }
+  .handoff-label { fill: #28213c; font-size: 29px; font-weight: 750; }
+  .handoff-detail { fill: #736a83; font-size: 24px; }
+  .handoff-path { fill: none; stroke: #b9aec9; stroke-width: 5; stroke-dasharray: 9 8; }
+  .handoff-live { opacity: 0; transition: opacity .4s ease; }
+  .handoff-live.is-serving { opacity: 1; }
+  .handoff-live path { fill: none; stroke: #187863; stroke-width: 5; }
+  .handoff-live .handoff-packets { stroke: #fff; stroke-width: 7; stroke-dasharray: 1 46; stroke-linecap: round; animation: handoff-requests 1.4s linear infinite; }
+  .handoff-server .server-body { fill: #fae9ed; stroke: #b74456; stroke-width: 2.5; transition: fill .4s ease, stroke .4s ease; }
+  .handoff-server .server-icon { color: #b74456; transition: color .4s ease; }
+  .handoff-server.is-serving .server-body { fill: #e0f1e8; stroke: #187863; }
+  .handoff-server.is-serving .server-icon { color: #187863; }
+  .handoff-server .server-status { opacity: 1; transition: opacity .25s ease; }
+  .handoff-server .server-status--serving { opacity: 0; }
+  .handoff-server.is-serving .server-status--serving { opacity: 1; }
+  .handoff-server.is-serving .server-status--deploying { opacity: 0; }
+  .handoff-server .server-status text:first-child { font-size: 31px; font-weight: 800; }
+  .server-status--serving { fill: #187863; }
+  .server-status--deploying { fill: #b74456; }
+  .handoff-server[data-phase="working"] .server-body { fill: #fff0d8; stroke: #a16a18; }
+  .handoff-server[data-phase="working"] .server-icon { color: #a16a18; }
+  .handoff-server[data-phase="working"] .server-status--deploying { fill: #a16a18; }
+  .handoff-server[data-phase="recovering"] .server-body { fill: #eee5fb; stroke: #7450b4; }
+  .handoff-server[data-phase="recovering"] .server-icon { color: #7450b4; }
+  .handoff-server[data-phase="recovering"] .server-status--deploying { fill: #7450b4; }
+  .server-icon-lines, .server-mark { transition: opacity .3s ease; }
+  .server-mark { opacity: 0; }
+  .handoff-server:is([data-phase="failed"], [data-phase="recovering"]) .server-icon-lines { opacity: 0; }
+  .handoff-server[data-phase="failed"] .server-mark--failed,
+  .handoff-server[data-phase="recovering"] .server-mark--recovering { opacity: 1; }
+  .handoff.is-animated [data-phase="failed"] .server-icon { animation: handoff-failure .4s ease; }
+  .handoff.is-animated [data-phase="recovering"] .server-mark--recovering { transform-box: fill-box; transform-origin: center; animation: handoff-recover .8s ease; }
+  @keyframes handoff-failure { 25%, 75% { transform: translateX(-4px); } 50% { transform: translateX(4px); } }
+  @keyframes handoff-recover { from { transform: rotate(-180deg); } to { transform: rotate(0); } }
+  /* Finish A's return before B leaves; this animation never advances the slide. */
+  .handoff.is-switching [data-handoff-server="1"] :is(.server-body, .server-icon, .server-status),
+  .handoff.is-switching [data-handoff-path="1"] { transition-delay: .7s; }
+  .slide--schema { gap: 2.8cqh; }
+  .schema { flex: 1; min-height: 0; background: #f3edf9; border-radius: 1cqw; }
+  .schema svg { display: block; width: 100%; height: 100%; font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .schema-box { fill: #fff; stroke: #cbb8e7; stroke-width: 2.5; transition: stroke .4s ease; }
+  .schema-heading { fill: #28213c; font-size: 35px; font-weight: 750; }
+  .schema-detail { fill: #736a83; font-size: 24px; }
+  .schema-code-state { opacity: 0; transform: translateY(-12px); transition: opacity .25s ease, transform .4s ease; }
+  .schema-code-state.is-current { opacity: 1; transform: translateY(0); }
+  .schema-status { fill: #e0f1e8; transition: fill .4s ease; }
+  .schema-status-text { fill: #187863; font-size: 27px; font-weight: 750; }
+  .schema-column-slot { fill: #f5f2f8; stroke: #aaa0b5; stroke-width: 2; stroke-dasharray: 5 5; transition: stroke .4s ease; }
+  .schema-column { opacity: 1; transform: translateY(0); transition: opacity .4s ease, transform .4s ease; }
+  .schema.is-animated .schema-column { transition-delay: calc(var(--column) * .08s); }
+  .schema-column rect { fill: #e0f1e8; stroke: #187863; stroke-width: 2; }
+  .schema-column path { fill: none; stroke: #187863; stroke-width: 3; }
+  .schema.is-missing .schema-column { opacity: 0; transform: translateY(16px); }
+  .schema-missing-mark { opacity: 0; fill: #81758f; font-size: 34px; transition: opacity .4s ease; }
+  .schema.is-missing .schema-missing-mark { opacity: 1; }
+  .schema-connection { color: #187863; transition: color .4s ease; }
+  .schema-link { fill: none; stroke: currentColor; stroke-width: 5; }
+  .schema-link-label { fill: currentColor; font-size: 24px; font-weight: 700; }
+  .schema.is-unused .schema-connection { color: #9b8eaf; }
+  .schema.is-unused .schema-link-line { stroke-dasharray: 9 8; }
+  .schema-break { opacity: 0; transition: opacity .3s ease; }
+  .schema-break circle { fill: #f3edf9; }
+  .schema-check-sweep { opacity: 0; fill: none; stroke: #fff; stroke-width: 6; stroke-dasharray: 16 320; }
+  .schema.is-checking.is-animated .schema-check-sweep { animation: schema-check 1s ease both; }
+  .schema.is-failed .schema-code-box { stroke: #b74456; }
+  .schema.is-failed .schema-status { fill: #fae0e6; }
+  .schema.is-failed :is(.schema-status-text, .schema-missing-mark, [data-schema-db-detail]) { fill: #b74456; }
+  .schema.is-failed .schema-column-slot { stroke: #b74456; }
+  .schema.is-failed .schema-connection { color: #b74456; }
+  .schema.is-failed .schema-break { opacity: 1; }
+  .schema:not(.is-animated) * { transition: none; }
+  @keyframes schema-check { 0% { opacity: 0; stroke-dashoffset: 0; } 15%, 85% { opacity: 1; } 100% { opacity: 0; stroke-dashoffset: -320; } }
+  @keyframes handoff-requests { to { stroke-dashoffset: -94; } }
+  @keyframes sequence-reveal { from { opacity: 0; transform: translateX(-1.2cqw); } }
+  @media (prefers-reduced-motion: reduce) {
+    .sequence-panel.is-entering .sequence-visual { animation: none; }
+    .handoff *, .handoff.is-switching *, .schema * { animation: none !important; transition: none !important; }
+    .handoff-packets { display: none; }
+  }
   .media-missing {
     display: grid; place-items: center; align-content: center; gap: 1.2cqh; height: 100%; min-height: 0;
     font-size: 1.8cqw; color: #4f4a5e; text-align: center;
@@ -625,10 +721,14 @@
   - 포탈에 sectionStyle: 'plain'을 지정하면 막 대신 번호와 구역 제목을 표시한다. tocTitle로 목차 제목을 바꿀 수 있다.
   - sectionIntro: 'stage'를 함께 지정하면 번호형 구역의 도입을 커튼이 열리는 무대로 표시한다.
   - 슬라이드 필드
-    type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' | 'flow' | 'cards' | 'crossroads' | 'dialogue' | 'table' | 'chat' | 'arena' | 'stamina' | 'sensors' (생략하면 내용에 맞춰 자동 배치)
+    type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' | 'flow' | 'cards' | 'crossroads' | 'dialogue' | 'table' | 'chat' | 'arena' | 'stamina' | 'sensors' | 'sequence' (생략하면 내용에 맞춰 자동 배치)
     kicker, title, subtitle, big, points, image, caption, images(사진 더미), claims, before/after, say(캐릭터 대사)
     cards: [{ label, title, detail }], takeaway: 카드나 대화의 정리 문장
     turns: [{ speaker: '대O' | '맥O', label, text, note, thought }], scene: 'goals' | 'request' | 'reunion'
+    sequence: stages: [{ label, image, alt, note, say }], 다음/이전으로 그림을 한 단계씩 공개한다.
+    sequence + layout: 'handoff': source/router: { label, detail }, servers: [A, B], stages: [{ serving: 0 | 1 | [0, 1], servingDetail, servingLabel?, note, say }]. 같은 그림에서 요청 경로와 서버 상태를 교대한다.
+    handoff의 단계별 serverStates?: [{ status, detail, phase?: 'working' | 'failed' | 'recovering' }, ...]로 서버별 설명과 실패/복구 표시를 바꿀 수 있다.
+    sequence + layout: 'schema': database, columnCount, description, stages: [{ code, codeDetail, codeStatus, columns: boolean, dbDetail, connection, mode: 'linked' | 'unused' | 'checking' | 'failed', note, say }]. 같은 코드·DB 그림에서 컬럼 유지/삭제와 호환성을 보여준다.
     crossroads와 dialogue가 이어지면 같은 무대에서 캐릭터와 말풍선을 이동한다. dialogue는 대화와 악수를 순서대로 공개한다.
     **강조**는 형광펜으로 표시된다.
 */
@@ -2455,6 +2555,62 @@ function drawStaminaMonitor(px, c, mode) {
 function renderStage(withSound) {
   const slide = deck.slides[deck.index];
   const stage = slide.stages[deck.stage];
+  if (slide.type === 'sequence') {
+    if (slide.layout === 'handoff') {
+      const scene = frameEl.querySelector('.handoff');
+      const servingServers = Array.isArray(stage.serving) ? stage.serving : [stage.serving];
+      const servingLabel = stage.servingLabel ?? slide.servingLabel;
+      scene.classList.toggle('is-animated', withSound);
+      scene.classList.toggle('is-switching', withSound && servingServers.length === 1 && servingServers[0] === 0);
+      scene.querySelectorAll('[data-handoff-server]').forEach((server, i) => {
+        const serving = servingServers.includes(i);
+        const serverState = stage.serverStates?.[i];
+        const status = serverState?.status ?? (serving ? servingLabel : slide.deployingLabel);
+        const detail = serverState?.detail ?? (serving ? stage.servingDetail : slide.excludedLabel);
+        server.classList.toggle('is-serving', serving);
+        server.dataset.phase = serverState?.phase ?? '';
+        server.setAttribute('aria-label', `${slide.servers[i]}: ${status}, ${detail}`);
+        const statusGroup = server.querySelector(serving ? '.server-status--serving' : '.server-status--deploying');
+        statusGroup.querySelector('[data-handoff-status]').textContent = status;
+        statusGroup.querySelector('[data-handoff-version]').textContent = detail;
+      });
+      scene.querySelectorAll('[data-handoff-path]').forEach((path, i) => path.classList.toggle('is-serving', servingServers.includes(i)));
+    } else if (slide.layout === 'schema') {
+      const scene = frameEl.querySelector('.schema');
+      scene.classList.toggle('is-animated', withSound);
+      scene.classList.toggle('is-missing', !stage.columns);
+      for (const mode of ['unused', 'checking', 'failed']) scene.classList.toggle(`is-${mode}`, stage.mode === mode);
+      scene.querySelectorAll('[data-schema-code]').forEach((code, i) => {
+        code.classList.toggle('is-current', i === deck.stage);
+        code.setAttribute('aria-hidden', String(i !== deck.stage));
+      });
+      scene.querySelector('[data-schema-code-group]').setAttribute('aria-label', `${stage.code}: ${stage.codeDetail}, ${stage.codeStatus}`);
+      scene.querySelector('[data-schema-db]').setAttribute('aria-label', `${slide.database}: ${stage.dbDetail}`);
+      scene.querySelector('[data-schema-db-detail]').textContent = stage.dbDetail;
+      scene.querySelector('[data-schema-connection]').textContent = stage.connection;
+    } else frameEl.querySelectorAll('.sequence-panel').forEach((panel, i) => {
+      const pending = i > deck.stage;
+      panel.classList.toggle('is-pending', pending);
+      panel.classList.toggle('is-entering', i === deck.stage);
+      panel.querySelector('.sequence-visual').setAttribute('aria-hidden', String(pending));
+      const img = panel.querySelector('img');
+      // Load each animated image only when its step is revealed, never on a timer.
+      if (pending) img.removeAttribute('src');
+      else if (!img.hasAttribute('src')) img.src = slide.stages[i].image;
+    });
+    frameEl.querySelector('[data-sequence-note]').textContent = stage.note;
+    frameEl.querySelector('[data-sequence-progress]').textContent = `${deck.stage + 1} / ${slide.stages.length} · ${deck.stage < slide.stages.length - 1 ? '다음을 눌러 이어보기' : '다음을 누르면 다음 페이지'}`;
+    const sayText = frameEl.querySelector('.say-text');
+    if (withSound && sayText) {
+      const say = sayText.closest('.say');
+      say.classList.remove('done');
+      say.classList.add('talking');
+      sayText.textContent = '';
+      deck.typing = { el: sayText, text: stage.say ?? slide.say, start: time };
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) finishTyping();
+    }
+    if (withSound) sfx('next');
+  }
   if (slide.type === 'sensors') {
     frameEl.querySelectorAll('.sensor-scene [data-stage]').forEach(el => el.classList.toggle('is-hidden', Number(el.dataset.stage) > deck.stage));
     frameEl.querySelector('[data-note]').innerHTML = rich(stage.note);
@@ -2823,7 +2979,47 @@ function crossroadMarkup(s) {
   return `${headingMarkup(s)}<div class="crossroad-scene crossroad-scene--${escapeHtml(s.scene)}">${road}${bubbles}${actors}${handshake}<p class="scene-path-label">같은 프로젝트</p></div><div class="scene-footer">${sceneFooterMarkup(s)}</div>`;
 }
 
+function handoffMarkup(s) {
+  const node = (x, data) => `<rect class="handoff-node" x="${x}" y="126" width="210" height="106" rx="12"/><text class="handoff-label" x="${x + 105}" y="169" text-anchor="middle">${escapeHtml(data.label)}</text><text class="handoff-detail" x="${x + 105}" y="208" text-anchor="middle">${escapeHtml(data.detail)}</text>`;
+  const paths = [95, 265].map((y, i) => {
+    const d = `M575 179 H695 V${y} H820`;
+    return `${i === 0 ? '<path class="handoff-path" d="M575 179 H695"/>' : ''}<path class="handoff-path" d="M695 179 V${y} H820"/><g class="handoff-live" data-handoff-path="${i}" aria-hidden="true"><path d="${d}"/><path class="handoff-packets" d="${d}"/></g>`;
+  }).join('');
+  const servers = s.servers.map((label, i) => {
+    const y = 27 + i * 170;
+    return `<g class="handoff-server" data-handoff-server="${i}" role="img">
+      <rect class="server-body" x="820" y="${y}" width="345" height="136" rx="12"/>
+      <g class="server-icon" aria-hidden="true">
+        <rect x="843" y="${y + 31}" width="60" height="77" rx="6" fill="#fff" stroke="currentColor" stroke-width="3"/>
+        <g class="server-icon-lines" stroke="currentColor" stroke-width="5"><path d="M853 ${y + 50}h25 M853 ${y + 70}h25 M853 ${y + 90}h25"/><path d="M886 ${y + 50}h7 M886 ${y + 70}h7 M886 ${y + 90}h7"/></g>
+        <path class="server-mark server-mark--failed" d="M858 ${y + 53}l30 34m-30 0 30-34" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+        <path class="server-mark server-mark--recovering" d="M887 ${y + 67}a17 17 0 1 0 -3 17 M887 ${y + 53}v14h-14" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <text class="handoff-label" x="924" y="${y + 34}">${escapeHtml(label)}</text>
+      <g class="server-status server-status--serving" aria-hidden="true"><text x="924" y="${y + 78}" data-handoff-status>${escapeHtml(s.servingLabel)}</text><text class="handoff-detail" x="924" y="${y + 112}" data-handoff-version></text></g>
+      <g class="server-status server-status--deploying" aria-hidden="true"><text x="924" y="${y + 78}" data-handoff-status>${escapeHtml(s.deployingLabel)}</text><text class="handoff-detail" x="924" y="${y + 112}" data-handoff-version>${escapeHtml(s.excludedLabel)}</text></g>
+    </g>`;
+  }).join('');
+  return `${headingMarkup(s)}<div class="handoff"><svg viewBox="0 0 1200 360" role="group" aria-label="${escapeHtml(s.description)}">${node(30, s.source)}${node(365, s.router)}<path d="M240 179 H365" fill="none" stroke="#7450b4" stroke-width="5"/><path d="m352 171 12 8-12 8" fill="none" stroke="#7450b4" stroke-width="4"/>${paths}${servers}</svg></div><div class="sequence-controls" role="status"><strong data-sequence-note></strong><span data-sequence-progress></span></div>`;
+}
+
+function schemaMarkup(s) {
+  const codeStates = s.stages.map((stage, i) => `<g class="schema-code-state" data-schema-code="${i}" aria-hidden="true"><text class="schema-heading" x="245" y="122" text-anchor="middle">${escapeHtml(stage.code)}</text><text class="schema-detail" x="245" y="169" text-anchor="middle">${escapeHtml(stage.codeDetail)}</text><text class="schema-status-text" x="245" y="251" text-anchor="middle">${escapeHtml(stage.codeStatus)}</text></g>`).join('');
+  const columns = Array.from({ length: s.columnCount }, (_, i) => {
+    const width = 310 / s.columnCount - 14;
+    const x = 807 + i * (width + 14);
+    return `<rect class="schema-column-slot" x="${x}" y="147" width="${width}" height="64" rx="6"/><text class="schema-missing-mark" x="${x + width / 2}" y="191" text-anchor="middle">×</text><g class="schema-column" style="--column:${i}"><rect x="${x}" y="147" width="${width}" height="64" rx="6"/><path d="M${x + 14} 165h${width - 28} M${x + 14} 179h${width - 28} M${x + 14} 193h${width - 28}"/></g>`;
+  }).join('');
+  return `${headingMarkup(s)}<div class="schema"><svg viewBox="0 0 1200 360" role="group" aria-label="${escapeHtml(s.description)}"><g data-schema-code-group role="img"><rect class="schema-box schema-code-box" x="50" y="60" width="390" height="240" rx="12"/><rect class="schema-status" x="82" y="211" width="326" height="62" rx="8"/>${codeStates}</g><g class="schema-connection" aria-hidden="true"><text class="schema-link-label" x="600" y="146" text-anchor="middle" data-schema-connection></text><path class="schema-link schema-link-line" d="M440 180 H760"/><path class="schema-link" d="m746 172 12 8-12 8"/><path class="schema-check-sweep" d="M440 180 H760"/><g class="schema-break"><circle cx="600" cy="180" r="22"/><path class="schema-link" d="m590 170 20 20m-20 0 20-20"/></g></g><g data-schema-db role="img"><rect class="schema-box" x="760" y="60" width="390" height="240" rx="12"/><text class="schema-heading" x="955" y="122" text-anchor="middle">${escapeHtml(s.database)}</text><g aria-hidden="true">${columns}</g><text class="schema-detail" x="955" y="263" text-anchor="middle" data-schema-db-detail></text></g></svg></div><div class="sequence-controls" role="status"><strong data-sequence-note></strong><span data-sequence-progress></span></div>`;
+}
+
 function slideMarkup(s) {
+  if (s.type === 'sequence') {
+    if (s.layout === 'handoff') return { kind: 'handoff', body: handoffMarkup(s) };
+    if (s.layout === 'schema') return { kind: 'schema', body: schemaMarkup(s) };
+    const panels = s.stages.map((stage, i) => `<figure class="sequence-panel is-pending"><figcaption class="sequence-label"><span>${i + 1}</span>${escapeHtml(stage.label)}</figcaption><div class="sequence-visual" aria-hidden="true"><img alt="${escapeHtml(stage.alt ?? stage.label)}"></div></figure>`).join('');
+    return { kind: 'sequence', body: `${headingMarkup(s)}<div class="sequence-panels">${panels}</div><div class="sequence-controls" role="status"><strong data-sequence-note></strong><span data-sequence-progress></span></div>` };
+  }
   if (s.type === 'chat') return { kind: 'chat', body: chatMarkup(s) };
   if (s.type === 'arena') return { kind: 'arena', body: arenaMarkup(s) };
   if (s.type === 'stamina') return { kind: 'stamina', body: staminaMarkup(s) };
@@ -2968,7 +3164,7 @@ function renderSlide(direction) {
 
   const sayText = frameEl.querySelector('.say-text');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  deck.typing = sayText ? { el: sayText, text: slide.say, start: time } : null;
+  deck.typing = sayText ? { el: sayText, text: slide.type === 'sequence' ? slide.stages[deck.stage].say ?? slide.say : slide.say, start: time } : null;
   if (deck.typing && reduce) finishTyping();
 
   const act = currentAct();
