@@ -138,6 +138,65 @@
   .sequence-panel.is-entering .sequence-visual { animation: sequence-reveal .4s ease both; }
   .sequence-controls { display: flex; justify-content: space-between; align-items: center; gap: 1cqw; font-size: 1.45cqw; color: #655c70; }
   .sequence-controls strong { font-size: 1.7cqw; color: var(--accent-deep); }
+  .slide--salon { gap: 1.8cqh; padding-top: 4.5cqh; word-break: keep-all; }
+  .slide--salon .slide-title { font-size: 3.65cqw; }
+  .salon-steps { display: flex; gap: .8cqw; }
+  .salon-step { flex: 1; padding: .8cqh 1cqw; border-bottom: .24cqw solid #d4c9c1; color: #81746e; font-size: 1.5cqw; }
+  .salon-step.is-done { border-color: var(--accent); color: var(--ink); }
+  .salon-step.is-current { background: var(--accent-soft); font-weight: 700; }
+  .salon-scene { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 9cqw 1.2fr; gap: 1.2cqw; }
+  .salon-card { position: relative; min-height: 0; width: 76%; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: .6cqh; transition: transform .6s ease; }
+  .salon-card img { width: 100%; flex: 1; min-height: 0; object-fit: contain; }
+  .salon-card figcaption, .salon-caption { font-size: 1.2cqw; color: #75635c; text-align: center; }
+  .salon-label { font-size: 1.5cqw; color: var(--accent-deep); }
+  .salon-link { align-self: center; position: relative; border-top: .25cqw dashed #c4b5ad; transition: border-color .4s ease; }
+  .salon-link::after { content: ''; position: absolute; right: 0; top: -.62cqw; border-left: .9cqw solid #c4b5ad; border-top: .5cqw solid transparent; border-bottom: .5cqw solid transparent; }
+  .salon-scene:not([data-mode="card"]):not([data-mode="upload"]) .salon-link { border-color: var(--accent-deep); border-top-style: solid; }
+  .salon-scene:not([data-mode="card"]):not([data-mode="upload"]) .salon-link::after { border-left-color: var(--accent-deep); }
+  .salon-scene:not([data-mode="card"]) .salon-card { transform: translateX(5%); }
+  .salon-phone { position: relative; width: 25cqw; justify-self: center; min-height: 0; border: .35cqw solid var(--ink); border-radius: 1.6cqw; background: #fff; overflow: hidden; }
+  .salon-phone::before { content: ''; position: absolute; z-index: 1; width: 4cqw; height: .45cqh; border-radius: 1cqw; background: var(--ink); top: 1cqh; left: calc(50% - 2cqw); }
+  .phone-view { position: absolute; inset: 2.2cqh 1.8cqw 1cqh; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.4cqh; opacity: 0; visibility: hidden; transform: translateY(1cqh); transition: opacity .35s ease, transform .35s ease; }
+  .phone-view.is-current { opacity: 1; visibility: visible; transform: none; }
+  .phone-view strong { font-size: 2cqw; }
+  .phone-view p { font-size: 1.5cqw; color: #75635c; }
+  .phone-qr { position: relative; width: 8cqw; height: 8cqw; max-height: 16cqh; color: var(--ink); }
+  .phone-qr svg { width: 100%; height: 100%; }
+  [data-mode="scan"] .phone-qr::after { content: ''; position: absolute; left: 0; right: 0; height: .35cqh; background: var(--accent-deep); animation: salon-scan .8s ease both; }
+  .profile-initial { display: grid; place-items: center; width: 5cqw; height: 5cqw; background: var(--accent-soft); border: .2cqw solid var(--accent); border-radius: 50%; font-size: 2.4cqw; }
+  .profile-entry { padding: 1cqh 1cqw; background: #f7f2ed; width: 100%; text-align: center; font-size: 1.45cqw; }
+  .profile-new { color: #21765a; background: #e5f4ec; display: none; }
+  [data-mode="updated"] .profile-new { display: block; animation: salon-rise .4s ease both; }
+  [data-mode="updated"] .profile-initial { display: none; }
+  .profile-fixed { position: absolute; bottom: 1cqh; left: 0; width: 100%; padding: .7cqh; background: var(--accent-soft); font-size: 1.4cqw; text-align: center; opacity: 0; }
+  [data-mode="updated"] .profile-fixed { opacity: 1; }
+  .salon-document { align-self: center; justify-self: center; width: 19cqw; height: 23cqh; border: .25cqw solid var(--ink); background: #fff; padding: 2cqh 1.4cqw; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2cqh; transition: transform .5s ease; }
+  .salon-document strong { font-size: 4cqw; color: var(--accent-deep); }
+  .salon-document span { font-size: 1.65cqw; }
+  .salon-document i { display: block; width: 80%; height: .5cqh; background: #ded6d1; box-shadow: 0 1.4cqh #ded6d1; }
+  .salon-scene--review { grid-template-columns: .7fr 6cqw 1.5fr; }
+  .salon-scene--review:not([data-mode="upload"]) .salon-document { transform: translateX(7%); }
+  .review-window { min-height: 0; display: flex; flex-direction: column; border: .2cqw solid #c4b5ad; background: #fff; }
+  .review-window h3 { font-size: 1.75cqw; padding: 1cqh 1.4cqw; background: var(--accent-soft); }
+  .review-crop { flex: 1; min-height: 0; position: relative; overflow: hidden; background: #f5f8fc; }
+  .review-crop img { position: absolute; width: 300%; max-width: none; height: auto; left: -210%; top: -104cqh; opacity: 1; transition: left .65s ease, top .65s ease, width .65s ease, opacity .3s ease; }
+  [data-mode="upload"] .review-crop img { opacity: 0; }
+  [data-mode="judge"] .review-crop img { width: 190%; left: -20%; top: -84cqh; }
+  .review-placeholder { position: absolute; inset: 0; display: grid; place-items: center; color: #8a7d76; font-size: 1.8cqw; }
+  .salon-scene--review:not([data-mode="upload"]) .review-placeholder { display: none; }
+  .review-caption { padding: .7cqh 1cqw; font-size: 1.3cqw; text-align: center; color: #75635c; }
+  .followup-grid { display: grid; grid-template-columns: 7cqw repeat(3, 1fr); grid-template-rows: auto 1fr 1fr; gap: 1.3cqh 1cqw; flex: 1; min-height: 0; }
+  .followup-head { font-size: 1.7cqw; text-align: center; padding: 1.2cqh .5cqw; border-bottom: .24cqw solid #c4b5ad; color: #81746e; }
+  .followup-head.is-current { background: var(--accent-soft); color: var(--ink); border-color: var(--accent-deep); }
+  .followup-track { align-self: center; font-size: 1.8cqw; color: var(--accent-deep); }
+  .followup-cell { display: grid; place-items: center; background: #fff; border: .15cqw solid #c4b5ad; padding: 1.3cqh .7cqw; font-size: 1.8cqw; line-height: 1.55; text-align: center; }
+  .followup-cell span { transition: opacity .35s ease, transform .35s ease; }
+  .followup-cell.is-pending { border-style: dashed; background: transparent; }
+  .followup-cell.is-pending span { opacity: 0; transform: translateY(1cqh); visibility: hidden; }
+  .followup-cell.is-current { border-color: var(--accent-deep); box-shadow: 0 .35cqh var(--accent-soft); }
+  @keyframes salon-scan { from { top: 0; } to { top: 96%; } }
+  @keyframes salon-rise { from { opacity: 0; transform: translateY(1cqh); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .slide--salon * { animation: none !important; transition: none !important; } }
   .slide--handoff { gap: 2.8cqh; }
   .handoff { flex: 1; min-height: 0; background: #f3edf9; border-radius: 1cqw; }
   .handoff svg { display: block; width: 100%; height: 100%; font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
@@ -729,6 +788,7 @@
     sequence + layout: 'handoff': source/router: { label, detail }, servers: [A, B], stages: [{ serving: 0 | 1 | [0, 1], servingDetail, servingLabel?, note, say }]. 같은 그림에서 요청 경로와 서버 상태를 교대한다.
     handoff의 단계별 serverStates?: [{ status, detail, phase?: 'working' | 'failed' | 'recovering' }, ...]로 서버별 설명과 실패/복구 표시를 바꿀 수 있다.
     sequence + layout: 'schema': database, columnCount, description, stages: [{ code, codeDetail, codeStatus, columns: boolean, dbDetail, connection, mode: 'linked' | 'unused' | 'checking' | 'failed', note, say }]. 같은 코드·DB 그림에서 컬럼 유지/삭제와 호환성을 보여준다.
+    sequence + layout: 'profile-link' | 'review-demo' | 'followup': 같은 장면에서 명함 연결, 심사 화면 확대, 대상별 확인 시점을 단계별로 보여준다. stages의 label, mode/cells, note, say는 포탈 파일에서 작성한다.
     crossroads와 dialogue가 이어지면 같은 무대에서 캐릭터와 말풍선을 이동한다. dialogue는 대화와 악수를 순서대로 공개한다.
     **강조**는 형광펜으로 표시된다.
 */
@@ -2556,7 +2616,9 @@ function renderStage(withSound) {
   const slide = deck.slides[deck.index];
   const stage = slide.stages[deck.stage];
   if (slide.type === 'sequence') {
-    if (slide.layout === 'handoff') {
+    if (['profile-link', 'review-demo', 'followup'].includes(slide.layout)) {
+      renderSalonStage(slide, stage);
+    } else if (slide.layout === 'handoff') {
       const scene = frameEl.querySelector('.handoff');
       const servingServers = Array.isArray(stage.serving) ? stage.serving : [stage.serving];
       const servingLabel = stage.servingLabel ?? slide.servingLabel;
@@ -3013,8 +3075,63 @@ function schemaMarkup(s) {
   return `${headingMarkup(s)}<div class="schema"><svg viewBox="0 0 1200 360" role="group" aria-label="${escapeHtml(s.description)}"><g data-schema-code-group role="img"><rect class="schema-box schema-code-box" x="50" y="60" width="390" height="240" rx="12"/><rect class="schema-status" x="82" y="211" width="326" height="62" rx="8"/>${codeStates}</g><g class="schema-connection" aria-hidden="true"><text class="schema-link-label" x="600" y="146" text-anchor="middle" data-schema-connection></text><path class="schema-link schema-link-line" d="M440 180 H760"/><path class="schema-link" d="m746 172 12 8-12 8"/><path class="schema-check-sweep" d="M440 180 H760"/><g class="schema-break"><circle cx="600" cy="180" r="22"/><path class="schema-link" d="m590 170 20 20m-20 0 20-20"/></g></g><g data-schema-db role="img"><rect class="schema-box" x="760" y="60" width="390" height="240" rx="12"/><text class="schema-heading" x="955" y="122" text-anchor="middle">${escapeHtml(s.database)}</text><g aria-hidden="true">${columns}</g><text class="schema-detail" x="955" y="263" text-anchor="middle" data-schema-db-detail></text></g></svg></div><div class="sequence-controls" role="status"><strong data-sequence-note></strong><span data-sequence-progress></span></div>`;
 }
 
+function renderSalonStage(slide, stage) {
+  const scene = frameEl.querySelector('.salon-scene');
+  if (scene) {
+    scene.dataset.mode = stage.mode;
+    scene.setAttribute('aria-label', `${stage.label}: ${stage.note}`);
+  }
+  frameEl.querySelectorAll('[data-salon-step]').forEach(el => {
+    const i = Number(el.dataset.salonStep);
+    el.classList.toggle('is-done', i <= deck.stage);
+    el.classList.toggle('is-current', i === deck.stage);
+    if (i === deck.stage) el.setAttribute('aria-current', 'step');
+    else el.removeAttribute('aria-current');
+  });
+  if (slide.layout === 'profile-link') {
+    const view = stage.mode === 'updated' ? 'profile' : stage.mode;
+    frameEl.querySelectorAll('[data-phone-view]').forEach(el => {
+      const current = el.dataset.phoneView === view;
+      el.classList.toggle('is-current', current);
+      el.setAttribute('aria-hidden', String(!current));
+    });
+    frameEl.querySelector('[data-profile-title]').textContent = stage.mode === 'updated' ? slide.labels.updated : slide.labels.profile;
+  }
+  if (slide.layout === 'review-demo') {
+    frameEl.querySelector('[data-review-label]').textContent = stage.screenLabel;
+    frameEl.querySelector('[data-review-detail]').textContent = stage.screenDetail;
+    frameEl.querySelector('.review-crop img').setAttribute('aria-hidden', String(stage.mode === 'upload'));
+  }
+  if (slide.layout === 'followup') {
+    frameEl.querySelectorAll('[data-followup-stage]').forEach(el => {
+      const i = Number(el.dataset.followupStage);
+      el.classList.toggle('is-current', i === deck.stage);
+      el.classList.toggle('is-pending', i > deck.stage);
+      el.querySelector('span').setAttribute('aria-hidden', String(i > deck.stage));
+    });
+  }
+}
+
+function salonMarkup(s) {
+  const steps = `<div class="salon-steps" aria-label="진행 순서">${s.stages.map((stage, i) => `<span class="salon-step" data-salon-step="${i}">${escapeHtml(stage.label)}</span>`).join('')}</div>`;
+  const controls = '<div class="sequence-controls" role="status"><strong data-sequence-note></strong><span data-sequence-progress></span></div>';
+  let scene;
+  if (s.layout === 'profile-link') {
+    const qr = '<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="6" height="6"/><rect x="16" y="2" width="6" height="6"/><rect x="2" y="16" width="6" height="6"/><path d="M12 2v9h10M2 12h6m4 3h5v7m-5-3h10m-1-5v2M4 4h2v2H4zm14 0h2v2h-2zM4 18h2v2H4z"/></g></svg>';
+    scene = `<div class="salon-scene" role="group"><figure class="salon-card"><p class="salon-label">${escapeHtml(s.labels.card)}</p><img src="${escapeHtml(s.cardImage)}" alt="${escapeHtml(s.person)}의 프로필 명함 예시"><figcaption>${escapeHtml(s.caption)}</figcaption><div class="profile-fixed">${escapeHtml(s.labels.fixed)}</div></figure><div class="salon-link" aria-hidden="true"></div><div class="salon-phone"><div class="phone-view" data-phone-view="card"><p>${escapeHtml(s.labels.phone)}</p><strong>${escapeHtml(s.labels.waiting)}</strong></div><div class="phone-view" data-phone-view="scan"><div class="phone-qr">${qr}</div><strong>${escapeHtml(s.labels.scanning)}</strong></div><div class="phone-view" data-phone-view="profile"><p class="salon-label" data-profile-title></p><div class="profile-initial" aria-hidden="true">${escapeHtml(s.person.slice(0, 1))}</div><strong>${escapeHtml(s.person)}</strong><p>${escapeHtml(s.personDetail)}</p><div class="profile-entry">${escapeHtml(s.profileEntry)}</div><div class="profile-entry profile-new">${escapeHtml(s.updatedEntry)}</div></div></div></div>`;
+  } else if (s.layout === 'review-demo') {
+    scene = `<div class="salon-scene salon-scene--review" role="group"><div class="salon-document"><strong>${escapeHtml(s.fileType)}</strong><span>${escapeHtml(s.fileLabel)}</span><i aria-hidden="true"></i></div><div class="salon-link" aria-hidden="true"></div><figure class="review-window"><h3 data-review-label></h3><div class="review-crop"><img src="${escapeHtml(s.image)}" alt="${escapeHtml(s.caption)}"><div class="review-placeholder">${escapeHtml(s.fileType)} → ${escapeHtml(s.stages[1].label)}</div></div><figcaption class="review-caption" data-review-detail></figcaption></figure></div>`;
+  } else {
+    const headers = '<span></span>' + s.stages.map((stage, i) => `<h3 class="followup-head" data-salon-step="${i}">${escapeHtml(stage.label)}</h3>`).join('');
+    const rows = s.tracks.map((track, row) => `<strong class="followup-track">${escapeHtml(track)}</strong>${s.stages.map((stage, i) => `<div class="followup-cell" data-followup-stage="${i}"><span>${rich(stage.cells[row])}</span></div>`).join('')}`).join('');
+    scene = `<div class="followup-grid" role="group" aria-label="대상과 시점별 확인 계획">${headers}${rows}</div>`;
+  }
+  return `${headingMarkup(s)}${s.layout === 'followup' ? '' : steps}${scene}${controls}`;
+}
+
 function slideMarkup(s) {
   if (s.type === 'sequence') {
+    if (['profile-link', 'review-demo', 'followup'].includes(s.layout)) return { kind: 'salon', body: salonMarkup(s) };
     if (s.layout === 'handoff') return { kind: 'handoff', body: handoffMarkup(s) };
     if (s.layout === 'schema') return { kind: 'schema', body: schemaMarkup(s) };
     const panels = s.stages.map((stage, i) => `<figure class="sequence-panel is-pending"><figcaption class="sequence-label"><span>${i + 1}</span>${escapeHtml(stage.label)}</figcaption><div class="sequence-visual" aria-hidden="true"><img alt="${escapeHtml(stage.alt ?? stage.label)}"></div></figure>`).join('');
