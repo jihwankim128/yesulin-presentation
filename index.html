@@ -113,7 +113,7 @@
     content: ''; position: absolute; left: 0; top: .48em; width: 1.05cqw; height: 1.05cqw;
     background: var(--accent); box-shadow: .25cqw .25cqw 0 var(--ink);
   }
-  .slide mark { color: inherit; background: linear-gradient(transparent 58%, var(--accent-soft) 58%); }
+  .slide mark { color: inherit; background: none; text-decoration: underline .14em var(--accent); text-underline-offset: .24em; text-decoration-skip-ink: none; }
   .slide--cover { justify-content: center; }
   .slide--cover .slide-title { font-size: 7.6cqw; }
   .slide--cover .slide-subtitle { font-size: 2.7cqw; max-width: 60ch; }
@@ -534,6 +534,34 @@
   .say.done .say-text::after { content: ' ▼'; color: var(--accent); animation: blink 1s steps(2) infinite; }
   @keyframes talk { 50% { transform: translateY(-.6cqh); } }
 
+  .visit {
+    position: relative; flex: 1; min-height: 0; overflow: hidden; box-shadow: 0 0 0 .3cqw var(--ink);
+    background: linear-gradient(#f4e7cf 0 72%, #6b4a33 72% 73.5%, #c99b6c 73.5%);
+  }
+  .visit-place { position: absolute; top: 1.6cqh; left: 1.4cqw; padding: .6cqh 1cqw; font-size: 1.4cqw; color: var(--accent); background: var(--ink); }
+  .visit-poster {
+    position: absolute; top: 14%; left: 50%; translate: -50% 0; rotate: -2deg; padding: 1.4cqh 1.6cqw;
+    text-align: center; font-size: 1.6cqw; font-weight: 700; line-height: 1.4; background: #fff;
+    box-shadow: 0 0 0 .25cqw var(--ink), .45cqw .45cqw 0 .25cqw var(--accent);
+  }
+  .visit-actor { position: absolute; bottom: 6%; display: grid; justify-items: center; gap: .6cqh; translate: -50% 0; transition: filter .2s; }
+  .visit-actor--left { left: 25%; animation: visit-enter-left .5s steps(5) both; }
+  .visit-actor--right { left: 75%; animation: visit-enter-right .5s .15s steps(5) both; }
+  .visit-actor img { width: 24cqh; height: 24cqh; image-rendering: pixelated; }
+  .visit-actor:not(.is-speaking) { filter: brightness(.55) saturate(.5); }
+  .visit-name { padding: .3cqh .8cqw; font-size: 1.5cqw; color: var(--ink); background: #fff; box-shadow: 0 0 0 .2cqw var(--ink); }
+  .visit-actor.is-speaking .visit-name { background: var(--accent); }
+  .visit-actor--right.is-speaking .visit-name { background: #d4b3ef; }
+  .slide--visit:has(.say.talking) .visit-actor.is-speaking img { animation: talk .24s steps(2) infinite; }
+  .say[data-side="right"] { grid-template-columns: 1fr auto; }
+  .say[data-side="right"] .say-portrait { order: 2; background: #d4b3ef; }
+  .say[data-side="right"] .say-name { left: auto; right: 2.2cqw; background: #d4b3ef; }
+  @keyframes visit-enter-left { from { transform: translateX(-30cqw); } }
+  @keyframes visit-enter-right { from { transform: translateX(30cqw); } }
+  @media (prefers-reduced-motion: reduce) {
+    .visit-actor, .slide--visit:has(.say.talking) .visit-actor.is-speaking img { animation: none; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .stack-card, .stack-card.leaving, .say.talking .say-portrait, .say.done .say-text::after { animation: none; transition: none; }
   }
@@ -571,6 +599,7 @@
   .cycle-step:last-child { background: var(--accent-soft); box-shadow: 0 0 0 .3cqw var(--ink), .5cqw .5cqw 0 .3cqw var(--accent); }
   .cycle-arrow { font-size: 2.4cqw; color: var(--accent-deep); }
   .cycle-loop { padding: 1.8cqh 2cqw; text-align: center; font-size: 2.1cqw; font-weight: 700; color: var(--accent); background: var(--ink); }
+  .cycle-loop mark { color: #ffd34d; text-decoration: none; }
 
   .confirm { position: fixed; left: 0; right: 0; bottom: 64px; display: grid; justify-items: center; padding: 0 16px; }
   .confirm-box {
@@ -628,7 +657,7 @@
   .arena[data-mode="slow"] [data-arena="p95"] { color: #b86a00; }
   .arena[data-mode="down"] [data-arena="p95"], .arena[data-mode="down"] [data-arena="err"] { color: #c62828; }
   .arena-note { position: absolute; left: 1.4cqw; bottom: 1.6cqh; padding: .8cqh 1.2cqw; font-size: 1.7cqw; color: #fff; background: var(--ink); }
-  .arena-note mark { color: #ffd34d; background: none; }
+  .arena-note mark { color: #ffd34d; text-decoration: none; }
   .arena-steps { position: absolute; right: 1.4cqw; top: 1.6cqh; display: flex; gap: .5cqw; }
   .arena-steps i { width: 1.4cqw; height: 1.4cqw; background: rgba(29, 22, 38, .2); }
   .arena-steps i.on { background: var(--accent-deep); }
@@ -657,6 +686,61 @@
   .sensor-pad.is-hidden, .sensor-row.is-hidden { display: none; }
   @keyframes pad-stick { from { transform: scale(1.8); opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .sensor-pad, .sensor-row { animation: none; } }
+
+  .slide--journey { gap: 1.6cqh; padding-top: 5cqh; }
+  .slide--journey .slide-title { font-size: 3.4cqw; }
+  .journey { flex: 1; min-height: 0; display: grid; grid-template-rows: auto 1fr; gap: 1.4cqh; }
+  .journey-note { display: flex; align-items: center; gap: 1.2cqw; padding: .9cqh 1.3cqw; font-size: 1.9cqw; line-height: 1.4; color: #fff; background: var(--ink); }
+  .journey-note mark { color: #ffd34d; text-decoration: none; }
+  .journey-count { flex: none; padding: .3cqh .8cqw; font-size: 1.3cqw; color: var(--ink); background: var(--accent); }
+  .journey-map {
+    position: relative; min-height: 0;
+    background: #f6f2e6 radial-gradient(rgba(29, 22, 38, .12) .15cqw, transparent .2cqw) 0 0 / 2.2cqw 2.2cqw;
+    box-shadow: 0 0 0 .3cqw var(--ink);
+  }
+  .journey-trail { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .journey-trail path { fill: none; stroke: #8a8496; stroke-width: 3; stroke-dasharray: 7 6; vector-effect: non-scaling-stroke; }
+  .journey-trail path.is-current { stroke: var(--accent-deep); stroke-width: 4; animation: journey-march .5s linear infinite; }
+  .journey-trail path[data-tone="signal"] { stroke-dasharray: 2 5; }
+  .journey-trail path[data-tone="wait"] { stroke: #b86a00; }
+  .journey-trail path[data-tone="fail"] { stroke: #c62828; }
+  .journey-label { position: absolute; z-index: 1; transform: translate(-50%, -50%); padding: .3cqh .6cqw; font-size: 1.2cqw; white-space: nowrap; color: #4f4a5e; background: #f6f2e6; }
+  .journey-label.is-current { color: var(--accent-deep); }
+  .journey-trail .is-hidden, .journey-label.is-hidden { display: none; }
+  .journey-station {
+    position: absolute; z-index: 1; transform: translate(-50%, -50%);
+    display: flex; align-items: center; gap: .8cqw; min-width: 14cqw; padding: 1cqh 1cqw;
+    color: #8a8496; background: #fff; box-shadow: 0 0 0 .22cqw #c9c3d2;
+  }
+  .journey-station img { width: 3.4cqw; height: 3.4cqw; image-rendering: pixelated; filter: grayscale(1); opacity: .45; }
+  .journey-station span { display: grid; gap: .3cqh; }
+  .journey-station b { font-size: 1.7cqw; white-space: nowrap; }
+  .journey-station small { font-family: 'GalmuriMono11', monospace; font-size: 1.1cqw; white-space: nowrap; }
+  .journey-station.is-visited { color: var(--ink); box-shadow: 0 0 0 .22cqw var(--ink); }
+  .journey-station.is-visited img { filter: none; opacity: 1; }
+  .journey-station.is-current { background: var(--accent-soft); box-shadow: 0 0 0 .22cqw var(--ink), .45cqw .45cqw 0 .22cqw var(--accent); }
+  .journey-token {
+    position: absolute; z-index: 3; transform: translate(-50%, -100%);
+    display: flex; align-items: center; gap: .5cqw; padding: .5cqh .7cqw; pointer-events: none;
+    background: #fff; box-shadow: 0 0 0 .22cqw var(--ink), .3cqw .3cqw 0 .22cqw rgba(29, 22, 38, .25);
+    transition: left .6s steps(6), top .6s steps(6);
+  }
+  .journey-token img { width: 2cqw; height: 2.5cqw; image-rendering: pixelated; animation: journey-bob .8s steps(2) infinite; }
+  .journey-token span { font-size: 1.35cqw; font-weight: 700; white-space: nowrap; }
+  .journey-token[data-tone="wait"] { background: #fff1c2; }
+  .journey-token[data-tone="done"] { background: #cdf3e1; }
+  .journey-token[data-tone="fail"] { background: #ffd9d6; }
+  .journey-pops { position: absolute; z-index: 2; display: flex; gap: .6cqw; pointer-events: none; }
+  .journey-pops[data-side="below"] { transform: translateX(-50%); }
+  .journey-pops[data-side="right"] { flex-direction: column; align-items: flex-start; gap: .8cqh; transform: translateY(-50%); }
+  .journey-pops[data-side="left"] { flex-direction: column; align-items: flex-end; gap: .8cqh; transform: translate(-100%, -50%); }
+  .journey-pops span { padding: .5cqh .8cqw; font-size: 1.3cqw; white-space: nowrap; color: #fff; background: var(--ink); animation: chat-pop .3s steps(3) both; }
+  .journey-pops span:nth-child(2) { animation-delay: .2s; }
+  .journey-pops span:nth-child(3) { animation-delay: .4s; }
+  .journey-pops mark { color: #ffd34d; text-decoration: none; }
+  @keyframes journey-march { to { stroke-dashoffset: -13; } }
+  @keyframes journey-bob { 50% { transform: translateY(-.4cqh); } }
+  @media (prefers-reduced-motion: reduce) { .journey-trail path, .journey-token img, .journey-pops span { animation: none; } .journey-token { transition: none; } }
 
   .hud-apples { display: flex; align-items: center; gap: .5rem; padding: .5rem .9rem; font-size: 15px; background: rgba(15, 20, 36, .82); box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px rgba(255, 255, 255, .85); }
   .hud-apples i { width: 12px; height: 12px; background: #e2474b; box-shadow: inset -3px -3px 0 #9e2a33, 0 -4px 0 -2px #4f9a3a; }
@@ -790,7 +874,7 @@
   - 포탈에 sectionStyle: 'plain'을 지정하면 막 대신 번호와 구역 제목을 표시한다. tocTitle로 목차 제목을 바꿀 수 있다.
   - sectionIntro: 'stage'를 함께 지정하면 번호형 구역의 도입을 커튼이 열리는 무대로 표시한다.
   - 슬라이드 필드
-    type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' | 'flow' | 'cards' | 'crossroads' | 'dialogue' | 'table' | 'chat' | 'arena' | 'stamina' | 'sensors' | 'sequence' (생략하면 내용에 맞춰 자동 배치)
+    type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' | 'flow' | 'cards' | 'crossroads' | 'dialogue' | 'table' | 'chat' | 'arena' | 'stamina' | 'sensors' | 'sequence' | 'journey' | 'visit' (생략하면 내용에 맞춰 자동 배치)
     kicker, title, subtitle, big, points, image, caption, images(사진 더미), claims, before/after, say(캐릭터 대사)
     cards: [{ label, title, detail }], takeaway: 카드나 대화의 정리 문장. image를 함께 쓰면 근거 이미지 옆에 카드 2개를 세로로 배치한다.
     turns: [{ speaker: '대O' | '맥O', label, text, note, thought }], scene: 'goals' | 'request' | 'reunion'
@@ -800,7 +884,7 @@
     sequence + layout: 'schema': database, columnCount, description, stages: [{ code, codeDetail, codeStatus, columns: boolean, dbDetail, connection, mode: 'linked' | 'unused' | 'checking' | 'failed', note, say }]. 같은 코드·DB 그림에서 컬럼 유지/삭제와 호환성을 보여준다.
     sequence + layout: 'profile-link' | 'review-demo' | 'followup': 같은 장면에서 명함 연결, 심사 화면 확대, 대상별 확인 시점을 단계별로 보여준다. stages의 label, mode/cells, note, say는 포탈 파일에서 작성한다.
     crossroads와 dialogue가 이어지면 같은 무대에서 캐릭터와 말풍선을 이동한다. dialogue는 대화와 악수를 순서대로 공개한다.
-    **강조**는 형광펜으로 표시된다.
+    **강조**는 밑줄로 표시된다.
 */
 const CONFIG = {
   narrator: '예술in',
@@ -2497,6 +2581,112 @@ function sensorsMarkup(s) {
   return `${headingMarkup(s)}<div class="sensor-scene"><div class="sensor-body"><div class="sensor-face"><i></i><i></i></div>${pads}</div><ul class="sensor-list"><li class="sensor-note" data-note></li>${rows}</ul></div>`;
 }
 
+const JOURNEY_ICONS = {
+  pdf: [['KKKKKK..', 'KWWWWKK.', 'KWWWWWKK', 'KWRRRWWK', 'KWWWWWWK', 'KWbbbbWK', 'KWWWWWWK', 'KWbbbbWK', 'KWWWWWWK', 'KKKKKKKK'], { R: '#e2474b', b: '#9fb4d8' }],
+  browser: [['KKKKKKKKKK', 'KRYGKKKKKK', 'KWWWWWWWWK', 'KWbbbbbbWK', 'KWWWWWWWWK', 'KWbbbbWWWK', 'KWWWWWWWWK', 'KWbbbbbbWK', 'KWWWWWWWWK', 'KKKKKKKKKK'], { R: '#e2474b', Y: '#ffd34d', G: '#5fd3a0', b: '#9fb4d8' }],
+  office: [['....GG....', '..GGGGGG..', 'GGGGGGGGGG', '.KKKKKKKK.', '.KOYOOYOK.', '.KOOOOOOK.', '.KOYOOYOK.', '.KOOOOOOK.', '.KOOBBOOK.', '.KKKBBKKK.'], { G: '#4fae5a', O: '#efe2c2', Y: '#ffd34d', B: '#8a5a2b' }],
+  bucket: [['.KKKKKKKK.', 'KAAAAAAAAK', 'KKKKKKKKKK', '.KaaaaaaK.', '.KaAAAAaK.', '.KaaaaaaK.', '..KaAAaK..', '..KaaaaK..', '..KKKKKK..'], { A: '#ff9a4a', a: '#d8662e' }],
+  gear: [['...KKKK...', '.K.KYYK.K.', '.KKYYYYKK.', 'KKYYKKYYKK', 'KYYK..KYYK', 'KYYK..KYYK', 'KKYYKKYYKK', '.KKYYYYKK.', '.K.KYYK.K.', '...KKKK...'], { Y: '#f0a33a' }],
+  review: [['.KKKKKKKK.', '.KWWWWWWK.', '.KWPPWbbK.', '.KWPPWWWK.', '.KWPPWbbK.', '.KWWWWWWK.', '.KWbbbbWK.', '.KWWWWGWK.', '.KWGWGWWK.', '.KKKKKKKK.'], { P: '#ff7ab6', b: '#9fb4d8', G: '#1f9a68' }],
+  db: [['..KKKKKK..', '.KccccccK.', '.KKccccKK.', '.KCKKKKCK.', '.KCCCCCCK.', '.KKCCCCKK.', '.KCKKKKCK.', '.KCCCCCCK.', '.KKCCCCKK.', '..KKKKKK..'], { c: '#bfe3ff', C: '#4cc8ff' }],
+  hourglass: [['KKKKKKKKKK', '.KYYYYYYK.', '..KYYYYK..', '...KYYK...', '....KK....', '....KK....', '...K..K...', '..K.YY.K..', '.KYYYYYYK.', 'KKKKKKKKKK'], { Y: '#ffd34d' }],
+  robot: [['....KK....', '....RR....', '.KKKKKKKK.', '.KWWWWWWK.', '.KWKWWKWK.', '.KWWWWWWK.', '.KWKKKKWK.', '.KKKKKKKK.', '..KVVVVK..', '..KKKKKK..'], { R: '#e2474b', V: '#b48cff' }],
+  magnifier: [['..KKKK....', '.KccccK...', 'KccWcccK..', 'KcWccccK..', 'KccccccK..', '.KccccK...', '..KKKKKK..', '......KKK.', '.......KKK', '........KK'], { c: '#cdeeff' }],
+  card: [['KKKKKKKKKK', 'KWWWWWWWWK', 'KWPPWbbbWK', 'KWPPWWWWWK', 'KWPPWbbWWK', 'KWWWWWWWWK', 'KWWWWWWGWK', 'KWWWWWGWWK', 'KWWGWGWWWK', 'KKKKKKKKKK'], { P: '#ff7ab6', b: '#9fb4d8', G: '#1f9a68' }],
+  warning: [['....KK....', '...KYYK...', '...KYYK...', '..KYKKYK..', '..KYKKYK..', '.KYYKKYYK.', '.KYYYYYYK.', 'KYYYKKYYYK', 'KYYYYYYYYK', 'KKKKKKKKKK'], { Y: '#ffb938' }],
+};
+const journeyIcons = Object.fromEntries(Object.entries(JOURNEY_ICONS).map(([name, [rows, palette]]) => [name, sprite(rows, { K: '#1d1626', W: '#ffffff', ...palette }).toDataURL()]));
+
+function journeySegments(s) {
+  const segments = [];
+  s.stages.forEach((stage, i) => {
+    const from = stage.from ?? s.stages[i - 1]?.at;
+    if (from && from !== stage.at) segments.push({ stage: i, from, to: stage.at, label: stage.label, curve: stage.curve ?? 0, tone: stage.tone ?? '' });
+    (stage.signals ?? []).forEach(signal => segments.push({ stage: i, curve: 0, ...signal, tone: 'signal' }));
+  });
+  const station = Object.fromEntries(s.stations.map(st => [st.id, st]));
+  return segments.map(seg => {
+    const a = station[seg.from], b = station[seg.to];
+    const cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2 + seg.curve;
+    return { ...seg, d: `M${a.x} ${a.y} Q${cx} ${cy} ${b.x} ${b.y}`, mx: (a.x + 2 * cx + b.x) / 4, my: (a.y + 2 * cy + b.y) / 4 };
+  });
+}
+
+function journeyMarkup(s) {
+  const segments = journeySegments(s);
+  const paths = segments.map(seg => `<path data-stage="${seg.stage}" data-tone="${seg.tone}" d="${seg.d}"/>`).join('');
+  const labels = segments.filter(seg => seg.label).map(seg => `<span class="journey-label" data-stage="${seg.stage}" style="left: ${seg.mx}%; top: ${seg.my}%">${escapeHtml(seg.label)}</span>`).join('');
+  const stations = s.stations.map(st => `<div class="journey-station" data-station="${st.id}" style="left: ${st.x}%; top: ${st.y}%"><img src="${journeyIcons[st.icon]}" alt=""><span><b>${escapeHtml(st.name)}</b><small>${escapeHtml(st.tech)}</small></span></div>`).join('');
+  return `${headingMarkup(s)}<div class="journey"><p class="journey-note"><span class="journey-count" data-journey-count></span><span data-journey-note></span></p><div class="journey-map"><svg class="journey-trail" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${paths}</svg>${labels}${stations}<div class="journey-pops" data-journey-pops></div><div class="journey-token" data-journey-token><img src="${journeyIcons.pdf}" alt=""><span data-journey-carry></span></div></div></div>`;
+}
+
+function renderJourneyStage(slide, stage, withSound) {
+  const map = frameEl.querySelector('.journey-map');
+  const here = slide.stations.find(st => st.id === stage.at);
+  const visited = new Set(slide.stages.slice(0, deck.stage + 1).flatMap((st, i) => [st.at, st.from ?? slide.stages[i - 1]?.at, ...(st.signals ?? []).flatMap(sig => [sig.from, sig.to])]));
+  map.querySelectorAll('[data-stage]').forEach(el => {
+    const at = Number(el.dataset.stage);
+    el.classList.toggle('is-hidden', at > deck.stage);
+    el.classList.toggle('is-current', at === deck.stage);
+  });
+  map.querySelectorAll('.journey-station').forEach(el => {
+    el.classList.toggle('is-current', el.dataset.station === stage.at);
+    el.classList.toggle('is-visited', visited.has(el.dataset.station));
+  });
+  const token = map.querySelector('[data-journey-token]');
+  if (!withSound) token.style.transition = 'none';
+  token.style.left = `${here.x}%`;
+  token.style.top = `calc(${here.y}% - 4.2cqh)`;
+  token.dataset.tone = stage.tone ?? '';
+  token.querySelector('[data-journey-carry]').textContent = stage.carry ?? '';
+  if (!withSound) {
+    void token.offsetWidth;
+    token.style.transition = '';
+  }
+  const pops = map.querySelector('[data-journey-pops]');
+  const side = here.popSide ?? 'right';
+  const offset = { right: '+ 9.5cqw', left: '- 9.5cqw', below: '+ 0cqw' }[side];
+  pops.dataset.side = side;
+  pops.style.left = `calc(${here.x}% ${offset})`;
+  pops.style.top = side === 'below' ? `calc(${here.y}% + 5cqh)` : `${here.y}%`;
+  pops.innerHTML = (stage.pops ?? []).map(pop => `<span>${rich(pop)}</span>`).join('');
+  frameEl.querySelector('[data-journey-note]').innerHTML = rich(stage.note);
+  frameEl.querySelector('[data-journey-count]').textContent = `${deck.stage + 1} / ${slide.stages.length}`;
+  if (withSound) sfx(stage.tone === 'fail' ? 'close' : 'next');
+}
+
+const VISIT_LOOKS = {
+  hero: HERO_PALETTE,
+  theater: { ...HERO_PALETTE, R: '#3a3450', r: '#211c30', H: '#2a1d1a', B: '#9a5fc4', b: '#d4b3ef', P: '#3a3450' },
+};
+const visitImages = Object.fromEntries(Object.entries(VISIT_LOOKS).map(([look, palette]) => {
+  const side = sprite([...HAT, ...FACE_SIDE, ...BODY_SIDE, ...LEGS_SIDE_IDLE], palette);
+  const portrait = sprite([...HAT, ...FACE_FRONT, ...BODY_FRONT, ...LEGS_IDLE], palette);
+  return [look, { left: side.toDataURL(), right: flipped(side).toDataURL(), portrait: portrait.toDataURL() }];
+}));
+
+function visitMarkup(s) {
+  const actors = s.cast.map((member, i) => {
+    const side = i ? 'right' : 'left';
+    return `<div class="visit-actor visit-actor--${side}" data-speaker="${escapeHtml(member.name)}"><img src="${visitImages[member.look][side]}" alt="${escapeHtml(member.name)} 캐릭터"><strong class="visit-name">${escapeHtml(member.name)}</strong></div>`;
+  }).join('');
+  const poster = s.poster ? `<p class="visit-poster">${rich(s.poster)}</p>` : '';
+  return `${headingMarkup(s)}<div class="visit"><span class="visit-place">${escapeHtml(s.place)}</span>${poster}${actors}</div>`;
+}
+
+function renderVisitStage(slide, stage, withSound) {
+  const index = slide.cast.findIndex(member => member.name === stage.speaker);
+  frameEl.querySelectorAll('.visit-actor').forEach(actor => actor.classList.toggle('is-speaking', actor.dataset.speaker === stage.speaker));
+  const box = frameEl.querySelector('.say');
+  box.dataset.side = index ? 'right' : 'left';
+  box.classList.replace('done', 'talking');
+  box.querySelector('.say-name').textContent = stage.speaker;
+  box.querySelector('.say-portrait').src = visitImages[slide.cast[index].look].portrait;
+  deck.typing = { el: box.querySelector('.say-text'), text: stage.line, start: time };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) finishTyping();
+  if (withSound) sfx('tick');
+}
+
 let stamina = null;
 
 function setupStamina() {
@@ -2683,6 +2873,8 @@ function renderStage(withSound) {
     }
     if (withSound) sfx('next');
   }
+  if (slide.type === 'journey') renderJourneyStage(slide, stage, withSound);
+  if (slide.type === 'visit') renderVisitStage(slide, stage, withSound);
   if (slide.type === 'sensors') {
     frameEl.querySelectorAll('.sensor-scene [data-stage]').forEach(el => el.classList.toggle('is-hidden', Number(el.dataset.stage) > deck.stage));
     frameEl.querySelector('[data-note]').innerHTML = rich(stage.note);
@@ -3151,6 +3343,8 @@ function slideMarkup(s) {
   if (s.type === 'arena') return { kind: 'arena', body: arenaMarkup(s) };
   if (s.type === 'stamina') return { kind: 'stamina', body: staminaMarkup(s) };
   if (s.type === 'sensors') return { kind: 'sensors', body: sensorsMarkup(s) };
+  if (s.type === 'journey') return { kind: 'journey', body: journeyMarkup(s) };
+  if (s.type === 'visit') return { kind: 'visit', body: visitMarkup(s) };
   if (s.type === 'toc') return { kind: 'toc', body: tocMarkup() };
   if (s.type === 'act') {
     if (deck.portal.sectionStyle === 'plain') {
@@ -3257,7 +3451,7 @@ function renderSlide(direction) {
   const slide = slides[index];
   if (slide.scene === 'request') deck.requestStep = direction === 'prev' ? slide.turns.length - 1 : 0;
   const { kind, body } = slideMarkup(slide);
-  const say = slide.say ? sayMarkup() : '';
+  const say = slide.say || slide.type === 'visit' ? sayMarkup() : '';
   if (kind === 'crossroads' && frameEl.querySelector('.crossroad-scene')) {
     continueCrossroadScene(slide, wasWalking);
   } else {
@@ -3292,7 +3486,8 @@ function renderSlide(direction) {
 
   const sayText = frameEl.querySelector('.say-text');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  deck.typing = sayText ? { el: sayText, text: slide.type === 'sequence' ? slide.stages[deck.stage].say ?? slide.say : slide.say, start: time } : null;
+  const sayLine = slide.type === 'visit' ? slide.stages[deck.stage].line : slide.type === 'sequence' ? slide.stages[deck.stage].say ?? slide.say : slide.say;
+  deck.typing = sayText ? { el: sayText, text: sayLine, start: time } : null;
   if (deck.typing && reduce) finishTyping();
 
   const act = currentAct();

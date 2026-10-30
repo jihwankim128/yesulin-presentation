@@ -36,7 +36,7 @@ python3 -m http.server 4173 --bind 127.0.0.1
 - 막 이름은 포탈 파일의 `actRoles: { 1: '...', 2: '...', 3: '...' }`로 바꿀 수 있다.
 - 주요 필드
   - `title`, `subtitle`, `kicker`, `big`(크게 강조할 단어)
-  - `points`: 글머리 목록. `**강조**`는 형광펜 표시
+  - `points`: 글머리 목록. `**강조**`는 밑줄 표시
   - `image`: 이미지 한 장, `images`: 클릭으로 넘기는 사진 더미
   - `type: 'hypothesis'` + `claims`: 가설 화면. `points`를 주면 가설 위에 배경 설명으로 나온다
   - `type: 'compare'` + `before`/`after`: 전후 비교
@@ -46,5 +46,12 @@ python3 -m http.server 4173 --bind 127.0.0.1
   - `type: 'chat'` + `room`, `stages`, `messages`, `popup`: 다음을 누를 때마다 채팅이 한 단계씩 진행되는 장면
   - `type: 'arena'` + `stages: [{ rps, p95, err, mode: 'ok' | 'slow' | 'down', note }]`: 사람이 서버로 몰려드는 부하 테스트 장면
   - `type: 'table'` + `head`, `rows`: 표. 마지막 열이 강조된다
+  - `type: 'journey'` + `stations`, `stages`: 서류가 정거장을 따라 이동하는 장면
+    - 정거장: `{ id, name, tech, icon, x, y, popSide }`. `x`, `y`는 지도 안의 % 위치, `popSide`는 `right`(기본)·`left`·`below`
+    - 단계: `{ at, from, label, curve, carry, tone, pops, signals, note }`. `from`을 생략하면 이전 정거장에서 출발하고, `tone`은 `wait`·`done`·`fail`
+    - 아이콘: `browser`, `office`, `bucket`, `gear`, `review`, `db`, `hourglass`, `robot`, `magnifier`, `card`, `warning`
+  - `type: 'visit'` + `place`, `poster`, `cast`, `stages`: 두 캐릭터가 양옆에 서서 대사창으로 대화하는 장면
+    - 등장인물: `[{ name, look }]` 두 명. 첫 번째가 왼쪽, `look`은 `hero`·`theater`
+    - 단계: `{ speaker, line }`. 다음을 누를 때마다 말하는 사람과 대사가 바뀐다
   - `say`: 캐릭터 대사창
 - 이미지는 `assets/` 아래에 둔다. 전광판 사진은 `CONFIG.billboard.images`.
