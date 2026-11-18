@@ -22,6 +22,8 @@ python3 -m http.server 4173 --bind 127.0.0.1
 
 포탈별 슬라이드는 `slides/soft.js`, `slides/product.js`, `slides/tech.js`에 나뉘어 있다. 맡은 포탈 파일만 고치면 된다. 전광판 등 마을 설정은 `index.html` 상단의 `CONFIG`에 있다.
 
+우아한형제들 전시회 채널의 예술in 전시 슬라이드는 `slides/exhibition/woowahan.js`에서 편집한다.
+
 ### 채널(스프린트)과 포탈
 
 시작 화면은 채널 선택이다. 채널마다 마을의 포탈 구성이 다르고, 포탈 수에 맞춰 마을이 자동으로 다시 그려진다(1~4개 권장).
