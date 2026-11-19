@@ -699,6 +699,14 @@
     border: .45cqw solid #e0312b; border-radius: 50%; rotate: -7deg; animation: expo-circle .5s .9s ease-out both;
   }
   @keyframes expo-circle { from { opacity: 0; scale: 1.6; } }
+  .expo-variety { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 1.4cqh; min-height: 0; }
+  .expo-variety-sheets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 2.2cqh 2.4cqw; place-items: center; min-height: 0; }
+  .expo-variety-sheet { max-width: 100%; max-height: 100%; min-height: 0; border: .16cqw solid var(--expo-card-edge); box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow); animation: expo-appear .38s ease-out both; }
+  .expo-variety-sheet:nth-child(1) { rotate: -2deg; }
+  .expo-variety-sheet:nth-child(2) { rotate: 1.5deg; animation-delay: .22s; }
+  .expo-variety-sheet:nth-child(3) { rotate: 1deg; animation-delay: .44s; }
+  .expo-variety-sheet:nth-child(4) { rotate: -1.5deg; animation-delay: .66s; }
+  .expo-variety figcaption { justify-self: center; }
   .expo-tech-step { font-size: 1.25cqw; font-weight: 700; color: var(--accent-deep); }
   .expo-closing { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 2.6cqw; align-items: stretch; }
   .expo-closing-copy { display: flex; flex-direction: column; justify-content: center; padding: 2.8cqh 2.4cqw; background: #eaf0f7; border: .16cqw solid var(--expo-card-edge); }
@@ -3870,7 +3878,17 @@ function exhibitParseMarkup(s) {
         </div>
       </figure>
     </div>
+    ${exhibitVarietyMarkup(s.variety)}
   </div>`;
+}
+
+function exhibitVarietyMarkup(variety) {
+  if (!variety) return '';
+  const sheets = variety.images.map(image => `<img class="expo-variety-sheet" src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt)}">`).join('');
+  return `<figure class="expo-variety" data-expo-reveal="3" hidden>
+      <div class="expo-variety-sheets">${sheets}</div>
+      <figcaption>${escapeHtml(variety.caption)}<small>${escapeHtml(variety.note)}</small></figcaption>
+    </figure>`;
 }
 
 function exhibitClosingMarkup(s) {
