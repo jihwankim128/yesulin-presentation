@@ -366,6 +366,320 @@
   .act-title { font-size: 4.2cqw; font-weight: 700; }
   .act-sub { font-size: 2.2cqw; color: #d8d2e6; }
 
+  /* 전시회 발표 */
+  .deck[data-portal="woowahan-exhibition:woowahan-exhibition"]:not(:has(.expo-layout-review)) :is(.deck-badge, .deck-progress, .slide-frame) {
+    --accent: #aec4df;
+    --accent-deep: #34547e;
+    --accent-soft: #e4ecf6;
+    --paper: #f9f6ef;
+  }
+  .slide--exhibit {
+    gap: 1.8cqh; padding: 6cqh 6cqw 5cqh; word-break: keep-all;
+    color: #1c2a42; background: #f9f6ef;
+    --expo-card-edge: #b9c6d8;
+    --expo-card-shadow: #e1e7ef;
+    --expo-muted: #43546b;
+    --expo-note-fill: #e8eef6;
+    --expo-row-edge: #c3cfde;
+    --expo-status: #31557d;
+  }
+  .slide--exhibit.expo-layout-review {
+    color: #172e28; background: #f6f4eb;
+    --expo-card-edge: #b4c5b8;
+    --expo-card-shadow: #dce4d8;
+    --expo-muted: #425b51;
+    --expo-note-fill: #e1f0e7;
+    --expo-row-edge: #b8c9bd;
+    --expo-status: #24654c;
+  }
+  .slide--exhibit .slide-kicker { font-size: 1.5cqw; font-weight: 700; }
+  .slide--exhibit .slide-title { font-size: 3.9cqw; line-height: 1.21; }
+  .expo-visual { flex: 1; min-height: 0; margin: 1.2cqh 0; }
+  .expo-note {
+    padding: 1.35cqh 1.6cqw; border-left: .38cqw solid var(--accent-deep);
+    background: var(--expo-note-fill); font-size: 1.62cqw; line-height: 1.5;
+  }
+  .expo-tile {
+    display: grid; align-content: center; gap: .65cqh; min-width: 0;
+    padding: 2.1cqh 1.55cqw; background: #fffdf6; border: .16cqw solid var(--expo-card-edge);
+    box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow);
+  }
+  .expo-tile:has(img) { grid-template-columns: 3.8cqw 1fr; align-items: center; column-gap: 1.1cqw; }
+  .expo-tile img { grid-row: span 2; width: 3.8cqw; image-rendering: pixelated; }
+  .expo-tile strong { font-size: 1.85cqw; line-height: 1.3; }
+  .expo-tile p { font-size: 1.54cqw; line-height: 1.5; color: var(--expo-muted); }
+  .expo-pivot { position: relative; }
+  .expo-outreach {
+    display: grid; grid-template-rows: minmax(0, 1fr) auto; height: 100%; gap: 2cqh;
+    padding: 2.8cqh 2.3cqw; background: #edf2f8; border: .16cqw solid var(--expo-card-edge);
+  }
+  .expo-outreach-line { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 2.55cqw; align-items: center; }
+  .expo-outreach-actor { display: grid; justify-items: center; gap: .8cqh; text-align: center; }
+  .expo-outreach-actor strong { font-size: 2.3cqw; }
+  .expo-outreach-actor p { max-width: 24ch; min-height: 4.5cqh; font-size: 1.48cqw; line-height: 1.45; color: var(--expo-muted); }
+  .expo-outreach-icon { position: relative; display: grid; place-items: center; width: 11cqw; height: 11cqw; }
+  .expo-outreach-icon img { position: relative; z-index: 1; width: 8cqw; image-rendering: pixelated; }
+  .expo-ring { display: none; position: absolute; inset: .9cqw; border: .19cqw solid #5279a5; border-radius: 50%; opacity: 0; }
+  .expo-pivot[data-expo-step="0"] .expo-ring { display: block; animation: expo-ring .88s .55s ease-out 2 both; }
+  .expo-pivot[data-expo-step="0"] .expo-ring + .expo-ring { animation-delay: .80s; }
+  @keyframes expo-ring { from { opacity: .55; scale: .68; } to { opacity: 0; scale: 1.45; } }
+  .expo-quiet {
+    position: absolute; z-index: 2; top: 57%; left: 60%; translate: -50% -50%;
+    display: grid; place-items: center; pointer-events: none;
+  }
+  .expo-quiet[data-expo-reveal]:not([hidden]) { animation: expo-quiet-pop .38s ease-out both; }
+  .expo-quiet-mark { position: relative; width: 10cqw; height: 10cqw; }
+  .expo-quiet-mark::before, .expo-quiet-mark::after {
+    content: ''; position: absolute; inset: 50% auto auto 50%; translate: -50% -50%;
+    width: 100%; height: .9cqw; border-radius: .12cqw; background: #a34241;
+    box-shadow: 0 0 0 .17cqw #edf2f8;
+  }
+  .expo-quiet-mark::before { rotate: 45deg; }
+  .expo-quiet-mark::after { rotate: -45deg; }
+  .expo-quiet-label {
+    position: absolute; top: calc(100% + .35cqh);
+    padding: .72cqh .85cqw; border: .14cqw solid #d5aaa4; background: #fff5f2; color: #713933;
+    white-space: nowrap; font-size: 1.4cqw; font-weight: 700;
+  }
+  @keyframes expo-quiet-pop {
+    from { opacity: 0; transform: translateY(.9cqh) scale(.78); }
+    65% { transform: translateY(0) scale(1.05); }
+  }
+  .expo-outreach-paths { position: relative; display: grid; gap: 2.5cqh; }
+  .expo-outreach-route { display: grid; gap: .8cqh; }
+  .expo-outreach-route strong { font-size: 1.48cqw; color: #34547e; }
+  .expo-outreach-track { position: relative; height: 5cqh; display: grid; align-items: center; transition: opacity .25s ease; }
+  .expo-pivot[data-expo-step="1"] .expo-outreach-track { opacity: .46; }
+  .expo-outreach-track::before { content: ''; border-top: .19cqw dashed #9eafc5; }
+  .expo-outreach-track img {
+    position: absolute; inset-block-start: 50%; left: calc(100% - 3.6cqw);
+    width: 3.25cqw; translate: 0 -50%; image-rendering: pixelated;
+  }
+  .expo-pivot[data-expo-step="0"] .expo-outreach-track img { animation: expo-call-travel .9s .12s ease-in-out both; }
+  .expo-pivot[data-expo-step="0"] .expo-outreach-route + .expo-outreach-route img { animation-delay: .37s; }
+  @keyframes expo-call-travel { from { left: 0; opacity: .38; } }
+  .expo-turn {
+    display: grid; grid-template-columns: minmax(0, 1fr) 4.6cqw minmax(0, 1fr); gap: .65cqw; align-items: stretch;
+  }
+  .expo-turn-card {
+    display: grid; grid-template-columns: 3.55cqw minmax(0, 1fr); gap: .95cqw; align-items: center;
+    padding: 1.6cqh 1.2cqw; border: .16cqw solid #c3b9ae; background: #fffaf0; color: #333345;
+  }
+  .expo-turn-card:last-child { background: #d7e6f8; border-color: #7e9fc4; color: #203b62; }
+  .expo-turn-card img { width: 100%; image-rendering: pixelated; }
+  .expo-turn-card strong { display: block; font-size: 2.05cqw; }
+  .expo-turn-card p { margin-top: .55cqh; font-size: 1.44cqw; line-height: 1.4; }
+  .expo-turn-arrow { display: grid; place-items: center; }
+  .expo-turn-arrow::before {
+    content: ''; width: 3.4cqw; height: 1.6cqw; background: #34547e;
+    clip-path: polygon(0 32%, 57% 32%, 57% 0, 100% 50%, 57% 100%, 57% 68%, 0 68%);
+  }
+  .expo-turn:not([hidden]) .expo-turn-card:last-child { animation: expo-appear .38s .16s ease-out both; }
+  .expo-layout-pivot:has(.expo-chat:not([hidden])) { padding-top: 4.3cqh; padding-bottom: 3.8cqh; gap: 1.2cqh; }
+  .expo-chat {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr); align-items: center; gap: 2.6cqw;
+    min-height: 0; height: 100%; padding: 1cqh 0;
+  }
+  .expo-chat[data-expo-reveal]:not([hidden]) { animation: none; }
+  .expo-chat img {
+    grid-column: 1; grid-row: 1;
+    display: block; width: auto; height: 100%; max-width: 100%; max-height: 100%; min-height: 0; min-width: 0;
+    justify-self: center; align-self: stretch; object-fit: contain; border-radius: .72cqw;
+    box-shadow: 0 .75cqh 1.8cqw rgba(25, 40, 65, .19); animation: expo-chat-arrive .68s cubic-bezier(.23,.61,.36,1) both;
+  }
+  @keyframes expo-chat-arrive { from { translate: -11cqw 0; scale: .84; opacity: .2; } }
+  .expo-chat-copy, .expo-chat-count {
+    grid-column: 2; grid-row: 1; justify-self: center;
+    display: flex; flex-direction: column; justify-content: center;
+    width: min(100%, 36cqw); min-height: 29cqh;
+    padding: 1.9cqh 2.1cqw; background: #eaf0f7;
+    border: .16cqw solid var(--expo-card-edge);
+  }
+  .expo-chat-copy[data-expo-reveal]:not([hidden]) { animation: expo-appear .38s .30s ease both; }
+  .expo-chat-copy h3 { margin-bottom: 1.3cqh; color: #294974; font-size: 2.4cqw; }
+  .expo-chat-copy .expo-detail { font-size: 1.9cqw; }
+  .expo-chat-count[data-expo-reveal]:not([hidden]) { animation: expo-chat-count-in .48s ease-out both; }
+  @keyframes expo-chat-count-in { from { opacity: 0; transform: translateY(1cqh) scale(.94); } }
+  .expo-chat-count .expo-metric-label { margin-bottom: 0; }
+  .expo-inquiry { position: absolute; inset: 0; display: flex; }
+  .expo-inquiry .stack-card { inset: 3cqh 1cqw 9cqh; }
+  .expo-number { color: #294974; font-size: 6.7cqw; font-weight: 700; line-height: 1.12; white-space: nowrap; }
+  .expo-metric-label { margin: 1.25cqh 0 2.3cqh; font-size: 1.9cqw; font-weight: 700; line-height: 1.4; }
+  .expo-detail { font-size: 1.6cqw; line-height: 1.55; color: var(--expo-muted); }
+  .expo-review { min-height: 0; }
+  .expo-review-split {
+    display: grid; grid-template-columns: 1fr 7cqw 1fr; height: 100%;
+    max-width: 69cqw; margin: 0 auto;
+  }
+  .expo-dual { display: grid; grid-template-rows: repeat(2, minmax(0, 1fr)); align-items: center; gap: 2.2cqh; }
+  .expo-review-split .expo-dual:last-child .expo-tile { background: #e7ede7; box-shadow: none; }
+  .expo-split-arrows { display: grid; grid-template-rows: repeat(2, 1fr); place-items: center; color: #427560; font-size: 3.1cqw; }
+  .expo-review-shell {
+    display: grid; grid-template-rows: auto minmax(0, 1fr); height: 100%;
+    border: .2cqw solid #27463b; background: #edf1ed; box-shadow: .46cqw .46cqw 0 #c4ddd0;
+  }
+  .expo-appbar { display: flex; align-items: center; justify-content: space-between; gap: 1cqw; padding: 1.3cqh 1.45cqw; background: #24463a; color: #fff9ec; font-size: 1.45cqw; }
+  .expo-appbar span { font-size: 1.13cqw; color: #c2e5d4; }
+  .expo-uploads { min-height: 0; padding: 2.6cqh 1.9cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 1.9cqw; }
+  .expo-drop {
+    display: grid; align-content: center; justify-items: center; gap: 1.25cqh; padding: 2cqh 1.1cqw;
+    border: .18cqw dashed #5b9a80; background: #e2f2e7; text-align: center;
+  }
+  .expo-drop strong, .expo-review-panel h3 { font-size: 2.05cqw; }
+  .expo-drop p, .expo-review-panel p { font-size: 1.35cqw; }
+  .expo-file-stack { position: relative; width: 5.2cqw; height: 5.2cqw; margin-bottom: .5cqh; }
+  .expo-file-stack img { position: absolute; width: 4.25cqw; left: 0; top: .35cqw; image-rendering: pixelated; animation: expo-file-in .52s ease-out both; }
+  .expo-file-stack img + img { left: 1.1cqw; top: 1cqw; animation-delay: .12s; }
+  @keyframes expo-file-in { from { opacity: 0; transform: translateY(-2.2cqh); } }
+  .expo-upload-list { display: grid; align-content: center; gap: 1.5cqh; }
+  .expo-upload-list h3 { font-size: 2.1cqw; }
+  .expo-upload-row { display: flex; align-items: center; justify-content: space-between; gap: .6cqw; background: #fff; padding: 1.4cqh 1.1cqw; border: .15cqw solid var(--expo-row-edge); font-size: 1.47cqw; }
+  .expo-upload-row span:last-child { color: var(--expo-status); font-size: 1.17cqw; white-space: nowrap; }
+  .expo-open-pdf { width: fit-content; padding: .9cqh 1cqw; background: #236148; color: #fff; font-size: 1.45cqw; }
+  .expo-original-review {
+    display: grid; grid-template-columns: 1.24fr 1fr; gap: 1.7cqw; min-height: 0; padding: 2cqh 1.65cqw;
+  }
+  .expo-original, .expo-review-panel { min-height: 0; border: .14cqw solid #b8c9bd; background: #fffdf8; }
+  .expo-original { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+  .expo-original figcaption {
+    display: flex; align-items: center; justify-content: space-between; gap: .45cqw;
+    padding: 1cqh 1.1cqw; background: #dce7df; font-size: 1.3cqw; font-weight: 700;
+  }
+  .expo-original figcaption small { font-size: 1.08cqw; }
+  .expo-original-page { display: grid; grid-template-columns: .9fr 1fr; min-height: 0; align-items: center; gap: 1.2cqw; padding: 1.4cqh 1.35cqw; }
+  .expo-original-page strong { display: block; color: #192d26; font-size: 2cqw; margin-bottom: 1.1cqh; }
+  .expo-original-page p { color: #4d6257; font-size: 1.4cqw; line-height: 1.55; }
+  .expo-pdf-portrait { position: relative; overflow: hidden; width: min(100%, 15cqw); aspect-ratio: 475 / 585; background: #e6e4dc; }
+  .expo-pdf-portrait img { position: absolute; top: -73%; left: -126%; width: 482%; }
+  .expo-review-panel { display: grid; align-content: center; padding: 1.7cqh 1.35cqw; }
+  .expo-review-fields { display: grid; gap: 1.25cqh; margin: 1.6cqh 0; }
+  .expo-review-fields dt { font-size: 1.25cqw; font-weight: 700; margin-bottom: .55cqh; }
+  .expo-review-fields dd { color: #2e4b3e; font-size: 1.38cqw; padding: 1cqh .7cqw; background: #eef3ee; }
+  .expo-verdict { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .55cqw; font-weight: 700; }
+  .expo-verdict span { padding: .9cqh .32cqw; border: .12cqw solid #a9b8af; text-align: center; font-size: 1.25cqw; }
+  .expo-verdict--set span:nth-child(2) { border-color: #206749; background: #dbf0e0; color: #15563b; animation: expo-appear .38s ease both; }
+  .expo-pipeline { display: grid; grid-template-columns: 1fr 6cqw 1fr; align-items: stretch; }
+  .expo-tech-box { display: grid; align-content: center; gap: 1.25cqh; padding: 2cqh 1.6cqw; min-width: 0; border: .17cqw solid var(--expo-card-edge); background: #fffdf6; }
+  .expo-tech-box h3 { font-size: 2.25cqw; margin-bottom: .5cqh; }
+  .expo-tech-chip { font-size: 1.35cqw; font-weight: 700; color: var(--accent-deep); }
+  .expo-tech-arrow { display: grid; place-items: center; color: var(--accent-deep); font-size: 3.1cqw; }
+  .expo-tech-visual { min-height: 0; display: grid; place-content: center; gap: .9cqh; padding: 2.1cqh 1.25cqw; color: #1c2a42; background: #e4ecf6; border: .17cqw solid var(--expo-card-edge); text-align: center; }
+  .expo-tech-visual img { width: 4.2cqw; margin: 0 auto; image-rendering: pixelated; }
+  .expo-tech-visual strong { font-size: 2.2cqw; }
+  .expo-tech-visual p { font-size: 1.45cqw; color: var(--expo-muted); }
+  .expo-proof { display: grid; grid-template-columns: 1.36fr 1fr; gap: 2.6cqw; }
+  .expo-proof figure { min-width: 0; min-height: 0; height: 100%; background: #273449; }
+  .expo-proof figure img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .expo-proof-copy { display: flex; flex-direction: column; justify-content: center; background: #eaf0f7; border: .16cqw solid var(--expo-card-edge); padding: 2.8cqh 2cqw; }
+  .expo-proof-copy .expo-number { font-size: 8.6cqw; }
+  .expo-credit { color: var(--expo-muted); font-size: 1.4cqw; line-height: 1.4; }
+  .expo-roles { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 2.3cqw; align-items: stretch; min-height: 0; }
+  .expo-roles .expo-tile { border-color: var(--expo-card-edge); background: #fffdf8; box-shadow: .36cqw .36cqw 0 var(--expo-card-shadow); }
+  .expo-roles .expo-tile strong { color: #2e507b; font-size: 2cqw; }
+  .expo-roles .expo-tile p { font-size: 1.9cqw; }
+  .slide--exhibit.expo-stage {
+    background: radial-gradient(ellipse at 87% 14%, #e0e9f6 0%, transparent 66%), #f9f6ef;
+  }
+  .expo-stage .slide-title { font-size: 5.5cqw; margin: .9cqh 0 1.7cqh; }
+  .expo-layout-opening .slide-title { font-size: 4.6cqw; }
+  .expo-open-map { display: grid; grid-template-rows: minmax(0, 1fr) 13cqh; flex: 1; min-height: 0; gap: 2.7cqh; }
+  .expo-open-problems { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.3cqw; min-height: 0; }
+  .expo-open-problem {
+    display: grid; grid-row: 1; grid-template-rows: minmax(0, 1fr) auto;
+    background: #fffdf8; border: .16cqw solid #b5c5d9; box-shadow: .34cqw .34cqw 0 #e1e7ef;
+  }
+  .expo-open-problem--actor { grid-column: 1; transition: translate .48s ease; }
+  .expo-open-map[data-expo-mode="actor"] .expo-open-problem--actor { translate: calc(50% + 1.15cqw) 0; }
+  .expo-open-problem--company { grid-column: 2; }
+  .expo-open-art {
+    display: grid; grid-template-columns: minmax(0, 1fr) 3.8cqw minmax(0, 1fr);
+    align-items: center; min-height: 0; padding: 2.2cqh 1.5cqw; background: #eaf1f9;
+  }
+  .expo-open-art img { display: block; image-rendering: pixelated; }
+  .expo-open-step { display: grid; grid-template-rows: 19cqh auto; gap: 1.6cqh; text-align: center; min-width: 0; }
+  .expo-open-step figcaption { color: #294b74; font-size: 1.62cqw; font-weight: 700; white-space: nowrap; }
+  .expo-open-arrow {
+    position: relative; display: grid; place-items: center; align-self: center; margin-bottom: 4.3cqh; height: 4cqh;
+  }
+  .expo-open-arrow::before {
+    content: ''; width: 2.9cqw; height: 1.45cqw; background: #527399;
+    clip-path: polygon(0 34%, 58% 34%, 58% 0, 100% 50%, 58% 100%, 58% 66%, 0 66%);
+  }
+  .expo-open-desk {
+    display: grid; grid-template-columns: 2fr 3fr; align-items: center; gap: .8cqw; min-width: 0;
+  }
+  .expo-open-character { width: 100%; align-self: end; }
+  .expo-open-tabs { display: grid; gap: 1.1cqh; }
+  .expo-open-tab, .expo-open-review-item {
+    display: flex; align-items: center; justify-content: flex-start; gap: .5cqw; min-width: 0;
+    padding: 1.1cqh .5cqw; border: .14cqw solid #93aac5; box-shadow: .22cqw .22cqw 0 #cad9eb;
+    background: #fffdf8; color: #294b74; font-size: 1.37cqw; font-weight: 700; white-space: nowrap;
+  }
+  .expo-open-tab img, .expo-open-review-item img { width: 2.35cqw; }
+  .expo-open-map[data-expo-mode="actor"] .expo-open-tab { animation: expo-appear .32s .18s ease-out both; }
+  .expo-open-map[data-expo-mode="actor"] .expo-open-tab + .expo-open-tab { animation-delay: .32s; }
+  .expo-open-post {
+    display: grid; align-content: center; justify-items: center; gap: .8cqh;
+    border: .18cqw solid #829ab9; background: #fffdf8; box-shadow: .32cqw .32cqw 0 #c6d5e8;
+  }
+  .expo-open-post strong { color: #193858; font-size: 2.05cqw; }
+  .expo-open-post span { color: #50627b; font-size: 1.33cqw; }
+  .expo-open-deadline {
+    margin-top: .55cqh; padding: .45cqh .65cqw; border: .22cqw solid #a13e3c;
+    background: #fff2ed; color: #993735; font-size: 2.15cqw; font-weight: 700; rotate: -6deg;
+  }
+  .expo-open-map[data-expo-mode="actor"] .expo-open-post { animation: expo-appear .26s .44s ease-out both; }
+  .expo-open-map[data-expo-mode="actor"] .expo-open-deadline { animation: expo-open-stamp .26s .62s ease-out both; }
+  @keyframes expo-open-stamp { from { opacity: 0; transform: scale(1.55) translateY(-1cqh); } }
+  .expo-open-inbox { display: grid; grid-template-columns: 1fr 1.2fr; align-items: center; gap: .85cqw; }
+  .expo-open-envelope { width: 100%; }
+  .expo-open-files { position: relative; height: 12.8cqh; }
+  .expo-open-files img { position: absolute; width: 58%; top: var(--file-top); left: var(--file-left); }
+  .expo-open-files img:nth-child(1) { --file-top: 0%; --file-left: 41%; --file-delay: .06s; }
+  .expo-open-files img:nth-child(2) { --file-top: 16%; --file-left: 21%; --file-delay: .13s; }
+  .expo-open-files img:nth-child(3) { --file-top: 32%; --file-left: 0%; --file-delay: .2s; }
+  .expo-open-map[data-expo-mode="company"] .expo-open-files img { animation: expo-appear .34s var(--file-delay) ease-out both; }
+  .expo-open-review-item + .expo-open-review-item { background: #fff2d8; border-color: #c3a574; }
+  .expo-open-map[data-expo-mode="company"] .expo-open-review-item { animation: expo-appear .28s .38s ease-out both; }
+  .expo-open-map[data-expo-mode="company"] .expo-open-review-item + .expo-open-review-item { animation-delay: .56s; }
+  .expo-open-caption { padding: 1.6cqh 1.65cqw 1.75cqh; border-top: .14cqw solid #d6e0ed; }
+  .expo-open-caption h3 { margin-bottom: .55cqh; color: var(--accent-deep); font-size: 1.7cqw; }
+  .expo-open-caption p { font-size: 1.94cqw; line-height: 1.35; }
+  .expo-open-flow {
+    display: grid; grid-template-columns: 15cqw minmax(0, 1fr); align-items: center;
+    padding: 1.65cqh 1.5cqw; background: #dce8f6; border: .16cqw solid #a6bcd6;
+  }
+  .expo-open-flow-brand { padding-right: 1.3cqw; border-right: .15cqw solid #a6bcd6; color: #26476e; font-size: 2.15cqw; font-weight: 700; }
+  .expo-open-flow-brand span { display: block; margin-top: .45cqh; font-weight: 400; font-size: 1.35cqw; }
+  .expo-open-flow ul { display: grid; grid-template-columns: 1fr 1.11fr; align-items: stretch; list-style: none; }
+  .expo-open-flow li { display: flex; align-items: center; gap: .7cqw; padding: 0 1.2cqw; font-size: 1.43cqw; font-weight: 700; line-height: 1.35; }
+  .expo-open-flow li + li { border-left: .15cqw solid #a6bcd6; }
+  .expo-open-flow li strong { display: block; margin-bottom: .45cqh; color: #294d76; font-size: 1.23cqw; }
+  .expo-open-flow li img { display: block; width: 2.85cqw; image-rendering: pixelated; }
+  .expo-open-map[data-expo-mode="connected"] .expo-open-flow li { animation: expo-appear .4s .11s ease both; }
+  .expo-open-map[data-expo-mode="connected"] .expo-open-flow li:nth-child(2) { animation-delay: .23s; }
+  .expo-layout-opening::before, .expo-layout-opening::after {
+    content: ''; position: absolute; z-index: 1; top: 0; bottom: 0; width: 51%;
+    pointer-events: none; background: repeating-linear-gradient(90deg, #354967 0 4cqw, #273a56 4cqw 6cqw, #405778 6cqw 8cqw);
+    animation: expo-curtain .72s cubic-bezier(.35,.05,.3,1) both;
+  }
+  .expo-layout-opening::before { left: 0; --curtain-exit: -102%; }
+  .expo-layout-opening::after { right: 0; --curtain-exit: 102%; }
+  .expo-layout-forward .slide-title { font-size: 5cqw; }
+  .expo-layout-forward .expo-roles { margin: .8cqh 0 1.3cqh; }
+  .expo-layout-forward .expo-roles .expo-tile { animation: expo-appear .45s .15s both; }
+  .expo-layout-forward .expo-roles .expo-tile + .expo-tile { animation-delay: .28s; }
+  .expo-next { font-size: 1.7cqw; line-height: 1.5; color: var(--expo-muted); }
+  .expo-booth { padding: 1.25cqh 1.5cqw; background: #dbe7f5; color: #1c3151; font-weight: 700; font-size: 1.65cqw; line-height: 1.5; }
+  [data-expo-reveal]:not([hidden]) { animation: expo-appear .4s ease both; }
+  @keyframes expo-appear { from { opacity: 0; transform: translateY(1.35cqh); } }
+  @keyframes expo-curtain { to { transform: translateX(var(--curtain-exit)); } }
+  @media (prefers-reduced-motion: reduce) {
+    .expo-layout-opening::before, .expo-layout-opening::after { display: none; }
+    .slide--exhibit *, .slide--exhibit [data-expo-reveal]:not([hidden]) { animation: none !important; transition: none !important; }
+  }
+
   .slide--opening.from-next, .slide--opening.from-prev { animation: none; }
   .slide--act.from-next, .slide--act.from-prev { animation: none; }
   .slide--act::before, .slide--act::after {
@@ -873,6 +1187,7 @@
   - 첫 장 목차는 type: 'act' 슬라이드에서 자동으로 만들어진다.
   - 포탈에 sectionStyle: 'plain'을 지정하면 막 대신 번호와 구역 제목을 표시한다. tocTitle로 목차 제목을 바꿀 수 있다.
   - sectionIntro: 'stage'를 함께 지정하면 번호형 구역의 도입을 커튼이 열리는 무대로 표시한다.
+  - 전시회 포탈의 exhibit 레이아웃은 막 슬라이드에도 사용할 수 있다. stages가 있으면 다음/이전으로 장면을 바꾼다.
   - 슬라이드 필드
     type: 'act' | 'hypothesis' | 'compare' | 'gaps' | 'cycle' | 'flow' | 'cards' | 'crossroads' | 'dialogue' | 'table' | 'chat' | 'arena' | 'stamina' | 'sensors' | 'sequence' | 'journey' | 'visit' (생략하면 내용에 맞춰 자동 배치)
     kicker, title, subtitle, big, points, image, caption, images(사진 더미), claims, before/after, say(캐릭터 대사)
@@ -2588,6 +2903,9 @@ function sensorsMarkup(s) {
 }
 
 const JOURNEY_ICONS = {
+  mail: [['............', '.KKKKKKKKKK.', '.KWWWWWWWWK.', '.KBWWWWWWBK.', '.KWBWWWWBWK.', '.KWWBWWBWWK.', '.KWWWBBWWWK.', '.KWWWWWWWWK.', '.KKKKKKKKKK.', '............'], { B: '#5279a5' }],
+  phone: [['...KK.......', '..KBBK......', '.KBBBBK.....', '.KBBBK......', '.KBBK.......', '.KBBK..KK...', '..KBBKKBK...', '...KBBBBBK..', '....KBBBBK..', '.....KKKK...'], { B: '#7298c5' }],
+  message: [['.KKKKKKKK.', 'KYYYYYYYYK', 'KYYYYYYYYK', 'KYKYKYKYYK', 'KYYYYYYYYK', 'KYYYYYYYYK', '.KYYYKKKK.', '.KYYK.....', '.KYK......', '.KK.......'], { Y: '#f7cc73' }],
   pdf: [['KKKKKK..', 'KWWWWKK.', 'KWWWWWKK', 'KWRRRWWK', 'KWWWWWWK', 'KWbbbbWK', 'KWWWWWWK', 'KWbbbbWK', 'KWWWWWWK', 'KKKKKKKK'], { R: '#e2474b', b: '#9fb4d8' }],
   browser: [['KKKKKKKKKK', 'KRYGKKKKKK', 'KWWWWWWWWK', 'KWbbbbbbWK', 'KWWWWWWWWK', 'KWbbbbWWWK', 'KWWWWWWWWK', 'KWbbbbbbWK', 'KWWWWWWWWK', 'KKKKKKKKKK'], { R: '#e2474b', Y: '#ffd34d', G: '#5fd3a0', b: '#9fb4d8' }],
   office: [['....GG....', '..GGGGGG..', 'GGGGGGGGGG', '.KKKKKKKK.', '.KOYOOYOK.', '.KOOOOOOK.', '.KOYOOYOK.', '.KOOOOOOK.', '.KOOBBOOK.', '.KKKBBKKK.'], { G: '#4fae5a', O: '#efe2c2', Y: '#ffd34d', B: '#8a5a2b' }],
@@ -2821,6 +3139,11 @@ function drawStaminaMonitor(px, c, mode) {
 function renderStage(withSound) {
   const slide = deck.slides[deck.index];
   const stage = slide.stages[deck.stage];
+  if (slide.exhibit) {
+    renderExhibitStage(stage);
+    if (withSound) sfx('next');
+    return;
+  }
   if (slide.type === 'sequence') {
     if (['profile-link', 'review-demo', 'followup'].includes(slide.layout)) {
       renderSalonStage(slide, stage);
@@ -3070,6 +3393,7 @@ function openDeck(portal) {
   deck = { portal, index: 0, slides: [{ type: 'toc', say: portal.tocSay }, ...portal.slides], typing: null };
   hudEl.hidden = true;
   deckEl.hidden = false;
+  deckEl.dataset.portal = portal.id;
   deckEl.style.setProperty('--accent', portal.accent);
   deckEl.style.setProperty('--accent-deep', portal.accentDeep);
   deckEl.style.setProperty('--accent-soft', portal.accentSoft);
@@ -3337,7 +3661,244 @@ function salonMarkup(s) {
   return `${headingMarkup(s)}${s.layout === 'followup' ? '' : steps}${scene}${controls}`;
 }
 
+function exhibitTile(item) {
+  const icon = item.icon ? `<img src="${journeyIcons[item.icon]}" alt="">` : '';
+  const detail = item.detail ? `<p>${rich(item.detail)}</p>` : '';
+  return `<div class="expo-tile">${icon}<strong>${escapeHtml(item.label)}</strong>${detail}</div>`;
+}
+
+function exhibitMetric(s) {
+  return `<div><p class="expo-number">${escapeHtml(s.metric)}</p><p class="expo-metric-label">${rich(s.metricLabel)}</p><p class="expo-detail">${rich(s.proof)}</p></div>`;
+}
+
+function exhibitOpeningMarkup(s) {
+  const [actor, company] = s.roles;
+  const caption = role => `<div class="expo-open-caption"><h3>${escapeHtml(role.label)}</h3><p>${escapeHtml(role.detail)}</p></div>`;
+  return `<div class="expo-open-map" data-expo>
+    <div class="expo-open-problems">
+      <section class="expo-open-problem expo-open-problem--actor">
+        <div class="expo-open-art" role="img" aria-label="배우가 OTR과 캐스틱을 각각 확인한다. 하루만 열린 오디션 공고를 다음 날 발견했을 때는 이미 접수가 마감됐다.">
+          <figure class="expo-open-step">
+            <div class="expo-open-desk">
+              <img class="expo-open-character" src="${visitImages.hero.left}" alt="">
+              <div class="expo-open-tabs">
+                <span class="expo-open-tab"><img src="${journeyIcons.browser}" alt="">OTR</span>
+                <span class="expo-open-tab"><img src="${journeyIcons.browser}" alt="">캐스틱</span>
+              </div>
+            </div>
+            <figcaption>여러 사이트 확인</figcaption>
+          </figure>
+          <span class="expo-open-arrow" aria-hidden="true"></span>
+          <figure class="expo-open-step">
+            <div class="expo-open-post">
+              <strong>오디션 공고</strong>
+              <span>하루 동안만 모집</span>
+              <p class="expo-open-deadline">접수 마감</p>
+            </div>
+            <figcaption>다음 날 공고 발견</figcaption>
+          </figure>
+        </div>
+        ${caption(actor)}
+      </section>
+      <section class="expo-open-problem expo-open-problem--company" data-expo-reveal="1 2" hidden>
+        <div class="expo-open-art" role="img" aria-label="공연사 담당자가 메일함에 쌓인 PDF 지원서를 하나씩 열어 심사하고, 메모는 별도로 남긴다.">
+          <figure class="expo-open-step">
+            <div class="expo-open-inbox">
+              <img class="expo-open-envelope" src="${journeyIcons.mail}" alt="">
+              <div class="expo-open-files">
+                <img src="${journeyIcons.pdf}" alt="">
+                <img src="${journeyIcons.pdf}" alt="">
+                <img src="${journeyIcons.pdf}" alt="">
+              </div>
+            </div>
+            <figcaption>메일함에 쌓인 PDF</figcaption>
+          </figure>
+          <span class="expo-open-arrow" aria-hidden="true"></span>
+          <figure class="expo-open-step">
+            <div class="expo-open-desk">
+              <img class="expo-open-character" src="${visitImages.theater.left}" alt="">
+              <div class="expo-open-tabs">
+                <span class="expo-open-review-item"><img src="${journeyIcons.pdf}" alt="">지원서</span>
+                <span class="expo-open-review-item"><img src="${journeyIcons.message}" alt="">심사 메모</span>
+              </div>
+            </div>
+            <figcaption>하나씩 열어 심사</figcaption>
+          </figure>
+        </div>
+        ${caption(company)}
+      </section>
+    </div>
+    <section class="expo-open-flow" aria-label="예술in에서 이어지는 과정" data-expo-reveal="2" hidden>
+      <p class="expo-open-flow-brand">예술in<span>한곳에서</span></p>
+      <ul>${s.flow.map(step => `<li><img src="${journeyIcons[step.icon]}" alt=""><span><strong>${escapeHtml(step.role)}</strong>${escapeHtml(step.label)}</span></li>`).join('')}</ul>
+    </section>
+  </div>`;
+}
+
+function exhibitPivotMarkup(s) {
+  const routes = [
+    { icon: 'mail', label: '메일 보내기' },
+    { icon: 'phone', label: '전화 걸기' },
+  ];
+  const shift = s.shift.map(({ label, detail, icon }) => {
+    const copy = detail ? `<p>${escapeHtml(detail)}</p>` : '';
+    return `<div class="expo-turn-card"><img src="${journeyIcons[icon]}" alt=""><div><strong>${escapeHtml(label)}</strong>${copy}</div></div>`;
+  }).join('<span class="expo-turn-arrow" aria-hidden="true"></span>');
+  return `<div class="expo-visual expo-pivot" data-expo>
+    <div class="expo-outreach" data-expo-reveal="0 1">
+      <div class="expo-outreach-line">
+        <div class="expo-outreach-actor">
+          <div class="expo-outreach-icon"><img src="${heroPortraitUrl}" alt=""></div>
+          <strong>예술in</strong><p>${escapeHtml(s.proposal)}</p>
+        </div>
+        <div class="expo-outreach-paths">${routes.map(route => `
+          <div class="expo-outreach-route">
+            <strong>${route.label}</strong>
+            <span class="expo-outreach-track" aria-hidden="true"><img src="${journeyIcons[route.icon]}" alt=""></span>
+          </div>`).join('')}
+          <span class="expo-quiet" data-expo-reveal="1" role="status" hidden>
+            <span class="expo-quiet-mark" aria-hidden="true"></span>
+            <span class="expo-quiet-label">${escapeHtml(s.response)}</span>
+          </span>
+        </div>
+        <div class="expo-outreach-actor">
+          <div class="expo-outreach-icon">
+            <span class="expo-ring" aria-hidden="true"></span><span class="expo-ring" aria-hidden="true"></span>
+            <img src="${journeyIcons.office}" alt="">
+          </div>
+          <strong>공연사</strong><p>오디션 지원 관리 제안</p>
+        </div>
+      </div>
+      <section class="expo-turn" aria-label="처음 만날 대상을 공연사에서 배우로 바꾼 이유" data-expo-reveal="1" hidden>${shift}</section>
+    </div>
+    <div class="expo-chat" data-expo-reveal="2 3" hidden>
+      <div class="expo-chat-copy" data-expo-reveal="2"><h3>카카오톡 오픈채팅</h3><p class="expo-detail">${rich(s.proof)}</p></div>
+      <img src="${escapeHtml(s.image)}" alt="${escapeHtml(s.caption)}">
+      <div class="expo-chat-count" data-expo-reveal="3" hidden><p class="expo-number">${escapeHtml(s.metric)}</p><p class="expo-metric-label">${rich(s.metricLabel)}</p></div>
+    </div>
+    <div class="expo-inquiry" data-expo-reveal="4" hidden>
+      ${mediaMarkup({ images: s.inquiryImages, title: '공고 공유와 등록 관련 답장' })}
+    </div>
+  </div>`;
+}
+
+function exhibitReviewMarkup(s) {
+  const decisions = '<span>불합격</span><span>보류</span><span>합격</span>';
+  return `<div class="expo-visual expo-review" data-expo>
+    <div class="expo-review-split" data-expo-reveal="0">
+      <div class="expo-dual">${s.sources.map(exhibitTile).join('')}</div>
+      <div class="expo-split-arrows" aria-hidden="true"><span>→</span><span>→</span></div>
+      <div class="expo-dual">${s.sources.map(source => exhibitTile({ label: source.check })).join('')}</div>
+    </div>
+    <section class="expo-review-shell" data-expo-reveal="1 2 3" hidden>
+      <header class="expo-appbar"><strong>PDF 지원서 심사</strong><span>발표용 화면 재구성</span></header>
+      <div class="expo-uploads" data-expo-reveal="1" hidden>
+        <div class="expo-drop">
+          <div class="expo-file-stack" aria-hidden="true"><img src="${journeyIcons.pdf}" alt=""><img src="${journeyIcons.pdf}" alt=""></div>
+          <strong>PDF 일괄 업로드</strong><p>파일이나 폴더를 한 번에 선택</p>
+        </div>
+        <div class="expo-upload-list">
+          <h3>심사함</h3>
+          <div class="expo-upload-row"><strong>지원서_01.pdf</strong><span>업로드 완료</span></div>
+          <div class="expo-upload-row"><strong>지원서_02.pdf</strong><span>업로드 중</span></div>
+          <p class="expo-open-pdf">원본으로 심사하기 →</p>
+        </div>
+      </div>
+      <div class="expo-original-review" data-expo-reveal="2 3" hidden>
+        <figure class="expo-original">
+          <figcaption><span>원본 PDF</span><small>지원서_01.pdf</small></figcaption>
+          <div class="expo-original-page">
+            <div class="expo-pdf-portrait"><img src="${escapeHtml(s.portraitSource)}" alt="기존 배우 사진을 재사용한 예시 PDF"></div>
+            <div><strong>오디션 지원서</strong><p>배우 프로필<br>출연 경력과 포트폴리오</p></div>
+          </div>
+        </figure>
+        <section class="expo-review-panel" aria-label="심사 입력 예시">
+          <h3>지원자 심사</h3>
+          <dl class="expo-review-fields">
+            <div><dt>배역 배정</dt><dd data-expo-reveal="2">미배정</dd><dd data-expo-reveal="3" hidden>주연</dd></div>
+            <div><dt>내부 메모</dt><dd data-expo-reveal="2">메모 입력</dd><dd data-expo-reveal="3" hidden>추가 영상 확인</dd></div>
+          </dl>
+          <div class="expo-verdict" data-expo-reveal="2">${decisions}</div>
+          <div class="expo-verdict expo-verdict--set" aria-label="보류 판정 예시" data-expo-reveal="3" hidden>${decisions}</div>
+        </section>
+      </div>
+    </section>
+  </div>`;
+}
+
+function exhibitMarkup(s) {
+  let scene;
+  let footer = '';
+
+  switch (s.exhibit) {
+    case 'opening':
+      scene = exhibitOpeningMarkup(s);
+      break;
+    case 'forward':
+      scene = `<div class="expo-roles">${s.roles.map(exhibitTile).join('')}</div>`;
+      footer = `<p class="expo-next">${escapeHtml(s.next)}</p><p class="expo-booth">${escapeHtml(s.booth)}</p>`;
+      break;
+    case 'pivot':
+      scene = exhibitPivotMarkup(s);
+      break;
+    case 'review':
+      scene = exhibitReviewMarkup(s);
+      break;
+    case 'pipeline':
+      scene = `<div class="expo-visual expo-pipeline" data-expo>
+        <div class="expo-tech-box">
+          <p class="expo-tech-chip">여러 지원서를 한 번에 올리면</p>
+          <h3>PDF 파일별로 업로드</h3>
+          <div class="expo-upload-row"><strong>지원서_01.pdf</strong><span>업로드 완료</span></div>
+          <div class="expo-upload-row"><strong>지원서_01_복사본.pdf</strong><span>중복 제외</span></div>
+          <div class="expo-upload-row"><strong>지원서_02.pdf</strong><span>업로드 중</span></div>
+        </div>
+        <div class="expo-tech-arrow" aria-hidden="true">→</div>
+        <div class="expo-tech-visual" data-expo-reveal="0">
+          <img src="${journeyIcons.bucket}" alt="">
+          <strong>같은 파일은 한 번만</strong><p>파일 내용으로 중복 확인</p>
+        </div>
+        <div class="expo-tech-visual" data-expo-reveal="1" hidden>
+          <img src="${journeyIcons.browser}" alt="">
+          <strong>지원서_01.pdf 열람</strong><p>PDF.js로 브라우저에서 원본 표시</p>
+        </div>
+      </div>`;
+      break;
+    case 'proof':
+      scene = `<div class="expo-visual expo-proof">
+        <figure><img src="${escapeHtml(s.image)}" alt="${escapeHtml(s.caption)}"></figure>
+        <div class="expo-proof-copy">${exhibitMetric(s)}</div>
+      </div>`;
+      footer = `<p class="expo-credit">${escapeHtml(s.credit)}</p>`;
+      break;
+  }
+
+  if (s.stages?.some(stage => stage.note)) footer = '<p class="expo-note" data-expo-note role="status"></p>';
+  const stageStyle = ['opening', 'forward'].includes(s.exhibit) ? ' expo-stage' : '';
+  return { kind: `exhibit expo-layout-${s.exhibit}${stageStyle}`, body: `${headingMarkup(s)}${scene}${footer}` };
+}
+
+function renderExhibitStage(stage) {
+  const scene = frameEl.querySelector('[data-expo]');
+  const step = String(deck.stage);
+  scene.dataset.expoStep = step;
+  if (stage.mode) scene.dataset.expoMode = stage.mode;
+  scene.querySelectorAll('[data-expo-reveal]').forEach(panel => {
+    panel.hidden = !panel.dataset.expoReveal.split(' ').includes(step);
+  });
+  if (stage.title) frameEl.querySelector('.slide-title').textContent = stage.title;
+  if (deck.slides[deck.index].exhibit === 'pivot') {
+    frameEl.querySelector('.slide-kicker').textContent = stage.kicker ?? deck.slides[deck.index].kicker;
+  }
+  const note = frameEl.querySelector('[data-expo-note]');
+  if (note) {
+    note.hidden = !stage.note;
+    note.textContent = stage.note ?? '';
+  }
+}
+
 function slideMarkup(s) {
+  if (s.exhibit) return exhibitMarkup(s);
   if (s.type === 'sequence') {
     if (['profile-link', 'review-demo', 'followup'].includes(s.layout)) return { kind: 'salon', body: salonMarkup(s) };
     if (s.layout === 'handoff') return { kind: 'handoff', body: handoffMarkup(s) };
@@ -3690,7 +4251,8 @@ function setupStack(stack) {
 }
 
 function flipStack(direction) {
-  frameEl.querySelector('[data-stack]')?.flip?.(direction);
+  const stack = frameEl.querySelector('[data-stack]');
+  if (stack && !stack.closest('[hidden]')) stack.flip?.(direction);
 }
 
 const DIRECTION_KEYS = {
