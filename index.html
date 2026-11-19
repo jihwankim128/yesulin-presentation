@@ -394,22 +394,36 @@
   }
   .slide--exhibit .slide-kicker { font-size: 1.5cqw; font-weight: 700; }
   .slide--exhibit .slide-title { font-size: 3.9cqw; line-height: 1.21; }
-  .slide--exhibit.expo-layout-presenter {
-    display: grid; grid-template-columns: 1fr 28cqw; align-content: center; align-items: center;
-    column-gap: 5cqw; row-gap: 2.1cqh; padding-inline: 10cqw;
+  .slide--exhibit.expo-layout-ticket {
+    justify-content: center; padding: 10cqh 6cqw;
+    background: radial-gradient(ellipse at 72% 80%, #293d68, transparent 68%), #152038;
   }
-  .expo-layout-presenter .slide-kicker { grid-area: 1 / 1; align-self: end; font-size: 3cqw; }
-  .expo-layout-presenter .slide-title { grid-area: 2 / 1; align-self: start; font-size: 8.6cqw; }
-  .expo-presenter-stage {
-    grid-area: 1 / 2 / 3 / 3; height: 51cqh; display: grid; place-items: end center; position: relative;
-    border-radius: 14cqw 14cqw 0 0; border-bottom: .75cqw solid #34547e;
-    background: radial-gradient(ellipse at 50% 100%, #eff5fb, #c7d8eb 75%, #b1c8e0);
+  .expo-ticket {
+    position: relative; isolation: isolate; overflow: hidden; display: grid; grid-template-columns: 64% 36%;
+    height: 74cqh; border-radius: 1.3cqw; background: #fcfaf5; color: #192943;
+    mask: radial-gradient(circle at 64% 0, transparent 1.45cqw, #000 calc(1.45cqw + 1px)) top / 100% 51% no-repeat,
+          radial-gradient(circle at 64% 100%, transparent 1.45cqw, #000 calc(1.45cqw + 1px)) bottom / 100% 51% no-repeat;
   }
-  .expo-presenter-stage::before {
-    content: ''; position: absolute; bottom: 3.3cqh; width: 13cqw; height: 2.5cqh;
-    border-radius: 50%; background: #a7bbcf;
+  .expo-ticket-copy { display: flex; flex-direction: column; align-items: flex-start; padding: 5.5cqh 4.6cqw; }
+  .expo-ticket-event { font-size: 1.55cqw; font-weight: 700; color: #4a617f; }
+  .expo-ticket-title { margin: auto 0 1.7cqh; line-height: 0; }
+  .expo-ticket-title img { width: 26.5cqw; height: auto; }
+  .expo-ticket-tagline { font: 700 2.8cqw/1.28 system-ui, sans-serif; letter-spacing: -.045em; }
+  .expo-ticket-team {
+    width: 100%; display: flex; align-items: baseline; gap: 1.4cqw; margin-top: auto;
+    padding-top: 2.1cqh; border-top: 1px solid #bfc7d1; font-size: 1.62cqw;
   }
-  .expo-presenter-stage img { position: relative; width: 15cqw; margin-bottom: 3.7cqh; image-rendering: pixelated; }
+  .expo-ticket-team span { color: #50627a; }
+  .expo-ticket-stub {
+    position: relative; overflow: hidden; display: grid; place-items: center; border-left: .14cqw dashed #778ba5;
+    background: linear-gradient(145deg, #e7e3ff, #bfdff8 58%, #aecef0);
+  }
+  .expo-ticket-stub::before, .expo-ticket-stub::after {
+    content: ''; position: absolute; width: 135%; aspect-ratio: 1; border: .13cqw solid #fff9; border-radius: 50%;
+  }
+  .expo-ticket-stub::before { top: -57%; left: -55%; }
+  .expo-ticket-stub::after { bottom: -52%; right: -65%; }
+  .expo-ticket-stub img { position: relative; z-index: 1; width: 71%; transform: rotate(5deg); }
   .expo-visual { flex: 1; min-height: 0; margin: 1.2cqh 0; }
   .expo-note {
     padding: 1.35cqh 1.6cqw; border-left: .38cqw solid var(--accent-deep);
@@ -3893,9 +3907,17 @@ function exhibitMarkup(s) {
   let footer = '';
 
   switch (s.exhibit) {
-    case 'presenter':
-      scene = `<div class="expo-presenter-stage" aria-hidden="true"><img src="${dialoguePortraits[s.portrait]}" alt=""></div>`;
-      break;
+    case 'ticket':
+      return { kind: 'exhibit expo-layout-ticket', body: `
+        <div class="expo-ticket">
+          <div class="expo-ticket-copy">
+            <p class="expo-ticket-event">${escapeHtml(s.kicker)}</p>
+            <h2 class="expo-ticket-title"><img src="${escapeHtml(s.wordmark)}" alt="${escapeHtml(s.title)}"></h2>
+            <p class="expo-ticket-tagline">${rich(s.subtitle)}</p>
+            <p class="expo-ticket-team"><span>만든 사람들</span>${escapeHtml(s.members.join(' · '))}</p>
+          </div>
+          <div class="expo-ticket-stub" aria-hidden="true"><img src="${escapeHtml(s.mascot)}" alt=""></div>
+        </div>` };
     case 'opening':
       scene = exhibitOpeningMarkup(s);
       break;

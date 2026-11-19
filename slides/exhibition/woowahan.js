@@ -1,7 +1,13 @@
 window.PORTAL_SLIDES = window.PORTAL_SLIDES || {};
 
 PORTAL_SLIDES['woowahan-exhibition'] = {
-  intro: { exhibit: 'presenter', kicker: '예술in 팀', title: '맥스입니다.', portrait: '맥O' },
+  intro: {
+    exhibit: 'ticket', kicker: '우아한형제들 전시회', title: '예술in',
+    subtitle: '배우와 공연사를 잇는\n오디션 플랫폼',
+    wordmark: 'assets/exhibition/intro/yesulin-wordmark.png',
+    mascot: 'assets/link-star.png',
+    members: ['피노', '맥스', '이프', '무빙', '대길'],
+  },
   tocTitle: '공연사와 배우, 한쪽씩 풀기',
   actRoles: { 1: '두 쪽의 불편', 2: '배우부터', 3: '원본 그대로' },
   stayOnLastSlide: true,
