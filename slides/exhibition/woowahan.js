@@ -9,14 +9,14 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
     members: ['피노', '맥스', '이프', '무빙', '대길'],
   },
   tocTitle: '공연사와 배우, 한쪽씩 풀기',
-  actRoles: { 1: '두 쪽의 불편', 2: '배우부터', 3: '원본 그대로' },
+  actRoles: { 1: '두 곳의 불편', 2: '배우부터', 3: '원본 그대로' },
   stayOnLastSlide: true,
   slides: [
     {
       type: 'act', act: 1, exhibit: 'triangle',
       kicker: '예술in',
-      title: '여러분은 세 쪽의 불편을 풉니다',
-      items: ['세 쪽과 두 쪽', '공연사부터 시작한 실패'],
+      title: '우아한형제들은 세 곳의 불편을 해결합니다',
+      items: ['세 곳과 두 곳', '공연사부터 시작한 실패'],
       three: {
         brand: '배달의민족',
         nodes: [
@@ -24,7 +24,7 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
           { label: '손님', detail: '주문하고' },
           { label: '라이더', detail: '배달하고' },
         ],
-        caption: '세 쪽이 모두 편해야 굴러갑니다',
+        caption: '세 곳이 모두 편해야 굴러갑니다',
       },
       two: {
         brand: '예술in',
@@ -32,16 +32,16 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
           { label: '공연사', detail: '지원서를 받고' },
           { label: '배우', detail: '공고를 찾고' },
         ],
-        caption: '두 쪽뿐인데도 한 번에 풀려다 넘어졌습니다',
+        caption: '두 곳뿐인데도 한 번에 풀려다 넘어졌습니다',
       },
       stages: [
-        { title: '여러분은 세 쪽의 불편을 풉니다' },
-        { title: '저희는 두 쪽입니다' },
+        { title: '우아한형제들은 세 곳의 불편을 해결합니다' },
+        { title: '저희는 두 곳입니다' },
       ],
     },
     {
       exhibit: 'opening',
-      kicker: '두 쪽의 불편',
+      kicker: '두 곳의 불편',
       title: '공고는 놓치고, 지원서는 흩어집니다',
       roles: [
         { label: '배우', detail: '공고를 늦게 봐 지원을 놓쳐요' },
