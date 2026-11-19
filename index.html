@@ -1201,7 +1201,7 @@
 
 <div class="lightbox" id="lightbox" hidden>
   <figure class="lightbox-frame">
-    <span class="lightbox-plate">소요유</span>
+    <span class="lightbox-plate">예술in</span>
     <img class="lightbox-img" id="lightbox-img" alt="전광판 사진">
     <figcaption class="lightbox-bar">
       <button data-lightbox="prev">◀</button>
@@ -1242,7 +1242,7 @@
 const CONFIG = {
   narrator: '예술in',
   billboard: {
-    images: ['assets/billboard.png', 'assets/billboard1.jpg', 'assets/billboard2.jpg'],
+    images: ['assets/village/networking/gathering.jpg', 'assets/village/networking/conversation.jpg'],
     interval: 6,
     ledEffect: true,
     fallbackText: '예술in에 오신 것을 환영합니다!   포탈로 걸어 들어가 보세요',
@@ -1296,7 +1296,7 @@ const SPAWN = { x: 192, y: 212 };
 const RETURN_Y = 194;
 const BOUNDS = { left: 24, right: 360, top: 118, bottom: 222 };
 const BILLBOARD = { x: 126, y: 24, w: 132, h: 80, inner: { x: 132, y: 30, w: 120, h: 68 } };
-const BILLBOARD_SIGN = { x: 158, y: 3, w: 68, h: 16, text: '소요유' };
+const BILLBOARD_SIGN = { x: 158, y: 3, w: 68, h: 16, text: '예술in' };
 
 const view = document.getElementById('view');
 const ctx = view.getContext('2d');
@@ -2247,8 +2247,8 @@ function drawOpenDoors() {
 }
 
 const ROOMS = [
-  { wall: '#f3e6c8', stripe: '#ead6ae', floor: '#b07a46', floorDark: '#93633a', rug: '#e2474b', photo: 1, title: '예술in 팀의 작업실', note: '여기까지 찾아오다니! 모든 이스터에그를 찾아줘서 고마워요.' },
-  { wall: '#dceaff', stripe: '#c9dcf7', floor: '#8a6a4a', floorDark: '#6f5238', rug: '#246bfe', photo: 2, title: '소요유의 비밀 방', note: '다음 공연에서 또 만나요!' },
+  { wall: '#f3e6c8', stripe: '#ead6ae', floor: '#b07a46', floorDark: '#93633a', rug: '#e2474b', photo: 0, title: '예술in 팀의 작업실', note: '여기까지 찾아오다니! 모든 이스터에그를 찾아줘서 고마워요.' },
+  { wall: '#dceaff', stripe: '#c9dcf7', floor: '#8a6a4a', floorDark: '#6f5238', rug: '#246bfe', photo: 1, title: '예술in의 비밀 방', note: '다음 공연에서 또 만나요!' },
 ];
 const roomEl = document.getElementById('room');
 const roomCtx = document.getElementById('room-canvas').getContext('2d');
