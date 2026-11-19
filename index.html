@@ -687,18 +687,8 @@
   .expo-parse-result img { max-width: 100%; max-height: 100%; min-height: 0; border: .16cqw solid var(--expo-card-edge); box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow); }
   .expo-parse figcaption { font-size: 1.5cqw; font-weight: 700; color: var(--accent-deep); }
   .expo-parse figcaption small { margin-left: .8cqw; font-size: 1.15cqw; font-weight: 400; color: var(--expo-muted); }
-  .expo-parse-compare { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 2.2cqw; min-height: 0; }
-  .expo-parse[data-expo-step="2"] .expo-parse-compare { grid-template-columns: minmax(0, .5fr) minmax(0, 2fr); }
-  .expo-parse-expected, .expo-parse-actual { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 1cqh; min-height: 0; }
+  .expo-parse-expected { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 1cqh; min-height: 0; }
   .expo-parse-expected img { max-height: 100%; max-width: 100%; min-height: 0; justify-self: center; border: .16cqw solid var(--expo-card-edge); }
-  .expo-parse[data-expo-step="2"] .expo-parse-expected { opacity: .55; }
-  .expo-actual-sheet { position: relative; justify-self: center; height: 100%; max-width: 100%; aspect-ratio: 1024 / 572; min-height: 0; container-type: size; animation: expo-appear .4s ease both; }
-  .expo-actual-sheet img { display: block; width: 100%; height: 100%; border: .16cqw solid var(--expo-card-edge); box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow); }
-  .expo-actual-circle {
-    position: absolute; left: 84.6%; top: 31%; width: 5.6%; height: 22%;
-    border: .45cqw solid #e0312b; border-radius: 50%; rotate: -7deg; animation: expo-circle .5s .9s ease-out both;
-  }
-  @keyframes expo-circle { from { opacity: 0; scale: 1.6; } }
   .expo-variety { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 1.4cqh; min-height: 0; }
   .expo-variety-sheets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 2.2cqh 2.4cqw; place-items: center; min-height: 0; }
   .expo-variety-sheet { max-width: 100%; max-height: 100%; min-height: 0; border: .16cqw solid var(--expo-card-edge); box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow); animation: expo-appear .38s ease-out both; }
@@ -3867,16 +3857,7 @@ function exhibitAlertMarkup(s) {
 function exhibitParseMarkup(s) {
   return `<div class="expo-visual expo-parse" data-expo>
     <figure class="expo-parse-result" data-expo-reveal="0"><img src="${escapeHtml(s.resultImage)}" alt="${escapeHtml(s.resultCaption)}"><figcaption>${escapeHtml(s.resultCaption)}</figcaption></figure>
-    <div class="expo-parse-compare" data-expo-reveal="1 2" hidden>
-      <figure class="expo-parse-expected"><figcaption>예상한 지원서</figcaption><img src="${escapeHtml(s.expectedImage)}" alt="표로 정리된 가상 배우 이력서"></figure>
-      <figure class="expo-parse-actual" data-expo-reveal="2" hidden>
-        <figcaption>실제로 받은 지원서<small>${escapeHtml(s.actualNote)}</small></figcaption>
-        <div class="expo-actual-sheet">
-          <img src="${escapeHtml(s.actualImage)}" alt="${escapeHtml(s.actualCaption)}">
-          <span class="expo-actual-circle" aria-hidden="true"></span>
-        </div>
-      </figure>
-    </div>
+    <figure class="expo-parse-expected" data-expo-reveal="1" hidden><figcaption>예상한 지원서</figcaption><img src="${escapeHtml(s.expectedImage)}" alt="표로 정리된 가상 배우 이력서"></figure>
     ${exhibitVarietyMarkup(s.variety)}
   </div>`;
 }
@@ -3884,7 +3865,7 @@ function exhibitParseMarkup(s) {
 function exhibitVarietyMarkup(variety) {
   if (!variety) return '';
   const sheets = variety.images.map(image => `<img class="expo-variety-sheet" src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt)}">`).join('');
-  return `<figure class="expo-variety" data-expo-reveal="3" hidden>
+  return `<figure class="expo-variety" data-expo-reveal="2" hidden>
       <div class="expo-variety-sheets">${sheets}</div>
       <figcaption>${escapeHtml(variety.caption)}<small>${escapeHtml(variety.note)}</small></figcaption>
     </figure>`;

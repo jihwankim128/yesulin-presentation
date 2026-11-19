@@ -110,9 +110,6 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
       resultImage: 'assets/exhibition/parse/extracted-result.webp',
       resultCaption: '팀원 지원서로 만든 AI 추출 결과 화면',
       expectedImage: 'assets/exhibition/parse/expected-profile.webp',
-      actualImage: 'assets/exhibition/parse/actual-profile.jpg',
-      actualCaption: '줄글 경력과 현장 사진으로 채운 가상 배우 지원서',
-      actualNote: '가짜 데이터로 만든 재현',
       variety: {
         caption: '배우마다 다른 지원서 양식',
         note: '가짜 데이터로 만든 재현',
@@ -125,8 +122,7 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
       stages: [
         { title: 'AI로 지원서를 정리하려 했습니다' },
         { title: '지원서가 이렇게 생겼을 거라 생각했습니다' },
-        { title: '실제 지원서는 전혀 달랐습니다' },
-        { title: '배우마다 양식이 전부 달랐습니다', kicker: '그래서 원본을 그대로 보여 주기로' },
+        { title: '실제 지원서는 배우마다 전부 달랐습니다', kicker: '그래서 원본을 그대로 보여 주기로' },
       ],
     },
     {
