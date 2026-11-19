@@ -394,6 +394,22 @@
   }
   .slide--exhibit .slide-kicker { font-size: 1.5cqw; font-weight: 700; }
   .slide--exhibit .slide-title { font-size: 3.9cqw; line-height: 1.21; }
+  .slide--exhibit.expo-layout-presenter {
+    display: grid; grid-template-columns: 1fr 28cqw; align-content: center; align-items: center;
+    column-gap: 5cqw; row-gap: 2.1cqh; padding-inline: 10cqw;
+  }
+  .expo-layout-presenter .slide-kicker { grid-area: 1 / 1; align-self: end; font-size: 3cqw; }
+  .expo-layout-presenter .slide-title { grid-area: 2 / 1; align-self: start; font-size: 8.6cqw; }
+  .expo-presenter-stage {
+    grid-area: 1 / 2 / 3 / 3; height: 51cqh; display: grid; place-items: end center; position: relative;
+    border-radius: 14cqw 14cqw 0 0; border-bottom: .75cqw solid #34547e;
+    background: radial-gradient(ellipse at 50% 100%, #eff5fb, #c7d8eb 75%, #b1c8e0);
+  }
+  .expo-presenter-stage::before {
+    content: ''; position: absolute; bottom: 3.3cqh; width: 13cqw; height: 2.5cqh;
+    border-radius: 50%; background: #a7bbcf;
+  }
+  .expo-presenter-stage img { position: relative; width: 15cqw; margin-bottom: 3.7cqh; image-rendering: pixelated; }
   .expo-visual { flex: 1; min-height: 0; margin: 1.2cqh 0; }
   .expo-note {
     padding: 1.35cqh 1.6cqw; border-left: .38cqw solid var(--accent-deep);
@@ -3402,7 +3418,9 @@ function drawArena() {
 
 
 function openDeck(portal) {
-  deck = { portal, index: 0, slides: [{ type: 'toc', say: portal.tocSay }, ...portal.slides], typing: null };
+  const slides = [{ type: 'toc', say: portal.tocSay }, ...portal.slides];
+  if (portal.intro) slides.unshift(portal.intro);
+  deck = { portal, index: 0, slides, typing: null };
   hudEl.hidden = true;
   deckEl.hidden = false;
   deckEl.dataset.portal = portal.id;
@@ -3875,6 +3893,9 @@ function exhibitMarkup(s) {
   let footer = '';
 
   switch (s.exhibit) {
+    case 'presenter':
+      scene = `<div class="expo-presenter-stage" aria-hidden="true"><img src="${dialoguePortraits[s.portrait]}" alt=""></div>`;
+      break;
     case 'opening':
       scene = exhibitOpeningMarkup(s);
       break;

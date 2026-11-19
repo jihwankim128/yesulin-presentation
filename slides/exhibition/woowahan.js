@@ -1,6 +1,7 @@
 window.PORTAL_SLIDES = window.PORTAL_SLIDES || {};
 
 PORTAL_SLIDES['woowahan-exhibition'] = {
+  intro: { exhibit: 'presenter', kicker: '예술in 팀', title: '맥스입니다.', portrait: '맥O' },
   tocTitle: '공연사와 배우, 한쪽씩 풀기',
   actRoles: { 1: '두 쪽의 불편', 2: '배우부터', 3: '원본 그대로' },
   stayOnLastSlide: true,
@@ -115,31 +116,13 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
     {
       type: 'act', act: 3, exhibit: 'review',
       kicker: '원본 그대로',
-      title: '판단은 사람이, 파일 정리는 예술in이',
+      title: '지원서 원본을 보며 심사 결과를 바로 남깁니다',
       items: ['원본 PDF 심사', '네트워킹 데이'],
       portraitSource: 'assets/exhibition/parse/expected-profile.webp',
       stages: [
         { note: '원본 PDF를 그대로 띄우고, 옆에서 배역과 메모를 남깁니다.' },
         { note: '합격·보류·불합격을 누르면 다음 지원자로 넘어갑니다.' },
       ],
-    },
-    {
-      exhibit: 'pipeline',
-      kicker: '원본을 빠르게 여는 방법',
-      title: '폴더째 올리고, 올라간 것부터 봅니다',
-      chip: '지원서 폴더를 한 번에 올리면',
-      boxTitle: '심사함 업로드',
-      rows: [
-        { file: '지원서_01.pdf', status: '업로드 완료' },
-        { file: '지원서_01_복사본.pdf', status: '중복 제외' },
-        { file: '지원서_02.pdf', status: '업로드 중' },
-      ],
-      items: [
-        { icon: 'bucket', title: '같은 지원서는 한 번만', detail: '파일 이름이 아니라 내용의 해시로 확인' },
-        { icon: 'browser', title: '올라간 PDF부터 바로 열람', detail: 'PDF.js로 브라우저에서 원본 표시' },
-        { icon: 'review', title: '판정하면 다음 지원자', detail: '합격·보류·불합격 뒤 자동 이동' },
-      ],
-      stages: [{}, {}, {}],
     },
     {
       exhibit: 'proof',
