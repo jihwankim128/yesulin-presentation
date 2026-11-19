@@ -5,7 +5,7 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
     exhibit: 'ticket', kicker: '우아한형제들 전시회', title: '예술in',
     subtitle: '배우와 공연사를 잇는\n오디션 플랫폼',
     wordmark: 'assets/exhibition/intro/yesulin-wordmark.png',
-    mascot: 'assets/link-star.png',
+    image: 'assets/exhibition/intro/door.png',
     members: ['피노', '맥스', '이프', '무빙', '대길'],
   },
   tocTitle: '공연사와 배우, 한쪽씩 풀기',

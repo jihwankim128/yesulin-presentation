@@ -415,15 +415,11 @@
   }
   .expo-ticket-team span { color: #50627a; }
   .expo-ticket-stub {
-    position: relative; overflow: hidden; display: grid; place-items: center; border-left: .14cqw dashed #778ba5;
-    background: linear-gradient(145deg, #e7e3ff, #bfdff8 58%, #aecef0);
+    position: relative; overflow: hidden; border-left: .14cqw dashed #778ba5; background: #060919;
   }
-  .expo-ticket-stub::before, .expo-ticket-stub::after {
-    content: ''; position: absolute; width: 135%; aspect-ratio: 1; border: .13cqw solid #fff9; border-radius: 50%;
+  .expo-ticket-stub img {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 96% center;
   }
-  .expo-ticket-stub::before { top: -57%; left: -55%; }
-  .expo-ticket-stub::after { bottom: -52%; right: -65%; }
-  .expo-ticket-stub img { position: relative; z-index: 1; width: 71%; transform: rotate(5deg); }
   .expo-visual { flex: 1; min-height: 0; margin: 1.2cqh 0; }
   .expo-note {
     padding: 1.35cqh 1.6cqw; border-left: .38cqw solid var(--accent-deep);
@@ -3916,7 +3912,7 @@ function exhibitMarkup(s) {
             <p class="expo-ticket-tagline">${rich(s.subtitle)}</p>
             <p class="expo-ticket-team"><span>만든 사람들</span>${escapeHtml(s.members.join(' · '))}</p>
           </div>
-          <div class="expo-ticket-stub" aria-hidden="true"><img src="${escapeHtml(s.mascot)}" alt=""></div>
+          <div class="expo-ticket-stub" aria-hidden="true"><img src="${escapeHtml(s.image)}" alt=""></div>
         </div>` };
     case 'opening':
       scene = exhibitOpeningMarkup(s);
