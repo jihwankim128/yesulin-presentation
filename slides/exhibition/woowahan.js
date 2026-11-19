@@ -117,10 +117,9 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
         caption: '배우마다 다른 지원서 양식',
         note: '가짜 데이터로 만든 재현',
         images: [
-          { src: 'assets/exhibition/parse/actual-profile.jpg', alt: '줄글 경력과 현장 사진으로 채운 가상 배우 지원서' },
           { src: 'assets/exhibition/parse/variety-columns.jpg', alt: '사진 옆에 2단으로 경력을 정리한 가상 배우 지원서' },
-          { src: 'assets/exhibition/parse/variety-banner.jpg', alt: '가로 배너에 이름과 신체 정보를 적은 가상 배우 지원서' },
           { src: 'assets/exhibition/parse/variety-boxed.jpg', alt: '사진 옆 상자에 활동 내용을 적은 가상 배우 지원서' },
+          { src: 'assets/exhibition/parse/variety-banner.jpg', alt: '가로 배너에 이름과 신체 정보를 적은 가상 배우 지원서' },
         ],
       },
       stages: [
