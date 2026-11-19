@@ -16,7 +16,7 @@ python3 -m http.server 4173 --bind 127.0.0.1
 | --- | --- |
 | 시작 | ↑/↓ 채널 고르기, Enter 또는 클릭으로 입장 |
 | 마을 | 방향키·WASD 이동, 숫자 키로 포탈 바로가기, 아래 길로 나가면 채널 선택, `F` 전체화면 |
-| 슬라이드 | ←/→ 넘기기, ↓/↑ 사진 더미 넘기기, ESC 마을로 |
+| 슬라이드 | ←/→ 또는 PageDown/PageUp(발표 리모컨) 넘기기, ↓/↑ 사진 더미 넘기기, ESC 마을로 |
 
 ## 내용 수정
 
@@ -56,4 +56,6 @@ python3 -m http.server 4173 --bind 127.0.0.1
     - 등장인물: `[{ name, look }]` 두 명. 첫 번째가 왼쪽, `look`은 `hero`·`theater`
     - 단계: `{ speaker, line }`. 다음을 누를 때마다 말하는 사람과 대사가 바뀐다
   - `say`: 캐릭터 대사창
+- 포탈 파일에 `stayOnLastSlide: true`를 두면 마지막 장에서 다음을 눌러도 마을로 나가지 않는다. 리모컨 발표용이다.
+- 전시회 포탈의 장면 종류(`exhibit`)와 필드는 `slides/exhibition/woowahan.js`를 예시로 본다.
 - 이미지는 `assets/` 아래에 둔다. 전광판 사진은 `CONFIG.billboard.images`.

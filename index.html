@@ -399,15 +399,6 @@
     padding: 1.35cqh 1.6cqw; border-left: .38cqw solid var(--accent-deep);
     background: var(--expo-note-fill); font-size: 1.62cqw; line-height: 1.5;
   }
-  .expo-tile {
-    display: grid; align-content: center; gap: .65cqh; min-width: 0;
-    padding: 2.1cqh 1.55cqw; background: #fffdf6; border: .16cqw solid var(--expo-card-edge);
-    box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow);
-  }
-  .expo-tile:has(img) { grid-template-columns: 3.8cqw 1fr; align-items: center; column-gap: 1.1cqw; }
-  .expo-tile img { grid-row: span 2; width: 3.8cqw; image-rendering: pixelated; }
-  .expo-tile strong { font-size: 1.85cqw; line-height: 1.3; }
-  .expo-tile p { font-size: 1.54cqw; line-height: 1.5; color: var(--expo-muted); }
   .expo-pivot { position: relative; }
   .expo-outreach {
     display: grid; grid-template-rows: minmax(0, 1fr) auto; height: 100%; gap: 2cqh;
@@ -439,7 +430,7 @@
   .expo-quiet-label {
     position: absolute; top: calc(100% + .35cqh);
     padding: .72cqh .85cqw; border: .14cqw solid #d5aaa4; background: #fff5f2; color: #713933;
-    white-space: nowrap; font-size: 1.4cqw; font-weight: 700;
+    white-space: nowrap; font-size: 2.6cqw; font-weight: 700;
   }
   @keyframes expo-quiet-pop {
     from { opacity: 0; transform: translateY(.9cqh) scale(.78); }
@@ -449,7 +440,7 @@
   .expo-outreach-route { display: grid; gap: .8cqh; }
   .expo-outreach-route strong { font-size: 1.48cqw; color: #34547e; }
   .expo-outreach-track { position: relative; height: 5cqh; display: grid; align-items: center; transition: opacity .25s ease; }
-  .expo-pivot[data-expo-step="1"] .expo-outreach-track { opacity: .46; }
+  .expo-pivot:not([data-expo-step="0"]) .expo-outreach-track { opacity: .46; }
   .expo-outreach-track::before { content: ''; border-top: .19cqw dashed #9eafc5; }
   .expo-outreach-track img {
     position: absolute; inset-block-start: 50%; left: calc(100% - 3.6cqw);
@@ -457,6 +448,7 @@
   }
   .expo-pivot[data-expo-step="0"] .expo-outreach-track img { animation: expo-call-travel .9s .12s ease-in-out both; }
   .expo-pivot[data-expo-step="0"] .expo-outreach-route + .expo-outreach-route img { animation-delay: .37s; }
+  .expo-pivot[data-expo-step="0"] .expo-outreach-route:nth-child(3) img { animation-delay: .62s; }
   @keyframes expo-call-travel { from { left: 0; opacity: .38; } }
   .expo-turn {
     display: grid; grid-template-columns: minmax(0, 1fr) 4.6cqw minmax(0, 1fr); gap: .65cqw; align-items: stretch;
@@ -475,68 +467,18 @@
     clip-path: polygon(0 32%, 57% 32%, 57% 0, 100% 50%, 57% 100%, 57% 68%, 0 68%);
   }
   .expo-turn:not([hidden]) .expo-turn-card:last-child { animation: expo-appear .38s .16s ease-out both; }
-  .expo-layout-pivot:has(.expo-chat:not([hidden])) { padding-top: 4.3cqh; padding-bottom: 3.8cqh; gap: 1.2cqh; }
-  .expo-chat {
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: minmax(0, 1fr); align-items: center; gap: 2.6cqw;
-    min-height: 0; height: 100%; padding: 1cqh 0;
-  }
-  .expo-chat[data-expo-reveal]:not([hidden]) { animation: none; }
-  .expo-chat img {
-    grid-column: 1; grid-row: 1;
-    display: block; width: auto; height: 100%; max-width: 100%; max-height: 100%; min-height: 0; min-width: 0;
-    justify-self: center; align-self: stretch; object-fit: contain; border-radius: .72cqw;
-    box-shadow: 0 .75cqh 1.8cqw rgba(25, 40, 65, .19); animation: expo-chat-arrive .68s cubic-bezier(.23,.61,.36,1) both;
-  }
-  @keyframes expo-chat-arrive { from { translate: -11cqw 0; scale: .84; opacity: .2; } }
-  .expo-chat-copy, .expo-chat-count {
-    grid-column: 2; grid-row: 1; justify-self: center;
-    display: flex; flex-direction: column; justify-content: center;
-    width: min(100%, 36cqw); min-height: 29cqh;
-    padding: 1.9cqh 2.1cqw; background: #eaf0f7;
-    border: .16cqw solid var(--expo-card-edge);
-  }
-  .expo-chat-copy[data-expo-reveal]:not([hidden]) { animation: expo-appear .38s .30s ease both; }
-  .expo-chat-copy h3 { margin-bottom: 1.3cqh; color: #294974; font-size: 2.4cqw; }
-  .expo-chat-copy .expo-detail { font-size: 1.9cqw; }
-  .expo-chat-count[data-expo-reveal]:not([hidden]) { animation: expo-chat-count-in .48s ease-out both; }
-  @keyframes expo-chat-count-in { from { opacity: 0; transform: translateY(1cqh) scale(.94); } }
-  .expo-chat-count .expo-metric-label { margin-bottom: 0; }
-  .expo-inquiry { position: absolute; inset: 0; display: flex; }
-  .expo-inquiry .stack-card { inset: 3cqh 1cqw 9cqh; }
   .expo-number { color: #294974; font-size: 6.7cqw; font-weight: 700; line-height: 1.12; white-space: nowrap; }
   .expo-metric-label { margin: 1.25cqh 0 2.3cqh; font-size: 1.9cqw; font-weight: 700; line-height: 1.4; }
   .expo-detail { font-size: 1.6cqw; line-height: 1.55; color: var(--expo-muted); }
   .expo-review { min-height: 0; }
-  .expo-review-split {
-    display: grid; grid-template-columns: 1fr 7cqw 1fr; height: 100%;
-    max-width: 69cqw; margin: 0 auto;
-  }
-  .expo-dual { display: grid; grid-template-rows: repeat(2, minmax(0, 1fr)); align-items: center; gap: 2.2cqh; }
-  .expo-review-split .expo-dual:last-child .expo-tile { background: #e7ede7; box-shadow: none; }
-  .expo-split-arrows { display: grid; grid-template-rows: repeat(2, 1fr); place-items: center; color: #427560; font-size: 3.1cqw; }
   .expo-review-shell {
     display: grid; grid-template-rows: auto minmax(0, 1fr); height: 100%;
     border: .2cqw solid #27463b; background: #edf1ed; box-shadow: .46cqw .46cqw 0 #c4ddd0;
   }
   .expo-appbar { display: flex; align-items: center; justify-content: space-between; gap: 1cqw; padding: 1.3cqh 1.45cqw; background: #24463a; color: #fff9ec; font-size: 1.45cqw; }
   .expo-appbar span { font-size: 1.13cqw; color: #c2e5d4; }
-  .expo-uploads { min-height: 0; padding: 2.6cqh 1.9cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 1.9cqw; }
-  .expo-drop {
-    display: grid; align-content: center; justify-items: center; gap: 1.25cqh; padding: 2cqh 1.1cqw;
-    border: .18cqw dashed #5b9a80; background: #e2f2e7; text-align: center;
-  }
-  .expo-drop strong, .expo-review-panel h3 { font-size: 2.05cqw; }
-  .expo-drop p, .expo-review-panel p { font-size: 1.35cqw; }
-  .expo-file-stack { position: relative; width: 5.2cqw; height: 5.2cqw; margin-bottom: .5cqh; }
-  .expo-file-stack img { position: absolute; width: 4.25cqw; left: 0; top: .35cqw; image-rendering: pixelated; animation: expo-file-in .52s ease-out both; }
-  .expo-file-stack img + img { left: 1.1cqw; top: 1cqw; animation-delay: .12s; }
-  @keyframes expo-file-in { from { opacity: 0; transform: translateY(-2.2cqh); } }
-  .expo-upload-list { display: grid; align-content: center; gap: 1.5cqh; }
-  .expo-upload-list h3 { font-size: 2.1cqw; }
   .expo-upload-row { display: flex; align-items: center; justify-content: space-between; gap: .6cqw; background: #fff; padding: 1.4cqh 1.1cqw; border: .15cqw solid var(--expo-row-edge); font-size: 1.47cqw; }
   .expo-upload-row span:last-child { color: var(--expo-status); font-size: 1.17cqw; white-space: nowrap; }
-  .expo-open-pdf { width: fit-content; padding: .9cqh 1cqw; background: #236148; color: #fff; font-size: 1.45cqw; }
   .expo-original-review {
     display: grid; grid-template-columns: 1.24fr 1fr; gap: 1.7cqw; min-height: 0; padding: 2cqh 1.65cqw;
   }
@@ -551,7 +493,7 @@
   .expo-original-page strong { display: block; color: #192d26; font-size: 2cqw; margin-bottom: 1.1cqh; }
   .expo-original-page p { color: #4d6257; font-size: 1.4cqw; line-height: 1.55; }
   .expo-pdf-portrait { position: relative; overflow: hidden; width: min(100%, 15cqw); aspect-ratio: 475 / 585; background: #e6e4dc; }
-  .expo-pdf-portrait img { position: absolute; top: -73%; left: -126%; width: 482%; }
+  .expo-pdf-portrait img { position: absolute; top: -102%; left: -225%; width: 361%; }
   .expo-review-panel { display: grid; align-content: center; padding: 1.7cqh 1.35cqw; }
   .expo-review-fields { display: grid; gap: 1.25cqh; margin: 1.6cqh 0; }
   .expo-review-fields dt { font-size: 1.25cqw; font-weight: 700; margin-bottom: .55cqh; }
@@ -574,16 +516,12 @@
   .expo-proof-copy { display: flex; flex-direction: column; justify-content: center; background: #eaf0f7; border: .16cqw solid var(--expo-card-edge); padding: 2.8cqh 2cqw; }
   .expo-proof-copy .expo-number { font-size: 8.6cqw; }
   .expo-credit { color: var(--expo-muted); font-size: 1.4cqw; line-height: 1.4; }
-  .expo-roles { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 2.3cqw; align-items: stretch; min-height: 0; }
-  .expo-roles .expo-tile { border-color: var(--expo-card-edge); background: #fffdf8; box-shadow: .36cqw .36cqw 0 var(--expo-card-shadow); }
-  .expo-roles .expo-tile strong { color: #2e507b; font-size: 2cqw; }
-  .expo-roles .expo-tile p { font-size: 1.9cqw; }
   .slide--exhibit.expo-stage {
     background: radial-gradient(ellipse at 87% 14%, #e0e9f6 0%, transparent 66%), #f9f6ef;
   }
   .expo-stage .slide-title { font-size: 5.5cqw; margin: .9cqh 0 1.7cqh; }
   .expo-layout-opening .slide-title { font-size: 4.6cqw; }
-  .expo-open-map { display: grid; grid-template-rows: minmax(0, 1fr) 13cqh; flex: 1; min-height: 0; gap: 2.7cqh; }
+  .expo-open-map { display: grid; grid-template-rows: minmax(0, 1fr); flex: 1; min-height: 0; }
   .expo-open-problems { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.3cqw; min-height: 0; }
   .expo-open-problem {
     display: grid; grid-row: 1; grid-template-rows: minmax(0, 1fr) auto;
@@ -646,37 +584,110 @@
   .expo-open-caption { padding: 1.6cqh 1.65cqw 1.75cqh; border-top: .14cqw solid #d6e0ed; }
   .expo-open-caption h3 { margin-bottom: .55cqh; color: var(--accent-deep); font-size: 1.7cqw; }
   .expo-open-caption p { font-size: 1.94cqw; line-height: 1.35; }
-  .expo-open-flow {
-    display: grid; grid-template-columns: 15cqw minmax(0, 1fr); align-items: center;
-    padding: 1.65cqh 1.5cqw; background: #dce8f6; border: .16cqw solid #a6bcd6;
-  }
-  .expo-open-flow-brand { padding-right: 1.3cqw; border-right: .15cqw solid #a6bcd6; color: #26476e; font-size: 2.15cqw; font-weight: 700; }
-  .expo-open-flow-brand span { display: block; margin-top: .45cqh; font-weight: 400; font-size: 1.35cqw; }
-  .expo-open-flow ul { display: grid; grid-template-columns: 1fr 1.11fr; align-items: stretch; list-style: none; }
-  .expo-open-flow li { display: flex; align-items: center; gap: .7cqw; padding: 0 1.2cqw; font-size: 1.43cqw; font-weight: 700; line-height: 1.35; }
-  .expo-open-flow li + li { border-left: .15cqw solid #a6bcd6; }
-  .expo-open-flow li strong { display: block; margin-bottom: .45cqh; color: #294d76; font-size: 1.23cqw; }
-  .expo-open-flow li img { display: block; width: 2.85cqw; image-rendering: pixelated; }
-  .expo-open-map[data-expo-mode="connected"] .expo-open-flow li { animation: expo-appear .4s .11s ease both; }
-  .expo-open-map[data-expo-mode="connected"] .expo-open-flow li:nth-child(2) { animation-delay: .23s; }
-  .expo-layout-opening::before, .expo-layout-opening::after {
+  .expo-layout-triangle::before, .expo-layout-triangle::after {
     content: ''; position: absolute; z-index: 1; top: 0; bottom: 0; width: 51%;
     pointer-events: none; background: repeating-linear-gradient(90deg, #354967 0 4cqw, #273a56 4cqw 6cqw, #405778 6cqw 8cqw);
     animation: expo-curtain .72s cubic-bezier(.35,.05,.3,1) both;
   }
-  .expo-layout-opening::before { left: 0; --curtain-exit: -102%; }
-  .expo-layout-opening::after { right: 0; --curtain-exit: 102%; }
-  .expo-layout-forward .slide-title { font-size: 5cqw; }
-  .expo-layout-forward .expo-roles { margin: .8cqh 0 1.3cqh; }
-  .expo-layout-forward .expo-roles .expo-tile { animation: expo-appear .45s .15s both; }
-  .expo-layout-forward .expo-roles .expo-tile + .expo-tile { animation-delay: .28s; }
-  .expo-next { font-size: 1.7cqw; line-height: 1.5; color: var(--expo-muted); }
-  .expo-booth { padding: 1.25cqh 1.5cqw; background: #dbe7f5; color: #1c3151; font-weight: 700; font-size: 1.65cqw; line-height: 1.5; }
+  .expo-layout-triangle::before { left: 0; --curtain-exit: -102%; }
+  .expo-layout-triangle::after { right: 0; --curtain-exit: 102%; }
+  .expo-review-panel h3 { font-size: 2.05cqw; }
+  .expo-review-panel p { font-size: 1.35cqw; }
+  .expo-next-applicant { margin-top: 1.4cqh; padding: .9cqh 1cqw; background: #236148; color: #fff; font-weight: 700; animation: expo-appear .38s .25s ease both; }
+  .expo-tri { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.3cqw; }
+  .expo-tri-panel {
+    grid-row: 1; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 1.2cqh; min-height: 0;
+    padding: 2.2cqh 1.8cqw; background: #fffdf8; border: .16cqw solid var(--expo-card-edge); box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow);
+  }
+  .expo-tri-panel--three { grid-column: 1; transition: translate .48s ease; }
+  .expo-tri-panel--two { grid-column: 2; background: #e4ecf6; }
+  .expo-tri[data-expo-step="0"] .expo-tri-panel--three { translate: calc(50% + 1.15cqw) 0; }
+  .expo-tri-brand { color: var(--accent-deep); font-size: 2.1cqw; font-weight: 700; text-align: center; }
+  .expo-tri-caption { font-size: 1.75cqw; line-height: 1.4; text-align: center; color: var(--expo-muted); }
+  .expo-tri-panel--two .expo-tri-caption { color: #7a2f2d; font-weight: 700; }
+  .expo-tri-map { position: relative; min-height: 0; }
+  .expo-tri-map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .expo-tri-map path { fill: none; stroke: #9eafc5; stroke-dasharray: 2.4 1.6; vector-effect: non-scaling-stroke; stroke-width: .25cqw; }
+  .expo-tri-node {
+    position: absolute; translate: -50% -50%; display: grid; justify-items: center; gap: .3cqh;
+    width: 12cqw; padding: 1.4cqh .6cqw; background: #fffdf8; border: .2cqw solid #5279a5; border-radius: 1.2cqw; text-align: center;
+  }
+  .expo-tri-node strong { font-size: 2.1cqw; color: #1c3151; }
+  .expo-tri-node span { font-size: 1.3cqw; color: var(--expo-muted); }
+  .expo-tri-map--three .expo-tri-node--0 { left: 50%; top: 16%; }
+  .expo-tri-map--three .expo-tri-node--1 { left: 14%; top: 84%; }
+  .expo-tri-map--three .expo-tri-node--2 { left: 86%; top: 84%; }
+  .expo-tri-map--two .expo-tri-node--0 { left: 20%; top: 50%; }
+  .expo-tri-map--two .expo-tri-node--1 { left: 80%; top: 50%; }
+  .expo-tri-map--two .expo-tri-node { border-color: #a34241; }
+  .expo-tri[data-expo-step="0"] .expo-tri-node { animation: expo-appear .38s calc(.15s + var(--d, 0s)) ease-out both; }
+  .expo-tri-node--1 { --d: .14s; }
+  .expo-tri-node--2 { --d: .28s; }
+  .expo-alert-flow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.3cqw; height: 100%; align-items: center; list-style: none; }
+  .expo-alert-flow li {
+    position: relative; display: grid; justify-items: center; align-content: center; gap: 1.4cqh; min-height: 46cqh;
+    padding: 2.2cqh .9cqw; background: #fffdf8; border: .16cqw solid var(--expo-card-edge); box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow);
+    text-align: center; animation: expo-appear .38s calc(.12s + var(--i) * .22s) ease-out both;
+  }
+  .expo-alert-flow li + li::before {
+    content: ''; position: absolute; left: -1.25cqw; top: 50%; width: 1.2cqw; height: .9cqw; translate: 0 -50%; background: #34547e;
+    clip-path: polygon(0 32%, 57% 32%, 57% 0, 100% 50%, 57% 100%, 57% 68%, 0 68%);
+  }
+  .expo-alert-flow img { width: 5.6cqw; image-rendering: pixelated; }
+  .expo-alert-flow strong { font-size: 2.15cqw; color: #1c3151; }
+  .expo-alert-flow span { font-size: 1.6cqw; line-height: 1.45; color: var(--expo-muted); }
+  .expo-versus { display: grid; grid-template-columns: minmax(0, 1fr) 5cqw minmax(0, 1fr); height: 100%; align-items: stretch; }
+  .expo-versus-side { display: flex; flex-direction: column; justify-content: center; padding: 2.6cqh 2.4cqw; border: .16cqw solid var(--expo-card-edge); }
+  .expo-versus-side--muted { background: #f1ece4; border-color: #c3b9ae; }
+  .expo-versus-side--muted .expo-number { color: #8a3a37; }
+  .expo-versus-side--bright { background: #dce8f6; border-color: #7e9fc4; animation: expo-appear .45s .3s ease-out both; }
+  .expo-versus-label { font-size: 1.9cqw; font-weight: 700; color: var(--expo-muted); }
+  .expo-versus-side .expo-number { font-size: 8.6cqw; }
+  .expo-versus-mid { display: grid; place-items: center; }
+  .expo-versus-mid::before {
+    content: ''; width: 3.4cqw; height: 1.6cqw; background: #34547e;
+    clip-path: polygon(0 32%, 57% 32%, 57% 0, 100% 50%, 57% 100%, 57% 68%, 0 68%);
+  }
+  .expo-thanks { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr) minmax(0, .9fr); grid-template-rows: minmax(0, 1fr); gap: 2.2cqw; height: 100%; min-height: 0; align-items: center; }
+  .expo-thanks-shot { height: 100%; min-height: 0; display: grid; place-items: center; }
+  .expo-thanks-shot img { max-width: 100%; max-height: 100%; border-radius: .72cqw; box-shadow: 0 .75cqh 1.8cqw rgba(25, 40, 65, .19); }
+  .expo-thanks-shot--reply { height: auto; max-height: 100%; aspect-ratio: 924 / 1000; overflow: hidden; border-radius: .72cqw; animation: expo-appear .45s .35s ease-out both; }
+  .expo-thanks-shot--reply img { width: 100%; height: 100%; max-height: none; object-fit: cover; object-position: top; border-radius: 0; }
+  .expo-thanks-copy { display: flex; flex-direction: column; justify-content: center; padding: 2.4cqh 2cqw; background: #eaf0f7; border: .16cqw solid var(--expo-card-edge); }
+  .expo-thanks-quote { margin-top: 1cqh; padding-left: 1cqw; border-left: .38cqw solid #34547e; font-size: 2.1cqw; font-weight: 700; line-height: 1.4; }
+  .expo-thanks-copy .expo-detail { margin-top: .8cqh; }
+  .expo-parse { display: grid; min-height: 0; }
+  .expo-parse-result { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 1cqh; justify-items: center; min-height: 0; }
+  .expo-parse-result img { max-width: 100%; max-height: 100%; min-height: 0; border: .16cqw solid var(--expo-card-edge); box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow); }
+  .expo-parse figcaption { font-size: 1.5cqw; font-weight: 700; color: var(--accent-deep); }
+  .expo-parse figcaption small { margin-left: .8cqw; font-size: 1.15cqw; font-weight: 400; color: var(--expo-muted); }
+  .expo-parse-compare { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 2.2cqw; min-height: 0; }
+  .expo-parse[data-expo-step="2"] .expo-parse-compare { grid-template-columns: minmax(0, .5fr) minmax(0, 2fr); }
+  .expo-parse-expected, .expo-parse-actual { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 1cqh; min-height: 0; }
+  .expo-parse-expected img { max-height: 100%; max-width: 100%; min-height: 0; justify-self: center; border: .16cqw solid var(--expo-card-edge); }
+  .expo-parse[data-expo-step="2"] .expo-parse-expected { opacity: .55; }
+  .expo-actual-sheet { position: relative; justify-self: center; height: 100%; max-width: 100%; aspect-ratio: 1024 / 572; min-height: 0; container-type: size; animation: expo-appear .4s ease both; }
+  .expo-actual-sheet img { display: block; width: 100%; height: 100%; border: .16cqw solid var(--expo-card-edge); box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow); }
+  .expo-actual-circle {
+    position: absolute; left: 84.6%; top: 31%; width: 5.6%; height: 22%;
+    border: .45cqw solid #e0312b; border-radius: 50%; rotate: -7deg; animation: expo-circle .5s .9s ease-out both;
+  }
+  @keyframes expo-circle { from { opacity: 0; scale: 1.6; } }
+  .expo-tech-step { font-size: 1.25cqw; font-weight: 700; color: var(--accent-deep); }
+  .expo-closing { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 2.6cqw; align-items: stretch; }
+  .expo-closing-copy { display: flex; flex-direction: column; justify-content: center; padding: 2.8cqh 2.4cqw; background: #eaf0f7; border: .16cqw solid var(--expo-card-edge); }
+  .expo-closing-copy .expo-number { font-size: 8.6cqw; }
+  .expo-badge { width: fit-content; margin-top: 1cqh; padding: 1.1cqh 1.3cqw; background: #34547e; color: #fff; font-size: 1.75cqw; font-weight: 700; }
+  .expo-qr { display: grid; grid-template-rows: auto auto; align-content: center; gap: 1.6cqh; justify-items: center; padding: 2.4cqh 1.6cqw; background: #fffdf8; border: .16cqw solid var(--expo-card-edge); box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow); }
+  .expo-qr img { width: min(100%, 23cqw); height: auto; aspect-ratio: 1; image-rendering: pixelated; }
+  .expo-qr figcaption { display: grid; gap: .6cqh; text-align: center; }
+  .expo-qr strong { font-size: 2.2cqw; color: #1c3151; }
+  .expo-qr span { font-size: 1.35cqw; color: var(--expo-muted); }
   [data-expo-reveal]:not([hidden]) { animation: expo-appear .4s ease both; }
   @keyframes expo-appear { from { opacity: 0; transform: translateY(1.35cqh); } }
   @keyframes expo-curtain { to { transform: translateX(var(--curtain-exit)); } }
   @media (prefers-reduced-motion: reduce) {
-    .expo-layout-opening::before, .expo-layout-opening::after { display: none; }
+    .expo-layout-triangle::before, .expo-layout-triangle::after { display: none; }
     .slide--exhibit *, .slide--exhibit [data-expo-reveal]:not([hidden]) { animation: none !important; transition: none !important; }
   }
 
@@ -1185,6 +1196,7 @@
     포탈: { slides: 'PORTAL_SLIDES 키', file: '슬라이드 파일 경로', label, theme: 'pink' | 'gold' | 'sky' | 'mint' | 'violet' | 'coral' }
     채널이나 포탈을 늘리고 줄일 때는 이 목록과 슬라이드 파일만 고치면 된다. 파일은 채널에 들어갈 때 불러온다.
   - 첫 장 목차는 type: 'act' 슬라이드에서 자동으로 만들어진다.
+  - 포탈에 stayOnLastSlide: true를 지정하면 마지막 장에서 다음을 눌러도 마을로 나가지 않는다. 리모컨 발표용이며 ESC나 마을로 버튼으로 나간다.
   - 포탈에 sectionStyle: 'plain'을 지정하면 막 대신 번호와 구역 제목을 표시한다. tocTitle로 목차 제목을 바꿀 수 있다.
   - sectionIntro: 'stage'를 함께 지정하면 번호형 구역의 도입을 커튼이 열리는 무대로 표시한다.
   - 전시회 포탈의 exhibit 레이아웃은 막 슬라이드에도 사용할 수 있다. stages가 있으면 다음/이전으로 장면을 바꾼다.
@@ -3463,6 +3475,7 @@ function moveSlide(delta) {
     }
   }
   const next = deck.index + delta;
+  if (next >= deck.slides.length && deck.portal.stayOnLastSlide) return;
   if (next >= deck.slides.length) return closeDeck();
   if (next < 0) return;
   goToSlide(next, delta > 0 ? 'next' : 'prev');
@@ -3661,12 +3674,6 @@ function salonMarkup(s) {
   return `${headingMarkup(s)}${s.layout === 'followup' ? '' : steps}${scene}${controls}`;
 }
 
-function exhibitTile(item) {
-  const icon = item.icon ? `<img src="${journeyIcons[item.icon]}" alt="">` : '';
-  const detail = item.detail ? `<p>${rich(item.detail)}</p>` : '';
-  return `<div class="expo-tile">${icon}<strong>${escapeHtml(item.label)}</strong>${detail}</div>`;
-}
-
 function exhibitMetric(s) {
   return `<div><p class="expo-number">${escapeHtml(s.metric)}</p><p class="expo-metric-label">${rich(s.metricLabel)}</p><p class="expo-detail">${rich(s.proof)}</p></div>`;
 }
@@ -3700,7 +3707,7 @@ function exhibitOpeningMarkup(s) {
         </div>
         ${caption(actor)}
       </section>
-      <section class="expo-open-problem expo-open-problem--company" data-expo-reveal="1 2" hidden>
+      <section class="expo-open-problem expo-open-problem--company" data-expo-reveal="1" hidden>
         <div class="expo-open-art" role="img" aria-label="공연사 담당자가 메일함에 쌓인 PDF 지원서를 하나씩 열어 심사하고, 메모는 별도로 남긴다.">
           <figure class="expo-open-step">
             <div class="expo-open-inbox">
@@ -3728,24 +3735,17 @@ function exhibitOpeningMarkup(s) {
         ${caption(company)}
       </section>
     </div>
-    <section class="expo-open-flow" aria-label="예술in에서 이어지는 과정" data-expo-reveal="2" hidden>
-      <p class="expo-open-flow-brand">예술in<span>한곳에서</span></p>
-      <ul>${s.flow.map(step => `<li><img src="${journeyIcons[step.icon]}" alt=""><span><strong>${escapeHtml(step.role)}</strong>${escapeHtml(step.label)}</span></li>`).join('')}</ul>
-    </section>
   </div>`;
 }
 
 function exhibitPivotMarkup(s) {
-  const routes = [
-    { icon: 'mail', label: '메일 보내기' },
-    { icon: 'phone', label: '전화 걸기' },
-  ];
+  const routes = s.routes;
   const shift = s.shift.map(({ label, detail, icon }) => {
     const copy = detail ? `<p>${escapeHtml(detail)}</p>` : '';
     return `<div class="expo-turn-card"><img src="${journeyIcons[icon]}" alt=""><div><strong>${escapeHtml(label)}</strong>${copy}</div></div>`;
   }).join('<span class="expo-turn-arrow" aria-hidden="true"></span>');
   return `<div class="expo-visual expo-pivot" data-expo>
-    <div class="expo-outreach" data-expo-reveal="0 1">
+    <div class="expo-outreach" data-expo-reveal="0 1 2">
       <div class="expo-outreach-line">
         <div class="expo-outreach-actor">
           <div class="expo-outreach-icon"><img src="${heroPortraitUrl}" alt=""></div>
@@ -3753,10 +3753,10 @@ function exhibitPivotMarkup(s) {
         </div>
         <div class="expo-outreach-paths">${routes.map(route => `
           <div class="expo-outreach-route">
-            <strong>${route.label}</strong>
+            <strong>${escapeHtml(route.label)}</strong>
             <span class="expo-outreach-track" aria-hidden="true"><img src="${journeyIcons[route.icon]}" alt=""></span>
           </div>`).join('')}
-          <span class="expo-quiet" data-expo-reveal="1" role="status" hidden>
+          <span class="expo-quiet" data-expo-reveal="1 2" role="status" hidden>
             <span class="expo-quiet-mark" aria-hidden="true"></span>
             <span class="expo-quiet-label">${escapeHtml(s.response)}</span>
           </span>
@@ -3769,15 +3769,7 @@ function exhibitPivotMarkup(s) {
           <strong>공연사</strong><p>오디션 지원 관리 제안</p>
         </div>
       </div>
-      <section class="expo-turn" aria-label="처음 만날 대상을 공연사에서 배우로 바꾼 이유" data-expo-reveal="1" hidden>${shift}</section>
-    </div>
-    <div class="expo-chat" data-expo-reveal="2 3" hidden>
-      <div class="expo-chat-copy" data-expo-reveal="2"><h3>카카오톡 오픈채팅</h3><p class="expo-detail">${rich(s.proof)}</p></div>
-      <img src="${escapeHtml(s.image)}" alt="${escapeHtml(s.caption)}">
-      <div class="expo-chat-count" data-expo-reveal="3" hidden><p class="expo-number">${escapeHtml(s.metric)}</p><p class="expo-metric-label">${rich(s.metricLabel)}</p></div>
-    </div>
-    <div class="expo-inquiry" data-expo-reveal="4" hidden>
-      ${mediaMarkup({ images: s.inquiryImages, title: '공고 공유와 등록 관련 답장' })}
+      <section class="expo-turn" aria-label="처음 만날 대상을 공연사에서 배우로 바꾼 이유" data-expo-reveal="2" hidden>${shift}</section>
     </div>
   </div>`;
 }
@@ -3785,44 +3777,96 @@ function exhibitPivotMarkup(s) {
 function exhibitReviewMarkup(s) {
   const decisions = '<span>불합격</span><span>보류</span><span>합격</span>';
   return `<div class="expo-visual expo-review" data-expo>
-    <div class="expo-review-split" data-expo-reveal="0">
-      <div class="expo-dual">${s.sources.map(exhibitTile).join('')}</div>
-      <div class="expo-split-arrows" aria-hidden="true"><span>→</span><span>→</span></div>
-      <div class="expo-dual">${s.sources.map(source => exhibitTile({ label: source.check })).join('')}</div>
-    </div>
-    <section class="expo-review-shell" data-expo-reveal="1 2 3" hidden>
+    <section class="expo-review-shell">
       <header class="expo-appbar"><strong>PDF 지원서 심사</strong><span>발표용 화면 재구성</span></header>
-      <div class="expo-uploads" data-expo-reveal="1" hidden>
-        <div class="expo-drop">
-          <div class="expo-file-stack" aria-hidden="true"><img src="${journeyIcons.pdf}" alt=""><img src="${journeyIcons.pdf}" alt=""></div>
-          <strong>PDF 일괄 업로드</strong><p>파일이나 폴더를 한 번에 선택</p>
-        </div>
-        <div class="expo-upload-list">
-          <h3>심사함</h3>
-          <div class="expo-upload-row"><strong>지원서_01.pdf</strong><span>업로드 완료</span></div>
-          <div class="expo-upload-row"><strong>지원서_02.pdf</strong><span>업로드 중</span></div>
-          <p class="expo-open-pdf">원본으로 심사하기 →</p>
-        </div>
-      </div>
-      <div class="expo-original-review" data-expo-reveal="2 3" hidden>
+      <div class="expo-original-review">
         <figure class="expo-original">
           <figcaption><span>원본 PDF</span><small>지원서_01.pdf</small></figcaption>
           <div class="expo-original-page">
-            <div class="expo-pdf-portrait"><img src="${escapeHtml(s.portraitSource)}" alt="기존 배우 사진을 재사용한 예시 PDF"></div>
+            <div class="expo-pdf-portrait"><img src="${escapeHtml(s.portraitSource)}" alt="가상 지원서의 프로필 사진"></div>
             <div><strong>오디션 지원서</strong><p>배우 프로필<br>출연 경력과 포트폴리오</p></div>
           </div>
         </figure>
         <section class="expo-review-panel" aria-label="심사 입력 예시">
           <h3>지원자 심사</h3>
           <dl class="expo-review-fields">
-            <div><dt>배역 배정</dt><dd data-expo-reveal="2">미배정</dd><dd data-expo-reveal="3" hidden>주연</dd></div>
-            <div><dt>내부 메모</dt><dd data-expo-reveal="2">메모 입력</dd><dd data-expo-reveal="3" hidden>추가 영상 확인</dd></div>
+            <div><dt>배역 배정</dt><dd data-expo-reveal="0">미배정</dd><dd data-expo-reveal="1" hidden>주연</dd></div>
+            <div><dt>내부 메모</dt><dd data-expo-reveal="0">메모 입력</dd><dd data-expo-reveal="1" hidden>추가 영상 확인</dd></div>
           </dl>
-          <div class="expo-verdict" data-expo-reveal="2">${decisions}</div>
-          <div class="expo-verdict expo-verdict--set" aria-label="보류 판정 예시" data-expo-reveal="3" hidden>${decisions}</div>
+          <div class="expo-verdict" data-expo-reveal="0">${decisions}</div>
+          <div class="expo-verdict expo-verdict--set" aria-label="보류 판정 예시" data-expo-reveal="1" hidden>${decisions}</div>
+          <p class="expo-next-applicant" data-expo-reveal="1" hidden>다음 지원자 지원서_02.pdf로 이동 →</p>
         </section>
       </div>
     </section>
+  </div>`;
+}
+
+function exhibitTriangleMarkup(s) {
+  const node = (n, i) => `<div class="expo-tri-node expo-tri-node--${i}"><strong>${escapeHtml(n.label)}</strong><span>${escapeHtml(n.detail)}</span></div>`;
+  const panel = (group, kind, reveal) => `<section class="expo-tri-panel expo-tri-panel--${kind}" data-expo-reveal="${reveal}"${reveal === '1' ? ' hidden' : ''}>
+      <p class="expo-tri-brand">${escapeHtml(group.brand)}</p>
+      <div class="expo-tri-map expo-tri-map--${kind}">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="${kind === 'three' ? 'M50 16 L14 84 L86 84 Z' : 'M20 50 H80'}"/></svg>
+        ${group.nodes.map(node).join('')}
+      </div>
+      <p class="expo-tri-caption">${escapeHtml(group.caption)}</p>
+    </section>`;
+  return `<div class="expo-visual expo-tri" data-expo>${panel(s.three, 'three', '0 1')}${panel(s.two, 'two', '1')}</div>`;
+}
+
+function exhibitAlertMarkup(s) {
+  const flow = s.flow.map((step, i) => `<li style="--i:${i}"><img src="${journeyIcons[step.icon]}" alt=""><strong>${escapeHtml(step.label)}</strong><span>${escapeHtml(step.detail)}</span></li>`).join('');
+  const side = c => `<div class="expo-versus-side expo-versus-side--${c.tone}"><p class="expo-versus-label">${escapeHtml(c.label)}</p><p class="expo-number">${escapeHtml(c.metric)}</p><p class="expo-metric-label">${rich(c.metricLabel)}</p><p class="expo-detail">${rich(c.detail)}</p></div>`;
+  return `<div class="expo-visual expo-alert" data-expo>
+    <ol class="expo-alert-flow" data-expo-reveal="0">${flow}</ol>
+    <div class="expo-versus" data-expo-reveal="1" hidden>${side(s.versus[0])}<span class="expo-versus-mid" aria-hidden="true"></span>${side(s.versus[1])}</div>
+    <div class="expo-thanks" data-expo-reveal="2" hidden>
+      <figure class="expo-thanks-shot"><img src="${escapeHtml(s.chatImage)}" alt="${escapeHtml(s.chatCaption)}"></figure>
+      <div class="expo-thanks-copy"><p class="expo-number">${escapeHtml(s.metric)}</p><p class="expo-metric-label">${rich(s.metricLabel)}</p><p class="expo-thanks-quote">${escapeHtml(s.quote)}</p><p class="expo-detail">${escapeHtml(s.quoteSource)}</p></div>
+      <figure class="expo-thanks-shot expo-thanks-shot--reply"><img src="${escapeHtml(s.replyImage)}" alt="${escapeHtml(s.replyCaption)}"></figure>
+    </div>
+  </div>`;
+}
+
+function exhibitParseMarkup(s) {
+  return `<div class="expo-visual expo-parse" data-expo>
+    <figure class="expo-parse-result" data-expo-reveal="0"><img src="${escapeHtml(s.resultImage)}" alt="${escapeHtml(s.resultCaption)}"><figcaption>${escapeHtml(s.resultCaption)}</figcaption></figure>
+    <div class="expo-parse-compare" data-expo-reveal="1 2" hidden>
+      <figure class="expo-parse-expected"><figcaption>예상한 지원서</figcaption><img src="${escapeHtml(s.expectedImage)}" alt="표로 정리된 가상 배우 이력서"></figure>
+      <figure class="expo-parse-actual" data-expo-reveal="2" hidden>
+        <figcaption>실제로 받은 지원서<small>${escapeHtml(s.actualNote)}</small></figcaption>
+        <div class="expo-actual-sheet">
+          <img src="${escapeHtml(s.actualImage)}" alt="${escapeHtml(s.actualCaption)}">
+          <span class="expo-actual-circle" aria-hidden="true"></span>
+        </div>
+      </figure>
+    </div>
+  </div>`;
+}
+
+function exhibitClosingMarkup(s) {
+  return `<div class="expo-visual expo-closing">
+    <div class="expo-closing-copy">
+      <p class="expo-number">${escapeHtml(s.metric)}</p>
+      <p class="expo-metric-label">${rich(s.metricLabel)}</p>
+      <p class="expo-badge">${escapeHtml(s.badge)}</p>
+    </div>
+    <figure class="expo-qr"><img src="${escapeHtml(s.qr)}" alt="예술in 사이트로 가는 QR 코드"><figcaption><strong>${escapeHtml(s.qrLabel)}</strong><span>${escapeHtml(s.booth)}</span></figcaption></figure>
+  </div>`;
+}
+
+function exhibitPipelineMarkup(s) {
+  const rows = s.rows.map(row => `<div class="expo-upload-row"><strong>${escapeHtml(row.file)}</strong><span>${escapeHtml(row.status)}</span></div>`).join('');
+  const items = s.items.map((item, i) => `<div class="expo-tech-visual" data-expo-reveal="${i}"${i ? ' hidden' : ''}>
+      <p class="expo-tech-step">${i + 1} / ${s.items.length}</p>
+      <img src="${journeyIcons[item.icon]}" alt="">
+      <strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.detail)}</p>
+    </div>`).join('');
+  return `<div class="expo-visual expo-pipeline" data-expo>
+    <div class="expo-tech-box"><p class="expo-tech-chip">${escapeHtml(s.chip)}</p><h3>${escapeHtml(s.boxTitle)}</h3>${rows}</div>
+    <div class="expo-tech-arrow" aria-hidden="true">→</div>
+    ${items}
   </div>`;
 }
 
@@ -3834,10 +3878,6 @@ function exhibitMarkup(s) {
     case 'opening':
       scene = exhibitOpeningMarkup(s);
       break;
-    case 'forward':
-      scene = `<div class="expo-roles">${s.roles.map(exhibitTile).join('')}</div>`;
-      footer = `<p class="expo-next">${escapeHtml(s.next)}</p><p class="expo-booth">${escapeHtml(s.booth)}</p>`;
-      break;
     case 'pivot':
       scene = exhibitPivotMarkup(s);
       break;
@@ -3845,24 +3885,19 @@ function exhibitMarkup(s) {
       scene = exhibitReviewMarkup(s);
       break;
     case 'pipeline':
-      scene = `<div class="expo-visual expo-pipeline" data-expo>
-        <div class="expo-tech-box">
-          <p class="expo-tech-chip">여러 지원서를 한 번에 올리면</p>
-          <h3>PDF 파일별로 업로드</h3>
-          <div class="expo-upload-row"><strong>지원서_01.pdf</strong><span>업로드 완료</span></div>
-          <div class="expo-upload-row"><strong>지원서_01_복사본.pdf</strong><span>중복 제외</span></div>
-          <div class="expo-upload-row"><strong>지원서_02.pdf</strong><span>업로드 중</span></div>
-        </div>
-        <div class="expo-tech-arrow" aria-hidden="true">→</div>
-        <div class="expo-tech-visual" data-expo-reveal="0">
-          <img src="${journeyIcons.bucket}" alt="">
-          <strong>같은 파일은 한 번만</strong><p>파일 내용으로 중복 확인</p>
-        </div>
-        <div class="expo-tech-visual" data-expo-reveal="1" hidden>
-          <img src="${journeyIcons.browser}" alt="">
-          <strong>지원서_01.pdf 열람</strong><p>PDF.js로 브라우저에서 원본 표시</p>
-        </div>
-      </div>`;
+      scene = exhibitPipelineMarkup(s);
+      break;
+    case 'triangle':
+      scene = exhibitTriangleMarkup(s);
+      break;
+    case 'alert':
+      scene = exhibitAlertMarkup(s);
+      break;
+    case 'parse':
+      scene = exhibitParseMarkup(s);
+      break;
+    case 'closing':
+      scene = exhibitClosingMarkup(s);
       break;
     case 'proof':
       scene = `<div class="expo-visual expo-proof">
@@ -3874,7 +3909,7 @@ function exhibitMarkup(s) {
   }
 
   if (s.stages?.some(stage => stage.note)) footer = '<p class="expo-note" data-expo-note role="status"></p>';
-  const stageStyle = ['opening', 'forward'].includes(s.exhibit) ? ' expo-stage' : '';
+  const stageStyle = s.exhibit === 'opening' ? ' expo-stage' : '';
   return { kind: `exhibit expo-layout-${s.exhibit}${stageStyle}`, body: `${headingMarkup(s)}${scene}${footer}` };
 }
 
@@ -3887,9 +3922,8 @@ function renderExhibitStage(stage) {
     panel.hidden = !panel.dataset.expoReveal.split(' ').includes(step);
   });
   if (stage.title) frameEl.querySelector('.slide-title').textContent = stage.title;
-  if (deck.slides[deck.index].exhibit === 'pivot') {
-    frameEl.querySelector('.slide-kicker').textContent = stage.kicker ?? deck.slides[deck.index].kicker;
-  }
+  const kicker = frameEl.querySelector('.slide-kicker');
+  if (kicker) kicker.textContent = stage.kicker ?? deck.slides[deck.index].kicker;
   const note = frameEl.querySelector('[data-expo-note]');
   if (note) {
     note.hidden = !stage.note;
@@ -4060,7 +4094,7 @@ function renderSlide(direction) {
   const act = currentAct();
   const labels = act ? actLabels(act) : null;
   document.getElementById('deck-act').textContent = slide.type === 'toc' ? '목차' : labels ? `${labels.num} ${labels.role}` : '';
-  document.getElementById('deck-count').textContent = index === slides.length - 1
+  document.getElementById('deck-count').textContent = index === slides.length - 1 && !deck.portal.stayOnLastSlide
     ? `${index + 1} / ${slides.length}   다음을 누르면 마을로 돌아가요`
     : `${index + 1} / ${slides.length}`;
   document.getElementById('deck-progress').innerHTML = slides
