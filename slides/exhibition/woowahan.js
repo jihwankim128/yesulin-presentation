@@ -8,7 +8,7 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
     image: 'assets/exhibition/intro/door.png',
     members: ['피노', '맥스', '이프', '무빙', '대길'],
   },
-  tocTitle: '공연사와 배우, 한쪽씩 풀기',
+  toc: false,
   actRoles: { 1: '두 곳의 불편', 2: '배우부터', 3: '원본 그대로' },
   stayOnLastSlide: true,
   slides: [
@@ -16,7 +16,6 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
       type: 'act', act: 1, exhibit: 'triangle',
       kicker: '예술in',
       title: '우아한형제들은 세 곳의 불편을 해결합니다',
-      items: ['세 곳과 두 곳', '공연사부터 시작한 실패'],
       three: {
         brand: '배달의민족',
         nodes: [
@@ -77,7 +76,6 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
       type: 'act', act: 2, exhibit: 'alert',
       kicker: '배우부터',
       title: '새 공고가 올라오면 Slack이 울립니다',
-      items: ['공고 알림과 허락받은 게시', 'AI로 정리하려다 실패'],
       flow: [
         { icon: 'browser', label: '새 공고', detail: '다른 공고 사이트에 등록' },
         { icon: 'gear', label: '10분마다 확인', detail: '새 공고면 Slack 알림' },
@@ -129,7 +127,6 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
       type: 'act', act: 3, exhibit: 'review',
       kicker: '원본 그대로',
       title: '지원서 원본을 보며 심사 결과를 바로 남깁니다',
-      items: ['원본 PDF 심사', '네트워킹 데이'],
       portraitSource: 'assets/exhibition/parse/expected-profile.webp',
       stages: [
         { note: '원본 PDF를 그대로 띄우고, 옆에서 배역과 메모를 남깁니다.' },
@@ -151,8 +148,9 @@ PORTAL_SLIDES['woowahan-exhibition'] = {
       exhibit: 'closing',
       kicker: '예술in',
       title: '한쪽씩 풀며 여기까지 왔습니다',
-      metric: '1,300명+',
-      metricLabel: '최근 한 달 예술in을 찾은 사람',
+      metric: '330명+',
+      metricLabel: '매주 예술in에서 공고를 보는 사람',
+      metricNote: '공고 상세 주간 고유 사용자(WAU) · 최근 두 주 334명씩',
       badge: '모두의 창업 2차 1라운드 통과 · 2라운드 도전 중',
       qr: 'assets/exhibition/closing/yesulin-qr.svg',
       qrLabel: 'yesulin.art',

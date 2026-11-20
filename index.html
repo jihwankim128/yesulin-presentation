@@ -688,7 +688,16 @@
   .expo-parse figcaption { font-size: 1.5cqw; font-weight: 700; color: var(--accent-deep); }
   .expo-parse figcaption small { margin-left: .8cqw; font-size: 1.15cqw; font-weight: 400; color: var(--expo-muted); }
   .expo-parse-expected { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 1cqh; min-height: 0; }
-  .expo-parse-expected img { max-height: 100%; max-width: 100%; min-height: 0; justify-self: center; border: .16cqw solid var(--expo-card-edge); }
+  .expo-parse-expected img { grid-area: 2 / 1; max-height: 100%; max-width: 100%; min-height: 0; justify-self: center; border: .16cqw solid var(--expo-card-edge); animation: expo-cross-dim .3s 2s ease-out forwards; }
+  .expo-parse-cross { grid-area: 2 / 1; place-self: center; position: relative; width: 20cqw; aspect-ratio: 1; pointer-events: none; }
+  .expo-parse-cross i {
+    position: absolute; inset: 50% auto auto 50%; translate: -50% -50%;
+    width: 100%; height: 1.2cqw; border-radius: .14cqw; background: #a34241; box-shadow: 0 0 0 .2cqw #edf2f8;
+    rotate: 45deg; clip-path: inset(-1cqw 100% -1cqw -1cqw); animation: expo-cross-draw .26s 2s ease-out forwards;
+  }
+  .expo-parse-cross i + i { rotate: 135deg; animation-delay: 2.32s; }
+  @keyframes expo-cross-draw { to { clip-path: inset(-1cqw -1cqw -1cqw -1cqw); } }
+  @keyframes expo-cross-dim { to { opacity: .6; filter: grayscale(1); } }
   .expo-variety { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 1.4cqh; min-height: 0; }
   .expo-variety-sheets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 2.2cqh 2.4cqw; place-items: center; min-height: 0; }
   .expo-variety-sheet { max-width: 100%; max-height: 100%; min-height: 0; border: .16cqw solid var(--expo-card-edge); box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow); animation: expo-appear .38s ease-out both; }
@@ -700,6 +709,8 @@
   .expo-closing { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 2.6cqw; align-items: stretch; }
   .expo-closing-copy { display: flex; flex-direction: column; justify-content: center; padding: 2.8cqh 2.4cqw; background: #eaf0f7; border: .16cqw solid var(--expo-card-edge); }
   .expo-closing-copy .expo-number { font-size: 8.6cqw; }
+  .expo-closing-copy .expo-metric-label { margin-bottom: .8cqh; }
+  .expo-metric-note { margin-bottom: 2.3cqh; font-size: 1.3cqw; color: var(--expo-muted); }
   .expo-badge { width: fit-content; margin-top: 1cqh; padding: 1.1cqh 1.3cqw; background: #34547e; color: #fff; font-size: 1.75cqw; font-weight: 700; }
   .expo-qr { display: grid; grid-template-rows: auto auto; align-content: center; gap: 1.6cqh; justify-items: center; padding: 2.4cqh 1.6cqw; background: #fffdf8; border: .16cqw solid var(--expo-card-edge); box-shadow: .34cqw .34cqw 0 var(--expo-card-shadow); }
   .expo-qr img { width: min(100%, 23cqw); height: auto; aspect-ratio: 1; image-rendering: pixelated; }
@@ -712,6 +723,8 @@
   @media (prefers-reduced-motion: reduce) {
     .expo-layout-triangle::before, .expo-layout-triangle::after { display: none; }
     .slide--exhibit *, .slide--exhibit [data-expo-reveal]:not([hidden]) { animation: none !important; transition: none !important; }
+    .expo-parse-cross i { clip-path: none; }
+    .expo-parse-expected img { opacity: .6; filter: grayscale(1); }
   }
 
   .slide--opening.from-next, .slide--opening.from-prev { animation: none; }
@@ -1218,7 +1231,7 @@
   - channels: 시작 화면의 채널(스프린트) 목록. 채널마다 portals 배열이 마을의 포탈이 되고, 포탈 수에 맞춰 마을이 다시 그려진다.
     포탈: { slides: 'PORTAL_SLIDES 키', file: '슬라이드 파일 경로', label, theme: 'pink' | 'gold' | 'sky' | 'mint' | 'violet' | 'coral' }
     채널이나 포탈을 늘리고 줄일 때는 이 목록과 슬라이드 파일만 고치면 된다. 파일은 채널에 들어갈 때 불러온다.
-  - 첫 장 목차는 type: 'act' 슬라이드에서 자동으로 만들어진다.
+  - 첫 장 목차는 type: 'act' 슬라이드에서 자동으로 만들어진다. 포탈에 toc: false를 지정하면 목차 없이 시작한다.
   - 포탈에 stayOnLastSlide: true를 지정하면 마지막 장에서 다음을 눌러도 마을로 나가지 않는다. 리모컨 발표용이며 ESC나 마을로 버튼으로 나간다.
   - 포탈에 sectionStyle: 'plain'을 지정하면 막 대신 번호와 구역 제목을 표시한다. tocTitle로 목차 제목을 바꿀 수 있다.
   - sectionIntro: 'stage'를 함께 지정하면 번호형 구역의 도입을 커튼이 열리는 무대로 표시한다.
@@ -3425,7 +3438,8 @@ function drawArena() {
 
 
 function openDeck(portal) {
-  const slides = [{ type: 'toc', say: portal.tocSay }, ...portal.slides];
+  const slides = [...portal.slides];
+  if (portal.toc !== false) slides.unshift({ type: 'toc', say: portal.tocSay });
   if (portal.intro) slides.unshift(portal.intro);
   deck = { portal, index: 0, slides, typing: null };
   hudEl.hidden = true;
@@ -3857,7 +3871,7 @@ function exhibitAlertMarkup(s) {
 function exhibitParseMarkup(s) {
   return `<div class="expo-visual expo-parse" data-expo>
     <figure class="expo-parse-result" data-expo-reveal="0"><img src="${escapeHtml(s.resultImage)}" alt="${escapeHtml(s.resultCaption)}"><figcaption>${escapeHtml(s.resultCaption)}</figcaption></figure>
-    <figure class="expo-parse-expected" data-expo-reveal="1" hidden><figcaption>예상한 지원서</figcaption><img src="${escapeHtml(s.expectedImage)}" alt="표로 정리된 가상 배우 이력서"></figure>
+    <figure class="expo-parse-expected" data-expo-reveal="1" hidden><figcaption>예상한 지원서</figcaption><img src="${escapeHtml(s.expectedImage)}" alt="표로 정리된 가상 배우 이력서"><span class="expo-parse-cross" aria-hidden="true"><i></i><i></i></span></figure>
     ${exhibitVarietyMarkup(s.variety)}
   </div>`;
 }
@@ -3876,10 +3890,16 @@ function exhibitClosingMarkup(s) {
     <div class="expo-closing-copy">
       <p class="expo-number">${escapeHtml(s.metric)}</p>
       <p class="expo-metric-label">${rich(s.metricLabel)}</p>
+      ${exhibitMetricNoteMarkup(s.metricNote)}
       <p class="expo-badge">${escapeHtml(s.badge)}</p>
     </div>
     <figure class="expo-qr"><img src="${escapeHtml(s.qr)}" alt="예술in 사이트로 가는 QR 코드"><figcaption><strong>${escapeHtml(s.qrLabel)}</strong><span>${escapeHtml(s.booth)}</span></figcaption></figure>
   </div>`;
+}
+
+function exhibitMetricNoteMarkup(note) {
+  if (!note) return '';
+  return `<p class="expo-metric-note">${escapeHtml(note)}</p>`;
 }
 
 function exhibitPipelineMarkup(s) {
