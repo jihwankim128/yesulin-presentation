@@ -4375,6 +4375,7 @@ addEventListener('keydown', e => {
   }
 
   if (state === 'deck') {
+    if (e.key === 'F5') { e.preventDefault(); return; }
     if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); moveSlide(1); }
     else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); moveSlide(-1); }
     else if (e.key === 'ArrowDown') { e.preventDefault(); flipStack(1); }
@@ -4576,6 +4577,37 @@ deckEl.querySelector('.deck-nav').addEventListener('click', e => {
   if (nav === 'next') moveSlide(1);
   if (nav === 'exit') closeDeck();
 });
+
+const DECK_CONTROLS = 'button, a, input, textarea, select, [data-stack], [data-goto], [data-dialogue-next]';
+const MOUSE_BACK = 3;
+const MOUSE_FORWARD = 4;
+const WHEEL_QUIET_MS = 220;
+let wheelGesture = { at: -Infinity, sum: 0, moved: false };
+
+deckEl.addEventListener('click', e => {
+  if (state !== 'deck' || e.target.closest(DECK_CONTROLS)) return;
+  moveSlide(1);
+});
+deckEl.addEventListener('contextmenu', e => {
+  if (state !== 'deck') return;
+  e.preventDefault();
+  moveSlide(-1);
+});
+deckEl.addEventListener('mouseup', e => {
+  if (state !== 'deck' || ![MOUSE_BACK, MOUSE_FORWARD].includes(e.button)) return;
+  e.preventDefault();
+  moveSlide(e.button === MOUSE_FORWARD ? 1 : -1);
+});
+deckEl.addEventListener('wheel', e => {
+  if (state !== 'deck') return;
+  e.preventDefault();
+  if (e.timeStamp - wheelGesture.at > WHEEL_QUIET_MS) wheelGesture = { sum: 0, moved: false };
+  wheelGesture.at = e.timeStamp;
+  wheelGesture.sum += e.deltaY;
+  if (wheelGesture.moved || wheelGesture.sum === 0) return;
+  wheelGesture.moved = true;
+  moveSlide(Math.sign(wheelGesture.sum));
+}, { passive: false });
 
 addEventListener('dragover', e => e.preventDefault());
 addEventListener('drop', e => {
