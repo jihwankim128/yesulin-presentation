@@ -79,6 +79,51 @@
     font: inherit; color: var(--ink); background: var(--paper); box-shadow: 0 2px 0 #8a8fa3;
   }
 
+  /* 전시회 마을 게시판: 캔버스와 같은 비율로 잔디에 고정한다. */
+  .village-boards {
+    position: absolute; left: 50%; top: 50%; translate: -50% -50%;
+    width: min(100vw, 160dvh); aspect-ratio: 8 / 5; container-type: inline-size; pointer-events: none;
+  }
+  .village-board {
+    --edge: max(1px, .21cqw); position: absolute; top: 60%; left: var(--board-x); translate: -50% -100%;
+    width: 10.9cqw; padding: .65cqw .4cqw .4cqw; pointer-events: auto;
+    background: #ad7547; color: #2c211e; border: var(--edge) solid #35251e;
+    box-shadow: inset 0 .25cqw #ecc998, inset 0 -.2cqw #805031, .24cqw .24cqw #446d36;
+  }
+  .village-board::before, .village-board::after {
+    content: ''; position: absolute; top: 100%; width: .85cqw; height: 1.8cqw;
+    background: #8d5c36; border: var(--edge) solid #392921; pointer-events: none;
+  }
+  .village-board::before { left: 12%; }
+  .village-board::after { right: 12%; }
+  .village-board-paper {
+    display: grid; position: relative; justify-items: center; gap: .34cqw; padding: .65cqw .1cqw .45cqw;
+    background: #fff4cf; box-shadow: inset 0 0 0 var(--edge) #936546;
+    font-size: 1.12cqw; line-height: 1.3; font-weight: 700; white-space: nowrap;
+  }
+  .village-board-paper img { width: 2.6cqw; height: 2.6cqw; object-fit: contain; image-rendering: pixelated; }
+  .village-board:hover, .village-board:focus-visible { outline: var(--edge) solid #ffe27a; outline-offset: var(--edge); }
+  .village-board:hover .village-board-paper, .village-board:focus-visible .village-board-paper { background: #fffde8; }
+  @media (max-width: 620px) and (orientation: portrait) {
+    .village-boards { display: flex; gap: 2vw; width: 94vw; aspect-ratio: auto; top: calc(50% + 32vw); translate: -50% 0; }
+    .village-board { position: relative; inset: auto; translate: none; width: auto; flex: 1; padding: 4px; }
+    .village-board-paper { min-height: 48px; gap: 3px; padding: 5px 0; font-size: clamp(10px, 2.8vw, 16px); }
+    .village-board-paper img { width: 17px; height: 17px; }
+  }
+  .board-viewer {
+    width: min(96vw, 1800px); height: 94dvh; max-width: none; max-height: none; margin: auto;
+    padding: 0; border: 3px solid #384158; color: #fff; background: #131928;
+  }
+  .board-viewer[open] { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+  .board-viewer::backdrop { background: rgba(9, 11, 22, .88); }
+  .board-viewer header { display: flex; align-items: center; flex-wrap: wrap; gap: .55rem; padding: .6rem .85rem; }
+  .board-viewer h2 { flex: 1; font-size: clamp(15px, 2vw, 22px); white-space: nowrap; }
+  .board-viewer button { padding: .45rem .7rem; border: 1px solid #737c92; font-size: 14px; }
+  .board-viewer button:hover, .board-viewer button:focus-visible { color: #ffe27a; }
+  .board-sheet { min-height: 0; overflow: auto; background: #e4e8ee; overscroll-behavior: contain; }
+  .board-sheet img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .board-sheet.is-expanded img { width: auto; height: auto; max-width: none; margin-inline: auto; }
+
   /* 슬라이드 */
   .deck {
     position: fixed; inset: 0; display: grid; grid-template-rows: auto 1fr auto; gap: 1rem;
@@ -1145,7 +1190,17 @@
     <span><kbd>F</kbd>전체화면</span>
     <span><kbd>M</kbd><span id="sound-label">소리 켬</span></span>
   </div>
+  <div class="village-boards" id="village-boards" role="group" aria-label="전시회 게시판" hidden></div>
 </div>
+
+<dialog class="board-viewer" id="board-viewer" aria-labelledby="board-title">
+  <header>
+    <h2 id="board-title"></h2>
+    <button type="button" id="board-scale" aria-pressed="false">원본 크기</button>
+    <button type="button" id="board-close" autofocus>닫기</button>
+  </header>
+  <div class="board-sheet" id="board-sheet" tabindex="0"><img id="board-image" alt=""></div>
+</dialog>
 
 <div class="title-screen" id="title-screen">
   <div class="title-card">
@@ -1276,6 +1331,11 @@ const CONFIG = {
     },
     {
       id: 'woowahan-exhibition', label: '우아한형제들 전시회', isNew: true,
+      boards: [
+        { x: 56, title: 'PDF 심사의 변화', icon: 'pdf', image: 'assets/exhibition/boards/pdf-review.png', alt: '지원서 정보 추출과 OCR 실험을 거쳐 원본 PDF 심사로 전환한 세 단계' },
+        { x: 103, title: '시스템 아키텍처', icon: 'db', image: 'assets/exhibition/boards/system-architecture.png', alt: '예술in 프런트엔드와 AWS 서버, 배포 및 모니터링 시스템의 구성도' },
+        { x: 150, title: '공고 알림', icon: 'message', image: 'assets/exhibition/boards/audition-notices.png', alt: 'OTR 수집 공고와 공연사 등록 공고의 공개, Slack 알림, 오픈채팅 공유 흐름' },
+      ],
       portals: [
         { slides: 'woowahan-exhibition', file: 'slides/exhibition/woowahan.js', label: '전시회 발표', theme: 'mint' },
       ],
@@ -1657,6 +1717,13 @@ function setChannel(next) {
 
   for (let i = SOLIDS.length - 1; i >= 0; i--) if (SOLIDS[i].channel) SOLIDS.splice(i, 1);
   for (let i = props.length - 1; i >= 0; i--) if (props[i].channel) props.splice(i, 1);
+  const boards = next.boards ?? [];
+  boardMap.hidden = !boards.length;
+  boardMap.innerHTML = boards.map((board, index) => `
+    <button type="button" class="village-board" data-board="${index}" aria-haspopup="dialog" style="--board-x:${board.x / W * 100}%">
+      <span class="village-board-paper"><img src="${journeyIcons[board.icon]}" alt="">${escapeHtml(board.title)}</span>
+    </button>`).join('');
+  boards.forEach(board => SOLIDS.push({ x: board.x - 16, y: 148, w: 32, h: 3, channel: true }));
   PORTAL_X.forEach(cx => {
     SOLIDS.push({ x: cx - 18, y: PORTAL_TOP, w: 6, h: 44, channel: true });
     SOLIDS.push({ x: cx + 12, y: PORTAL_TOP, w: 6, h: 44, channel: true });
@@ -2408,6 +2475,8 @@ function nearbyTree() {
 }
 
 function interactNearby() {
+  const boardIndex = channel.boards?.findIndex(board => Math.abs(hero.x - board.x) <= 21 && Math.abs(hero.y - 151) <= 10) ?? -1;
+  if (boardIndex >= 0) { openBoard(boardIndex); return true; }
   if (Math.hypot(hero.x - 150, hero.y - 208) < 24) { openDoodle(); return true; }
   const tree = nearbyTree();
   if (tree) { kickTree(tree); return true; }
@@ -4359,6 +4428,8 @@ function toggleFullscreen() {
 }
 
 addEventListener('keydown', e => {
+  if (state === 'board') return;
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.closest?.('.village-board')) return;
   if (e.code === 'KeyF') { toggleFullscreen(); return; }
   if (e.code === 'KeyM') { toggleSound(); return; }
 
@@ -4429,6 +4500,46 @@ addEventListener('keydown', e => {
     if (e.key === ' ') { e.preventDefault(); jump(); }
   }
 });
+
+const boardMap = document.getElementById('village-boards');
+const boardViewer = document.getElementById('board-viewer');
+const boardSheet = document.getElementById('board-sheet');
+const boardScale = document.getElementById('board-scale');
+let boardResume = 'play';
+
+function setBoardScale(expanded) {
+  boardSheet.classList.toggle('is-expanded', expanded);
+  boardScale.setAttribute('aria-pressed', String(expanded));
+  boardScale.textContent = expanded ? '전체 보기' : '원본 크기';
+  boardSheet.scrollTo(0, 0);
+}
+
+function openBoard(index) {
+  const board = channel.boards?.[index];
+  if (!board || (state !== 'play' && state !== 'intro')) return;
+  boardResume = state;
+  state = 'board';
+  keys.clear();
+  tappedKeys.clear();
+  releasedKeys.clear();
+  hero.moving = false;
+  document.getElementById('board-title').textContent = board.title;
+  const img = document.getElementById('board-image');
+  img.alt = board.alt;
+  img.src = board.image;
+  setBoardScale(false);
+  boardViewer.showModal();
+  sfx('open');
+}
+
+boardMap.addEventListener('click', e => {
+  const button = e.target.closest('[data-board]');
+  if (button) openBoard(Number(button.dataset.board));
+});
+boardScale.addEventListener('click', () => setBoardScale(!boardSheet.classList.contains('is-expanded')));
+document.getElementById('board-close').addEventListener('click', () => boardViewer.close());
+boardViewer.addEventListener('click', e => { if (e.target === boardViewer) boardViewer.close(); });
+boardViewer.addEventListener('close', () => { state = boardResume; sfx('close'); });
 
 const lightboxEl = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightbox-img');
